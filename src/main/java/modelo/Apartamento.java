@@ -3,6 +3,11 @@ import enums.EstadoApartamento;
 import enums.Temporada;
 import estructuras.ArbolBinarioBusqueda;
 import estructuras.ListaDoblementeEnlazada;
+import modelo.Reserva;
+import modelo.Tarifa;
+
+import java.util.Comparator;
+import java.util.Objects;
 
 public class Apartamento implements Comparable<Apartamento> {
 
