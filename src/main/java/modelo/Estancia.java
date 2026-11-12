@@ -7,10 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- * Rango [entrada, salida): la noche de salida no se ocupa ni se cobra.
- * Es iterable: for (LocalDate noche : estancia) recorre las noches a cobrar.
- */
+
 public class Estancia implements Iterable<LocalDate> {
 
     private final LocalDate entrada;
@@ -35,12 +32,10 @@ public class Estancia implements Iterable<LocalDate> {
         return salida;
     }
 
-    /** Del 10 al 12 de marzo son 2 noches. */
     public int noches() {
         return (int) ChronoUnit.DAYS.between(entrada, salida);
     }
 
-    /** Dos estancias se solapan si comparten al menos una noche. */
     public boolean seSolapaCon(Estancia otra) {
         return entrada.isBefore(otra.salida) && otra.entrada.isBefore(salida);
     }
