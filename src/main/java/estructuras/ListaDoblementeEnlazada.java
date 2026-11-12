@@ -223,4 +223,28 @@ public class ListaDoblementeEnlazada<T> implements Iterable<T> {
             return dato;
         }
     }
+
+    public NodoDoble<T> getCabeza() {
+        return cabeza;
+    }
+
+    public void setCabeza(NodoDoble<T> cabeza) {
+        this.cabeza = cabeza;
+    }
+
+    public NodoDoble<T> getCola() {
+        return cola;
+    }
+
+    public void setCola(NodoDoble<T> cola) {
+        this.cola = cola;
+    }
+
+    public int getTamano() {
+        return tamano;
+    }
+
+    public void setTamano(int tamano) {
+        this.tamano = tamano;
+    }
 }

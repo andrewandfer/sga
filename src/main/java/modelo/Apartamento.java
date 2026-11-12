@@ -1,6 +1,9 @@
 package modelo;
 import enums.EstadoApartamento;
 import enums.Temporada;
+import estructuras.ArbolBinarioBusqueda;
+import estructuras.ListaDoblementeEnlazada;
+
 public class Apartamento implements Comparable<Apartamento> {
 
     private final String codigo;
@@ -36,14 +39,10 @@ public class Apartamento implements Comparable<Apartamento> {
         this.codigo = codigo;
     }
 
-    /** Objeto "sonda" que solo lleva el codigo, para buscar en el arbol. */
     public static Apartamento paraBusqueda(String codigo) {
         return new Apartamento(codigo);
     }
 
-    // ---------------- Estado operativo ----------------
-
-    /** Cambia el estado. Para FUERA_DE_SERVICIO use {@link #ponerFueraDeServicio(String)}. */
     public void cambiarEstado(EstadoApartamento nuevo) {
         if (nuevo == null) {
             throw new IllegalArgumentException("El estado es obligatorio");
@@ -62,8 +61,6 @@ public class Apartamento implements Comparable<Apartamento> {
         this.estadoOperativo = EstadoApartamento.FUERA_DE_SERVICIO;
         this.motivoFueraServicio = motivo;
     }
-
-    // ---------------- Tarifas ----------------
 
     public void definirTarifa(Temporada temporada, double valorPersonaNoche) {
         for (Tarifa t : tarifas) {
@@ -84,7 +81,6 @@ public class Apartamento implements Comparable<Apartamento> {
         return false;
     }
 
-    /** Valor por persona por noche en la temporada dada. */
     public double tarifaPara(Temporada temporada) {
         for (Tarifa t : tarifas) {
             if (t.getTemporada() == temporada) {
@@ -94,7 +90,6 @@ public class Apartamento implements Comparable<Apartamento> {
         throw new IllegalStateException("El apartamento " + codigo + " no tiene tarifa para la temporada " + temporada);
     }
 
-    // ---------------- Reservas ----------------
 
     public boolean agregarReserva(Reserva r) {
         return reservas.insertar(r);
@@ -108,9 +103,6 @@ public class Apartamento implements Comparable<Apartamento> {
         return reservas.tamano();
     }
 
-    // ---------------- Comparadores alternos ----------------
-
-    /** Por precio (tarifa de temporada baja, la base); desempata por codigo. */
     public static Comparator<Apartamento> porPrecio() {
         return porPrecio(Temporada.BAJA);
     }
@@ -135,7 +127,6 @@ public class Apartamento implements Comparable<Apartamento> {
                 .thenComparing((x, y) -> x.compareTo(y));
     }
 
-    // ---------------- Getters / setters ----------------
 
     public String getCodigo() {
         return codigo;
