@@ -1,5 +1,4 @@
 package modelo;
-
 import enums.EstadoApartamento;
 import enums.Temporada;
 public class Apartamento implements Comparable<Apartamento> {

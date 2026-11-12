@@ -5,9 +5,6 @@ import java.util.Objects;
 
 public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T> {
 
-    /**
-     * Nodo de un arbol binario de busqueda.
-     */
     public static class NodoArbol<T> {
 
         private T dato;
@@ -59,7 +56,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return comparador != null ? comparador.compare(a, b) : a.compareTo(b);
     }
 
-    /** @return true si se inserto; false si ya existia un elemento equivalente. */
     public boolean insertar(T dato) {
         Objects.requireNonNull(dato, "El arbol no admite elementos nulos");
         int antes = tamano;
@@ -81,7 +77,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return nodo;
     }
 
-    /** @return el elemento almacenado equivalente a la clave, o null si no existe. */
     public T buscar(T clave) {
         return buscar(raiz, clave);
     }
@@ -101,7 +96,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return buscar(clave) != null;
     }
 
-    /** @return true si el elemento existia y fue eliminado. */
     public boolean eliminar(T clave) {
         int antes = tamano;
         raiz = eliminar(raiz, clave);
@@ -125,7 +119,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
             if (nodo.getDerecho() == null) {
                 return nodo.getIzquierdo();
             }
-            // Dos hijos: se reemplaza por el sucesor in-orden (minimo del subarbol derecho)
             nodo.setDato(minimo(nodo.getDerecho()).getDato());
             nodo.setDerecho(eliminarMinimo(nodo.getDerecho()));
         }
@@ -144,7 +137,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return nodo;
     }
 
-    /** Altura del arbol: 0 si esta vacio, 1 si solo tiene la raiz. */
     public int altura() {
         return altura(raiz);
     }
@@ -156,7 +148,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return 1 + Math.max(altura(nodo.getIzquierdo()), altura(nodo.getDerecho()));
     }
 
-    /** Recorrido in-orden (de menor a mayor segun el orden del arbol). */
     public ListaDoblementeEnlazada<T> inOrden() {
         ListaDoblementeEnlazada<T> resultado = new ListaDoblementeEnlazada<>();
         inOrden(raiz, resultado);
@@ -180,15 +171,11 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return tamano == 0;
     }
 
-    /**
-     * Expone la raiz para que los servicios puedan hacer recorridos recursivos
-     * propios (por ejemplo, la deteccion de solapamientos de reservas).
-     */
+
     public NodoArbol<T> getRaiz() {
         return raiz;
     }
 
-    /** Itera en orden ascendente sobre una copia in-orden del arbol. */
     @Override
     public Iterator<T> iterator() {
         return inOrden().iterator();
