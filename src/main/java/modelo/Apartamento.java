@@ -40,7 +40,7 @@ public class Apartamento implements Comparable<Apartamento> {
         this.caracteristicas = caracteristicas;
     }
 
-    private Apartamento(String codigo) {
+    public Apartamento(String codigo) {
         this.codigo = codigo;
     }
 
