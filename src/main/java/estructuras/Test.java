@@ -1,13 +1,19 @@
-package estructuras.Grafo;
+package estructuras;
 
+import estructuras.Cola.Cola;
+import estructuras.Cola.ColaPrioritaria;
+import estructuras.Grafo.Grafo;
+import estructuras.Grafo.NodoGrafo;
 import estructuras.Grafo.Tipo_nodos.Cuartos_aseo;
 import estructuras.Grafo.Tipo_nodos.Pasillo;
 import estructuras.Grafo.Tipo_nodos.Recepcion;
-import estructuras.ListaDoblementeEnlazada;
 import modelo.Apartamento;
 
 public class Test {
     public static void main(String[] args) {
+        test_colaprio();
+    }
+    public static void test_grafo(){
         Apartamento apartamento=new Apartamento("123456");
         Cuartos_aseo cuartos_aseo=new Cuartos_aseo(1);
         Pasillo pasillo=new Pasillo(1);
@@ -53,5 +59,63 @@ public class Test {
             System.out.println(nodoGrafo);
         }
         System.out.println(grafo.imprimir(nodo4));
+    }
+    public static void test_cola() {
+        Cola<Integer> cola = new Cola<>();
+        cola.add(1);
+        cola.add(2);
+        cola.add(3);
+        cola.add(4);
+        cola.add(5);
+        cola.add(6);
+        cola.add(7);
+        cola.add(8);
+        cola.add(9);
+        cola.add(10);
+        System.out.println(cola);
+        cola.poll();
+        cola.poll();
+        cola.poll();
+        System.out.println(cola);
+        cola.add(1);
+        cola.add(2);
+        cola.add(3);
+        System.out.println(cola);
+        Cola<Integer> cola2 = new Cola<>();
+        cola2.add(11);
+        cola2.add(12);
+        cola2.add(13);
+        cola2.add(14);
+        cola2.add(15);
+        cola.merge(cola2);
+        System.out.println(cola);
+    }
+    public static void test_colaprio(){
+        ColaPrioritaria<Integer> cola=new ColaPrioritaria<>();
+        cola.add(1);
+        cola.add(2);
+        cola.add(3);
+        cola.add(4);
+        cola.add(5);
+        cola.add(6);
+        cola.add(7);
+        cola.add(8);
+        cola.add(9);
+        cola.add(10);
+        System.out.println(cola);
+        cola.poll();
+        cola.poll();
+        cola.poll();
+        cola.poll();
+        System.out.println(cola);
+        cola.add(11);
+        cola.add(12);
+        cola.add(13);
+        cola.add(1);
+        cola.add(2);
+        cola.add(3);
+        System.out.println(cola);
+        cola.add(4);
+        System.out.println(cola);
     }
 }
