@@ -1,6 +1,8 @@
 package estructuras;
 import java.util.Comparator;
+import excepciones.EstructuraVaciaException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T> {
@@ -176,8 +178,95 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return raiz;
     }
 
+    /** Recorrido raiz - izquierdo - derecho (recursivo). */
+    public ListaDoblementeEnlazada<T> preOrden() {
+        ListaDoblementeEnlazada<T> resultado = new ListaDoblementeEnlazada<>();
+        preOrden(raiz, resultado);
+        return resultado;
+    }
+
+    private void preOrden(NodoArbol<T> nodo, ListaDoblementeEnlazada<T> resultado) {
+        if (nodo == null) {
+            return;
+        }
+        resultado.agregar(nodo.getDato());
+        preOrden(nodo.getIzquierdo(), resultado);
+        preOrden(nodo.getDerecho(), resultado);
+    }
+
+    /** Recorrido izquierdo - derecho - raiz (recursivo). */
+    public ListaDoblementeEnlazada<T> postOrden() {
+        ListaDoblementeEnlazada<T> resultado = new ListaDoblementeEnlazada<>();
+        postOrden(raiz, resultado);
+        return resultado;
+    }
+
+    private void postOrden(NodoArbol<T> nodo, ListaDoblementeEnlazada<T> resultado) {
+        if (nodo == null) {
+            return;
+        }
+        postOrden(nodo.getIzquierdo(), resultado);
+        postOrden(nodo.getDerecho(), resultado);
+        resultado.agregar(nodo.getDato());
+    }
+
+    /** Menor elemento segun el orden del arbol. Lanza EstructuraVaciaException si no hay elementos. */
+    public T obtenerMinimo() {
+        if (raiz == null) {
+            throw new EstructuraVaciaException("El arbol esta vacio");
+        }
+        return minimo(raiz).getDato();
+    }
+
+    /** Mayor elemento segun el orden del arbol. Lanza EstructuraVaciaException si no hay elementos. */
+    public T obtenerMaximo() {
+        if (raiz == null) {
+            throw new EstructuraVaciaException("El arbol esta vacio");
+        }
+        return maximo(raiz).getDato();
+    }
+
+    private NodoArbol<T> maximo(NodoArbol<T> nodo) {
+        return nodo.getDerecho() == null ? nodo : maximo(nodo.getDerecho());
+    }
+
+    /**
+     * Iterador propio en in-orden (de menor a mayor). Es perezoso: no copia el arbol,
+     * mantiene una pila de nodos pendientes. No se debe modificar el arbol mientras se recorre.
+     */
     @Override
     public Iterator<T> iterator() {
-        return inOrden().iterator();
+        return new IteradorInOrden();
+    }
+
+    private class IteradorInOrden implements Iterator<T> {
+
+        private final ListaDoblementeEnlazada<NodoArbol<T>> pendientes = new ListaDoblementeEnlazada<>();
+
+        IteradorInOrden() {
+            apilarRamaIzquierda(raiz);
+        }
+
+        private void apilarRamaIzquierda(NodoArbol<T> nodo) {
+            while (nodo != null) {
+                pendientes.agregar(nodo);
+                nodo = nodo.getIzquierdo();
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !pendientes.estaVacia();
+        }
+
+        @Override
+        public T next() {
+            if (pendientes.estaVacia()) {
+                throw new NoSuchElementException("No hay mas elementos en el arbol");
+            }
+            NodoArbol<T> nodo = pendientes.eliminarEn(pendientes.tamano() - 1);
+            apilarRamaIzquierda(nodo.getDerecho());
+            return nodo.getDato();
+        }
     }
 }

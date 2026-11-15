@@ -7,6 +7,7 @@ import estructuras.ArbolBinarioBusqueda;
 import estructuras.ListaDoblementeEnlazada;
 import excepciones.CapacidadExcedidaException;
 import excepciones.ReservaSolapadaException;
+import excepciones.TransicionInvalidaException;
 import modelo.*;
 
 import java.time.LocalDate;
@@ -88,14 +89,29 @@ public class GestorReservas {
         ListaDoblementeEnlazada<Apartamento> combinacion = asignarGrupo(grupo.tamano(), estancia, catalogo);
         ListaDoblementeEnlazada<Reserva> reservas = new ListaDoblementeEnlazada<>();
         Iterator<Ocupante> iterador = grupo.iterator();
-        for (Apartamento apartamento : combinacion) {
-            ListaDoblementeEnlazada<Ocupante> parte = new ListaDoblementeEnlazada<>();
-            while (iterador.hasNext() && parte.tamano() < apartamento.getCapacidadMaxima()) {
-                parte.agregar(iterador.next());
+        try {
+            for (Apartamento apartamento : combinacion) {
+                ListaDoblementeEnlazada<Ocupante> parte = new ListaDoblementeEnlazada<>();
+                while (iterador.hasNext() && parte.tamano() < apartamento.getCapacidadMaxima()) {
+                    parte.agregar(iterador.next());
+                }
+                reservas.agregar(crearReserva(titular, apartamento, estancia, parte, canal));
             }
-            reservas.agregar(crearReserva(titular, apartamento, estancia, parte, canal));
+        } catch (ReservaSolapadaException | CapacidadExcedidaException | RuntimeException e) {
+            // Todo o nada: si una de las reservas del grupo falla, se deshacen las ya creadas.
+            deshacerReservas(reservas);
+            throw e;
         }
         return reservas;
+    }
+
+    /** Libera las noches y borra del historial las reservas de un grupo que no se pudo completar. */
+    private void deshacerReservas(ListaDoblementeEnlazada<Reserva> creadas) {
+        for (Reserva r : creadas) {
+            r.cancelar();
+            r.getApartamento().quitarReserva(r);
+            r.getTitular().quitarDelHistorial(r);
+        }
     }
 
     /** Solo calcula la combinacion de apartamentos para el grupo (sin reservar). */
@@ -181,7 +197,7 @@ public class GestorReservas {
 
     public double calcularDevolucion(Reserva reserva, double montoPagado, LocalDate hoy) {
         if (reserva.getEstado() != EstadoReserva.PENDIENTE && reserva.getEstado() != EstadoReserva.CONFIRMADA) {
-            throw new IllegalStateException("La reserva " + reserva.getId() + " no se puede cancelar en estado "
+            throw new TransicionInvalidaException("La reserva " + reserva.getId() + " no se puede cancelar en estado "
                     + reserva.getEstado());
         }
         long dias = ChronoUnit.DAYS.between(hoy, reserva.getEstancia().getEntrada());

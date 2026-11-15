@@ -1,27 +1,37 @@
 package servicios;
 
+import controlador.SgaControlador;
 import enums.CanalReserva;
+import enums.CriterioOrden;
 import enums.EstadoApartamento;
+import enums.EstadoReserva;
+import enums.RolEmpleado;
 import enums.Temporada;
 import estructuras.ArbolBinarioBusqueda;
+import estructuras.ListaCircular;
 import estructuras.ListaDoblementeEnlazada;
 import excepciones.CapacidadExcedidaException;
+import excepciones.EstructuraVaciaException;
 import excepciones.ExcepcionSGA;
 import excepciones.FechasInvalidasException;
 import excepciones.ReservaSolapadaException;
+import excepciones.TransicionInvalidaException;
 import modelo.Apartamento;
 import modelo.Cotizacion;
+import modelo.Empleado;
 import modelo.Estancia;
 import modelo.Huesped;
 import modelo.Ocupante;
 import modelo.PeriodoTemporada;
 import modelo.Reserva;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 /**
  * Programa de prueba del Sistema de Gestion de Apartamentos (SGA).
@@ -31,7 +41,7 @@ import java.time.LocalDateTime;
  * por canal, solapamiento, grupos grandes (backtracking), cancelaciones, no-show,
  * favoritos, historial y carga desde archivo plano.
  */
-public class Main_rueba_andres {
+public class Main_Prueba_andres {
 
     /** Fecha fija de "hoy" para que las politicas de devolucion den resultados reproducibles. */
     private static final LocalDate HOY = LocalDate.of(2026, 11, 14);
@@ -57,6 +67,13 @@ public class Main_rueba_andres {
             pruebaCancelacionesYNoShow(apartamentos, huespedes, reservas);
             pruebaFavoritosEHistorial(apartamentos, huespedes);
             pruebaArchivoPlano();
+            pruebaRecorridosDelArbol(apartamentos);
+            pruebaTurnosYAdministracion(apartamentos, huespedes);
+            pruebaExcepcionesPropias(apartamentos);
+            pruebaPersistencia(cargador, reservas, temporadas, apartamentos, huespedes);
+            pruebaControlador();
+            System.out.println();
+            System.out.println("=== FIN DE LA PRUEBA ===");
         } catch (ExcepcionSGA e) {
             System.out.println("ERROR INESPERADO: " + e.getMessage());
             e.printStackTrace();
@@ -463,8 +480,378 @@ public class Main_rueba_andres {
                 }
             }
         }
-        System.out.println();
-        System.out.println("=== FIN DE LA PRUEBA ===");
+    }
+
+    // ==================== 11. Recorridos del arbol ====================
+
+    private static void pruebaRecorridosDelArbol(ArbolBinarioBusqueda<Apartamento> apartamentos) {
+        titulo("11. RECORRIDOS DEL ARBOL, MINIMO/MAXIMO E ITERADOR PROPIO");
+        System.out.println("Altura del arbol de apartamentos: " + apartamentos.altura()
+                + " (codigos insertados en orden ascendente -> el arbol queda como una cadena)");
+        System.out.println("inOrden   : " + codigos(apartamentos.inOrden()));
+        System.out.println("preOrden  : " + codigos(apartamentos.preOrden()));
+        System.out.println("postOrden : " + codigos(apartamentos.postOrden()));
+        System.out.println("Menor codigo: " + apartamentos.obtenerMinimo().getCodigo()
+                + " | mayor codigo: " + apartamentos.obtenerMaximo().getCodigo());
+
+        StringBuilder porIterador = new StringBuilder();
+        for (Apartamento a : apartamentos) {
+            porIterador.append(a.getCodigo()).append(' ');
+        }
+        System.out.println("for-each (iterador propio, perezoso): " + porIterador.toString().trim());
+
+        // Un arbol con forma distinta muestra la diferencia entre los tres recorridos
+        ArbolBinarioBusqueda<Integer> numeros = new ArbolBinarioBusqueda<>();
+        for (int n : new int[] {50, 30, 70, 20, 40, 60, 80}) {
+            numeros.insertar(n);
+        }
+        System.out.println("Arbol de enteros (raiz 50, altura " + numeros.altura() + "):");
+        System.out.println("   inOrden   : " + numeros.inOrden());
+        System.out.println("   preOrden  : " + numeros.preOrden());
+        System.out.println("   postOrden : " + numeros.postOrden());
+    }
+
+    private static String codigos(ListaDoblementeEnlazada<Apartamento> lista) {
+        StringBuilder sb = new StringBuilder();
+        for (Apartamento a : lista) {
+            sb.append(a.getCodigo()).append(' ');
+        }
+        return sb.toString().trim();
+    }
+
+    // ==================== 12. Turnos y administracion ====================
+
+    private static void pruebaTurnosYAdministracion(ArbolBinarioBusqueda<Apartamento> apartamentos,
+                                                    ArbolBinarioBusqueda<Huesped> huespedes) throws ExcepcionSGA {
+        titulo("12. TURNOS DE RECEPCION (LISTA CIRCULAR) Y ADMINISTRACION");
+        GestorTurnos turnos = new GestorTurnos();
+        GestorAdministracion admin = new GestorAdministracion(apartamentos, huespedes, turnos);
+
+        try {
+            turnos.turnoActual();
+            System.out.println("ERROR: se consulto un turno sin recepcionistas");
+        } catch (EstructuraVaciaException e) {
+            System.out.println("Turno sin recepcionistas -> " + e.getMessage());
+        }
+
+        admin.registrarEmpleado(new Empleado("900001", "Camila Rojas", RolEmpleado.RECEPCIONISTA, "3001112222"));
+        admin.registrarEmpleado(new Empleado("900002", "Julian Mora", RolEmpleado.RECEPCIONISTA, "3002223333"));
+        admin.registrarEmpleado(new Empleado("900003", "Elena Ruiz", RolEmpleado.RECEPCIONISTA, "3003334444"));
+        admin.registrarEmpleado(new Empleado("900004", "Pedro Soto", RolEmpleado.PERSONAL_ASEO, "3004445555"));
+        admin.registrarEmpleado(new Empleado("900005", "Ana Vera", RolEmpleado.ADMINISTRADOR, "3005556666"));
+
+        System.out.println("Empleados (arbol, orden por documento):");
+        for (Empleado e : admin.listarEmpleados()) {
+            System.out.println("   " + e);
+        }
+        System.out.println("Recepcionistas en la rotacion: " + turnos.cantidad());
+        System.out.println("Turno actual: " + turnos.turnoActual().getNombre());
+        for (int i = 1; i <= 4; i++) {
+            System.out.println("Termina el turno -> recibe " + turnos.pasarTurno().getNombre());
+        }
+        System.out.println("(con 3 recepcionistas la rotacion vuelve a empezar: es una lista circular)");
+
+        try {
+            admin.registrarEmpleado(new Empleado("900001", "Otra Persona", RolEmpleado.ADMINISTRADOR, ""));
+            System.out.println("ERROR: se registro un documento repetido");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Empleado repetido rechazado -> " + e.getMessage());
+        }
+        try {
+            turnos.agregarRecepcionista(admin.buscarEmpleado("900004"));
+            System.out.println("ERROR: personal de aseo entro a la rotacion de recepcion");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Solo recepcionistas rotan -> " + e.getMessage());
+        }
+
+        String quienTieneElTurno = turnos.turnoActual().getDocumento();
+        admin.eliminarEmpleado(quienTieneElTurno);
+        System.out.println("Se retira a quien tenia el turno (" + quienTieneElTurno + ") -> ahora atiende "
+                + turnos.turnoActual().getNombre() + " | recepcionistas restantes: " + turnos.cantidad());
+        System.out.println("Personal de aseo: " + admin.listarEmpleadosPorRol(RolEmpleado.PERSONAL_ASEO));
+
+        // --- Apartamentos ---
+        Apartamento nuevo = new Apartamento("D-101", "Frailejon", "D", 1, 2, 4, "Chimenea");
+        try {
+            admin.registrarApartamento(nuevo);
+            System.out.println("ERROR: se registro un apartamento sin tarifas");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Apartamento sin tarifas rechazado -> " + e.getMessage());
+        }
+        nuevo.definirTarifa(Temporada.BAJA, 70000);
+        nuevo.definirTarifa(Temporada.MEDIA, 90000);
+        nuevo.definirTarifa(Temporada.ALTA, 130000);
+        admin.registrarApartamento(nuevo);
+        System.out.println("D-101 registrado. Apartamentos: " + apartamentos.tamano());
+
+        Apartamento copia = new Apartamento("D-101", "Copia", "D", 1, 1, 2, "");
+        for (Temporada t : Temporada.values()) {
+            copia.definirTarifa(t, 1000);
+        }
+        try {
+            admin.registrarApartamento(copia);
+            System.out.println("ERROR: se registro un codigo repetido");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Codigo repetido rechazado -> " + e.getMessage());
+        }
+
+        admin.editarApartamento("D-101", "Frailejon Real", "D", 2, "Chimenea y balcon");
+        System.out.println("Editado: " + admin.buscarApartamento("D-101") + " | "
+                + admin.buscarApartamento("D-101").getCaracteristicas());
+
+        try {
+            admin.eliminarApartamento("C-101");
+            System.out.println("ERROR: se elimino un apartamento con reserva activa");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Eliminar con reserva activa rechazado -> " + e.getMessage());
+        }
+        admin.eliminarApartamento("D-101");
+        System.out.println("D-101 eliminado. Apartamentos: " + apartamentos.tamano());
+        try {
+            admin.eliminarApartamento("Z-999");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Eliminar inexistente -> " + e.getMessage());
+        }
+
+        // --- Huespedes ---
+        admin.registrarHuesped(new Huesped("1094000099", "Temporal Prueba", LocalDate.of(2000, 1, 1),
+                "3000000000", "temporal@correo.com"));
+        admin.actualizarHuesped("1094000099", "Temporal Actualizado", LocalDate.of(2000, 1, 1),
+                "3111111111", "nuevo@correo.com");
+        System.out.println("Huesped actualizado: " + admin.buscarHuesped("1094000099")
+                + " | " + admin.buscarHuesped("1094000099").getCorreo());
+        try {
+            admin.eliminarHuesped("1094000003");
+            System.out.println("ERROR: se elimino un huesped con reserva activa");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Eliminar huesped con reserva activa rechazado -> " + e.getMessage());
+        }
+        admin.eliminarHuesped("1094000099");
+        System.out.println("Huesped temporal eliminado. Huespedes: " + huespedes.tamano());
+    }
+
+    // ==================== 13. Excepciones propias ====================
+
+    private static void pruebaExcepcionesPropias(ArbolBinarioBusqueda<Apartamento> apartamentos) {
+        titulo("13. EXCEPCIONES PROPIAS: TRANSICION INVALIDA Y ESTRUCTURA VACIA");
+        Reserva confirmada = apartamentos.buscar(Apartamento.paraBusqueda("A-102")).getReservas().getRaiz().getDato();
+        System.out.println("Reserva de prueba: " + confirmada);
+        try {
+            confirmada.finalizar();
+            System.out.println("ERROR: se finalizo una reserva que no estaba en curso");
+        } catch (TransicionInvalidaException e) {
+            System.out.println("CONFIRMADA -> FINALIZADA -> TransicionInvalidaException: " + e.getMessage());
+            System.out.println("   Sigue siendo un IllegalStateException: " + (e instanceof IllegalStateException));
+        }
+
+        try {
+            new ListaCircular<String>().siguiente();
+        } catch (EstructuraVaciaException e) {
+            System.out.println("Lista circular vacia -> EstructuraVaciaException: " + e.getMessage());
+        }
+        try {
+            new ListaDoblementeEnlazada<String>().primero();
+        } catch (EstructuraVaciaException e) {
+            System.out.println("Lista doble vacia (primero) -> EstructuraVaciaException: " + e.getMessage());
+        }
+        try {
+            new ListaDoblementeEnlazada<String>().ultimo();
+        } catch (EstructuraVaciaException e) {
+            System.out.println("Lista doble vacia (ultimo) -> EstructuraVaciaException: " + e.getMessage());
+        }
+        try {
+            new ArbolBinarioBusqueda<Integer>().obtenerMaximo();
+        } catch (EstructuraVaciaException e) {
+            System.out.println("Arbol vacio -> EstructuraVaciaException: " + e.getMessage());
+        }
+    }
+
+    // ==================== 14. Persistencia ====================
+
+    private static void pruebaPersistencia(CargadorDatos cargador, GestorReservas reservas,
+                                           GestorTemporadas temporadas,
+                                           ArbolBinarioBusqueda<Apartamento> apartamentos,
+                                           ArbolBinarioBusqueda<Huesped> huespedes) throws ExcepcionSGA {
+        titulo("14. PERSISTENCIA: GUARDAR EN ARCHIVO PLANO Y RECARGAR");
+        Huesped sofia = huespedes.buscar(Huesped.paraBusqueda("1094000005"));
+        Apartamento a201 = apartamentos.buscar(Apartamento.paraBusqueda("A-201"));
+
+        // Casos dificiles: una reserva Portal pendiente (con su vencimiento), un favorito y un apartamento fuera de servicio
+        Reserva pendiente = reservas.crearReserva(sofia, a201,
+                new Estancia(LocalDate.of(2027, 2, 10), LocalDate.of(2027, 2, 12)),
+                ocupantes("Sofia Torres:1992-01-09"), CanalReserva.PORTAL, LocalDateTime.of(2026, 11, 14, 9, 0));
+        sofia.agregarFavorito(a201);
+        a201.ponerFueraDeServicio("Pintura de fachada");
+
+        Path archivo = null;
+        try {
+            archivo = Files.createTempFile("sga-guardado", ".txt");
+            cargador.guardarEnArchivo(archivo.toString());
+
+            System.out.println("Contenido guardado (registros FAVORITO, RESERVA y ESTADO):");
+            try (BufferedReader lector = Files.newBufferedReader(archivo)) {
+                String linea;
+                while ((linea = lector.readLine()) != null) {
+                    if (linea.startsWith("FAVORITO") || linea.startsWith("RESERVA") || linea.startsWith("ESTADO")) {
+                        System.out.println("   " + linea);
+                    }
+                }
+            }
+
+            ArbolBinarioBusqueda<Apartamento> apartamentos2 = new ArbolBinarioBusqueda<>();
+            ArbolBinarioBusqueda<Huesped> huespedes2 = new ArbolBinarioBusqueda<>();
+            GestorTemporadas temporadas2 = new GestorTemporadas();
+            GestorReservas reservas2 = new GestorReservas(new CotizadorService(temporadas2), new AsignadorGrupos());
+            CargadorDatos cargador2 = new CargadorDatos(apartamentos2, huespedes2, reservas2, temporadas2);
+            cargador2.cargarDesdeArchivo(archivo.toString());
+
+            int diferencias = 0;
+            if (apartamentos.tamano() != apartamentos2.tamano() || huespedes.tamano() != huespedes2.tamano()) {
+                diferencias++;
+            }
+            int totalReservas = 0;
+            for (Apartamento a : apartamentos) {
+                Apartamento b = apartamentos2.buscar(a);
+                if (b == null || a.getEstadoOperativo() != b.getEstadoOperativo()
+                        || a.numeroReservas() != b.numeroReservas()) {
+                    diferencias++;
+                    continue;
+                }
+                Iterator<Reserva> recargadas = b.getReservas().iterator();
+                for (Reserva r : a.getReservas()) {
+                    totalReservas++;
+                    Reserva q = recargadas.next();
+                    if (r.getEstado() != q.getEstado() || r.getCanal() != q.getCanal()
+                            || !r.getEstancia().getEntrada().equals(q.getEstancia().getEntrada())
+                            || !r.getEstancia().getSalida().equals(q.getEstancia().getSalida())
+                            || r.numeroPersonas() != q.numeroPersonas()
+                            || !r.getVenceEn().equals(q.getVenceEn())) {
+                        diferencias++;
+                    }
+                }
+            }
+            for (Huesped h : huespedes) {
+                Huesped g = huespedes2.buscar(h);
+                if (g == null || g.getFavoritos().tamano() != h.getFavoritos().tamano()) {
+                    diferencias++;
+                }
+            }
+            if (temporadas.getPeriodos().tamano() != temporadas2.getPeriodos().tamano()) {
+                diferencias++;
+            }
+            System.out.println("Recargado: " + apartamentos2.tamano() + " apartamentos, " + huespedes2.tamano()
+                    + " huespedes, " + totalReservas + " reservas vigentes, " + temporadas2.getPeriodos().tamano()
+                    + " periodos de temporada");
+            System.out.println("Diferencias entre el estado original y el recargado: " + diferencias
+                    + (diferencias == 0 ? "  (OK)" : "  (ERROR)"));
+
+            Reserva recargadaPortal = apartamentos2.buscar(Apartamento.paraBusqueda("A-201"))
+                    .getReservas().getRaiz().getDato();
+            System.out.println("Reserva Portal pendiente recargada: " + recargadaPortal
+                    + " | vence " + recargadaPortal.getVenceEn()
+                    + " | estado " + (recargadaPortal.getEstado() == EstadoReserva.PENDIENTE ? "PENDIENTE (OK)" : "ERROR"));
+            Apartamento a201Recargado = apartamentos2.buscar(Apartamento.paraBusqueda("A-201"));
+            System.out.println("A-201 recargado: " + a201Recargado.getEstadoOperativo()
+                    + " | motivo: " + a201Recargado.getMotivoFueraServicio());
+        } catch (IOException e) {
+            System.out.println("ERROR de lectura/escritura: " + e.getMessage());
+        } finally {
+            a201.cambiarEstado(EstadoApartamento.PREPARADO);
+            sofia.quitarFavorito(a201);
+            reservas.cancelar(pendiente, 0, HOY);
+            if (archivo != null) {
+                try {
+                    Files.deleteIfExists(archivo);
+                } catch (IOException ignorada) {
+                    // el archivo temporal se borra solo al reiniciar; no afecta la prueba
+                }
+            }
+        }
+    }
+
+    // ==================== 15. Controlador (fachada para la GUI) ====================
+
+    private static void pruebaControlador() throws ExcepcionSGA {
+        titulo("15. CONTROLADOR: FACHADA QUE USARA LA GUI");
+        SgaControlador sga = new SgaControlador();
+        sga.cargarEscenarioPrueba();
+        System.out.println("Escenario cargado: " + sga.listarApartamentos().tamano() + " apartamentos, "
+                + sga.listarHuespedes().tamano() + " huespedes");
+
+        LocalDate entrada = LocalDate.of(2026, 12, 12);
+        LocalDate salida = LocalDate.of(2026, 12, 15);
+        System.out.println("Temporada el " + entrada + ": " + sga.temporadaDe(entrada)
+                + " | el " + salida + ": " + sga.temporadaDe(salida));
+
+        System.out.println("-- 4 personas, " + entrada + " a " + salida + ", por precio, sin filtros:");
+        for (Apartamento a : sga.buscarDisponibilidad(entrada, salida, 4, CriterioOrden.PRECIO, null, null, null)) {
+            System.out.println("   " + a + " -> " + (long) a.tarifaPara(sga.temporadaDe(entrada)) + " p/p/n");
+        }
+        System.out.println("-- Mismos datos con filtros: bloque B, minimo 3 dormitorios, maximo 160000 p/p/n:");
+        for (Apartamento a : sga.buscarDisponibilidad(entrada, salida, 4, CriterioOrden.PRECIO, "B", 3, 160000.0)) {
+            System.out.println("   " + a + " -> " + (long) a.tarifaPara(sga.temporadaDe(entrada)) + " p/p/n");
+        }
+        System.out.println("-- Ordenados por numero de dormitorios, bloque C:");
+        for (Apartamento a : sga.buscarDisponibilidad(entrada, salida, 2, CriterioOrden.DORMITORIOS, "c", null, null)) {
+            System.out.println("   " + a + " | " + a.getDormitorios() + " dorm.");
+        }
+
+        ListaDoblementeEnlazada<Ocupante> ocupantes = ocupantes("Nora Jaramillo:1988-03-03",
+                "Ivan Jaramillo:1986-07-07", "Lia Jaramillo:2024-01-01");
+        Cotizacion cotizacion = sga.cotizar("B-201", entrada, salida, ocupantes);
+        System.out.println("Cotizacion de B-201 (la bebe no paga):");
+        System.out.println(cotizacion);
+
+        sga.registrarHuesped("2000000010", "Nora Jaramillo", LocalDate.of(1988, 3, 3),
+                "3001239876", "nora@correo.com");
+        try {
+            sga.registrarHuesped("2000000010", "Repetida", LocalDate.of(1990, 1, 1), "", "");
+            System.out.println("ERROR: se registro un documento repetido");
+        } catch (ExcepcionSGA e) {
+            System.out.println("Huesped repetido rechazado -> " + e.getMessage());
+        }
+
+        LocalDate lejana = LocalDate.of(2030, 2, 10);
+        Reserva r = sga.crearReserva("2000000010", "B-201", lejana, lejana.plusDays(2), CanalReserva.PORTAL, ocupantes);
+        System.out.println("Reserva creada por el portal: " + r);
+        System.out.println("Anticipo (30%): " + (long) sga.calcularAnticipo(r.getId()));
+        sga.confirmarReserva(r.getId());
+        System.out.println("Tras pagar el anticipo: " + sga.buscarReserva(r.getId()).getEstado());
+        System.out.println("Devolucion si cancela hoy con $300000 pagados: "
+                + (long) sga.consultarDevolucion(r.getId(), 300000));
+        System.out.println("Cancelada, devolucion: " + (long) sga.cancelarReserva(r.getId(), 300000)
+                + " | estado: " + sga.buscarReserva(r.getId()).getEstado());
+
+        System.out.println("Favorito agregado: " + sga.agregarFavorito("2000000010", "B-201")
+                + " | repetido: " + sga.agregarFavorito("2000000010", "B-201")
+                + " | total: " + sga.getFavoritos("2000000010").tamano());
+        System.out.println("Historial de Nora: " + sga.getHistorial("2000000010"));
+
+        try {
+            sga.crearReserva("2000000010", "Z-999", lejana, lejana.plusDays(1), CanalReserva.DIRECTA, ocupantes);
+        } catch (ExcepcionSGA e) {
+            System.out.println("Apartamento inexistente -> " + e.getMessage());
+        }
+        try {
+            sga.cancelarReserva("RES-9999", 0);
+        } catch (ExcepcionSGA e) {
+            System.out.println("Reserva inexistente -> " + e.getMessage());
+        }
+
+        sga.getAdministracion().registrarEmpleado(
+                new Empleado("900001", "Camila Rojas", RolEmpleado.RECEPCIONISTA, "3001112222"));
+        sga.getAdministracion().registrarEmpleado(
+                new Empleado("900002", "Julian Mora", RolEmpleado.RECEPCIONISTA, "3002223333"));
+        System.out.println("Turno actual: " + sga.turnoActual().getNombre()
+                + " | despues: " + sga.pasarTurno().getNombre());
+
+        ListaDoblementeEnlazada<Ocupante> grupo = new ListaDoblementeEnlazada<>();
+        for (int i = 1; i <= 11; i++) {
+            grupo.agregar(new Ocupante("Invitado " + i, LocalDate.of(1990 + (i % 8), 1 + (i % 12), 1 + i)));
+        }
+        ListaDoblementeEnlazada<Reserva> reservasGrupo = sga.reservarGrupoGrande("2000000010",
+                LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 25), grupo, CanalReserva.DIRECTA);
+        System.out.println("Grupo de 11 personas -> " + reservasGrupo.tamano() + " reservas: " + reservasGrupo);
     }
 
     // ==================== Utilidades ====================

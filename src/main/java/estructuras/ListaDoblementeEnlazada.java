@@ -1,4 +1,5 @@
 package estructuras;
+import excepciones.EstructuraVaciaException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -112,6 +113,22 @@ public class ListaDoblementeEnlazada<T> implements Iterable<T> {
     public T obtener(int indice) {
         validarIndice(indice);
         return nodoEn(indice).getDato();
+    }
+
+    /** Primer elemento. Lanza EstructuraVaciaException si la lista esta vacia. */
+    public T primero() {
+        if (cabeza == null) {
+            throw new EstructuraVaciaException("La lista esta vacia");
+        }
+        return cabeza.getDato();
+    }
+
+    /** Ultimo elemento. Lanza EstructuraVaciaException si la lista esta vacia. */
+    public T ultimo() {
+        if (cola == null) {
+            throw new EstructuraVaciaException("La lista esta vacia");
+        }
+        return cola.getDato();
     }
 
     public boolean contiene(T dato) {

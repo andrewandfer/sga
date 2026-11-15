@@ -1,6 +1,8 @@
 package servicios;
 
 import enums.CanalReserva;
+import enums.EstadoApartamento;
+import enums.EstadoReserva;
 import enums.Temporada;
 import estructuras.ArbolBinarioBusqueda;
 import estructuras.ListaDoblementeEnlazada;
@@ -8,9 +10,12 @@ import excepciones.ExcepcionSGA;
 import modelo.*;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class CargadorDatos {
 
@@ -51,7 +56,7 @@ public class CargadorDatos {
     }
 
     private void procesarLinea(String linea) throws ExcepcionSGA {
-        String[] c = linea.split(";");
+        String[] c = linea.split(";", -1);
         switch (c[0].trim().toUpperCase()) {
             case "TEMPORADA":
                 gestorTemporadas.definirPeriodo(new PeriodoTemporada(
@@ -68,11 +73,22 @@ public class CargadorDatos {
                 registrar(a);
                 break;
             case "HUESPED":
-                registrar(new Huesped(c[1].trim(), c[2].trim(), LocalDate.parse(c[3].trim()),
-                        c[4].trim(), c[5].trim()));
+                Huesped h = new Huesped(c[1].trim(), c[2].trim(),
+                        c[3].trim().isEmpty() ? null : LocalDate.parse(c[3].trim()),
+                        c[4].trim(), c[5].trim());
+                if (c.length > 6 && !c[6].trim().isEmpty()) {
+                    h.setRutaFotografia(c[6].trim());
+                }
+                registrar(h);
+                break;
+            case "FAVORITO":
+                cargarFavorito(c);
                 break;
             case "RESERVA":
                 cargarReserva(c);
+                break;
+            case "ESTADO":
+                cargarEstadoApartamento(c);
                 break;
             default:
                 throw new ExcepcionSGA("Tipo de registro desconocido: " + c[0]);
@@ -95,7 +111,141 @@ public class CargadorDatos {
             String[] datos = par.split(":");
             ocupantes.agregar(new Ocupante(datos[0].trim(), LocalDate.parse(datos[1].trim())));
         }
-        gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal);
+        // Campos opcionales: c[7] = estado de la reserva, c[8] = fecha/hora de creacion (vencimiento de Portal)
+        LocalDateTime creada = c.length > 8 && !c[8].trim().isEmpty()
+                ? LocalDateTime.parse(c[8].trim()) : LocalDateTime.now();
+        Reserva reserva = gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal, creada);
+        if (c.length > 7 && !c[7].trim().isEmpty()) {
+            aplicarEstado(reserva, c[7].trim());
+        }
+    }
+
+    /** Lleva una reserva recien creada al estado guardado en el archivo, respetando el ciclo de vida. */
+    private void aplicarEstado(Reserva reserva, String texto) throws ExcepcionSGA {
+        EstadoReserva destino = EstadoReserva.valueOf(texto.toUpperCase());
+        if (destino != EstadoReserva.PENDIENTE && destino != EstadoReserva.CONFIRMADA
+                && destino != EstadoReserva.EN_CURSO && destino != EstadoReserva.FINALIZADA) {
+            throw new ExcepcionSGA("Estado de reserva no restaurable desde archivo: " + texto);
+        }
+        if (destino == EstadoReserva.PENDIENTE) {
+            return;
+        }
+        if (reserva.getEstado() == EstadoReserva.PENDIENTE) {
+            reserva.confirmar();
+        }
+        if (destino == EstadoReserva.EN_CURSO || destino == EstadoReserva.FINALIZADA) {
+            reserva.iniciar();
+        }
+        if (destino == EstadoReserva.FINALIZADA) {
+            reserva.finalizar();
+        }
+    }
+
+    private void cargarFavorito(String[] c) throws ExcepcionSGA {
+        Huesped huesped = huespedes.buscar(Huesped.paraBusqueda(c[1].trim()));
+        Apartamento apartamento = apartamentos.buscar(Apartamento.paraBusqueda(c[2].trim()));
+        if (huesped == null) {
+            throw new ExcepcionSGA("Huesped inexistente: " + c[1]);
+        }
+        if (apartamento == null) {
+            throw new ExcepcionSGA("Apartamento inexistente: " + c[2]);
+        }
+        huesped.agregarFavorito(apartamento);
+    }
+
+    /** El estado operativo se carga al final del archivo: un apartamento fuera de servicio no admite reservas nuevas. */
+    private void cargarEstadoApartamento(String[] c) throws ExcepcionSGA {
+        Apartamento apartamento = apartamentos.buscar(Apartamento.paraBusqueda(c[1].trim()));
+        if (apartamento == null) {
+            throw new ExcepcionSGA("Apartamento inexistente: " + c[1]);
+        }
+        EstadoApartamento estado = EstadoApartamento.valueOf(c[2].trim().toUpperCase());
+        if (estado == EstadoApartamento.FUERA_DE_SERVICIO) {
+            apartamento.ponerFueraDeServicio(c.length > 3 && !c[3].trim().isEmpty()
+                    ? c[3].trim() : "Sin motivo registrado");
+        } else {
+            apartamento.cambiarEstado(estado);
+        }
+    }
+
+    // ==================== Escritura de archivo plano ====================
+
+    /**
+     * Guarda el estado actual con el mismo formato que lee cargarDesdeArchivo:
+     * temporadas, apartamentos, huespedes, favoritos, reservas vigentes y estados operativos.
+     * Las reservas canceladas y no-show no se guardan porque ya no reclaman noches.
+     * Al recargar, las reservas reciben folios nuevos (RES-xxxx) en el orden del archivo.
+     */
+    public void guardarEnArchivo(String ruta) throws IOException {
+        try (BufferedWriter w = new BufferedWriter(new FileWriter(ruta))) {
+            escribir(w, "# SGA - datos exportados");
+            escribir(w, "# TEMPORADA;tipo;inicio;fin");
+            for (PeriodoTemporada p : gestorTemporadas.getPeriodos()) {
+                escribir(w, "TEMPORADA;" + p.getTemporada() + ";" + p.getInicio() + ";" + p.getFin());
+            }
+            escribir(w, "# APARTAMENTO;codigo;nombre;bloque;piso;dormitorios;capacidad;baja;media;alta;caracteristicas");
+            for (Apartamento a : apartamentos) {
+                escribir(w, "APARTAMENTO;" + campo(a.getCodigo()) + ";" + campo(a.getNombre()) + ";"
+                        + campo(a.getBloque()) + ";" + a.getPiso() + ";" + a.getDormitorios() + ";"
+                        + a.getCapacidadMaxima() + ";" + tarifa(a, Temporada.BAJA) + ";"
+                        + tarifa(a, Temporada.MEDIA) + ";" + tarifa(a, Temporada.ALTA) + ";"
+                        + campo(a.getCaracteristicas()));
+            }
+            escribir(w, "# HUESPED;documento;nombre;nacimiento;telefono;correo;foto");
+            for (Huesped h : huespedes) {
+                escribir(w, "HUESPED;" + campo(h.getDocumento()) + ";" + campo(h.getNombre()) + ";"
+                        + (h.getFechaNacimiento() == null ? "" : h.getFechaNacimiento()) + ";"
+                        + campo(h.getTelefono()) + ";" + campo(h.getCorreo()) + ";" + campo(h.getRutaFotografia()));
+            }
+            escribir(w, "# FAVORITO;documento;codigoApartamento");
+            for (Huesped h : huespedes) {
+                for (Apartamento favorito : h.getFavoritos()) {
+                    escribir(w, "FAVORITO;" + campo(h.getDocumento()) + ";" + campo(favorito.getCodigo()));
+                }
+            }
+            escribir(w, "# RESERVA;documento;codigoApartamento;entrada;salida;canal;ocupantes;estado;creadaEn");
+            for (Apartamento a : apartamentos) {
+                for (Reserva r : a.getReservas()) {
+                    escribir(w, "RESERVA;" + campo(r.getTitular().getDocumento()) + ";" + campo(a.getCodigo()) + ";"
+                            + r.getEstancia().getEntrada() + ";" + r.getEstancia().getSalida() + ";"
+                            + r.getCanal() + ";" + ocupantesComoTexto(r) + ";" + r.getEstado() + ";"
+                            + r.getCreadaEn());
+                }
+            }
+            escribir(w, "# ESTADO;codigoApartamento;estadoOperativo;motivo");
+            for (Apartamento a : apartamentos) {
+                if (a.getEstadoOperativo() != EstadoApartamento.PREPARADO) {
+                    escribir(w, "ESTADO;" + campo(a.getCodigo()) + ";" + a.getEstadoOperativo() + ";"
+                            + campo(a.getMotivoFueraServicio()));
+                }
+            }
+        }
+    }
+
+    private void escribir(BufferedWriter w, String linea) throws IOException {
+        w.write(linea);
+        w.newLine();
+    }
+
+    private double tarifa(Apartamento a, Temporada t) {
+        return a.tieneTarifa(t) ? a.tarifaPara(t) : 0;
+    }
+
+    private String ocupantesComoTexto(Reserva r) {
+        StringBuilder sb = new StringBuilder();
+        for (Ocupante o : r.getOcupantes()) {
+            if (sb.length() > 0) {
+                sb.append('|');
+            }
+            sb.append(campo(o.getNombre()).replace('|', '/').replace(':', '-'))
+                    .append(':').append(o.getFechaNacimiento());
+        }
+        return sb.toString();
+    }
+
+    /** Evita que el texto de un campo rompa el formato (separador ; y saltos de linea). */
+    private String campo(String texto) {
+        return texto == null ? "" : texto.replace(';', ',').replace('\n', ' ').replace('\r', ' ');
     }
 
     private void registrar(Apartamento a) throws ExcepcionSGA {
