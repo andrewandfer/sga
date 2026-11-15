@@ -6,7 +6,7 @@ package model.excepciones;
  * <p>Al heredar de {@link Exception}, es una excepción comprobada
  * que debe declararse o gestionarse mediante bloques de captura.</p>
  */
-public class ExcepcionSGA extends Exception {
+public class ExcepcionSGA extends RuntimeException {
     /** Identificador de versión para la serialización de la excepción. */
     private static final long serialVersionUID = 1L;
     /**

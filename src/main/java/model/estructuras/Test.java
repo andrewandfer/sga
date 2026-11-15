@@ -74,7 +74,7 @@ public class Test {
         System.out.println(grafo.costoCamino(nodo,nodo12));
 
     }
-    public static void test_cola() throws EstructuraVaciaException {
+    public static void test_cola() {
         Cola<Integer> cola = new Cola<>();
         cola.add(1);
         cola.add(2);
@@ -104,7 +104,7 @@ public class Test {
         cola.merge(cola2);
         System.out.println(cola);
     }
-    public static void test_colaprio() throws EstructuraVaciaException {
+    public static void test_colaprio() {
         ColaPrioritaria<Integer> cola=new ColaPrioritaria<>();
         cola.add(1);
         cola.add(2);

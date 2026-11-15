@@ -72,7 +72,7 @@ public class Pila<T>{
      * @return Dato almacenado en el nodo extraído.
      * @throws EstructuraVaciaException si la pila esta vacia
      */
-    public T pop() throws EstructuraVaciaException {
+    public T pop() {
         if (isEmpty()) throw new EstructuraVaciaException("La pila esta vacia");
         NodoPila<T> aux=Raiz;
         this.setRaiz(Raiz.getSiguiente());

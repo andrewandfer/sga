@@ -52,7 +52,7 @@ public class Cola<T> {
      *
      * @return Dato almacenado en el nodo extraído, o null si está vacía.
      */
-    public T poll() throws EstructuraVaciaException {
+    public T poll() {
         if (isEmpty()) throw new EstructuraVaciaException("La pila esta vacia");
         NodoCola<T> aux=Raiz;
         Raiz=Raiz.getSiguiente();
