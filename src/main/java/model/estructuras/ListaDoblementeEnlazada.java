@@ -264,4 +264,12 @@ public class ListaDoblementeEnlazada<T> implements Iterable<T> {
     public void setTamano(int tamano) {
         this.tamano = tamano;
     }
+
+    public void merge( ListaDoblementeEnlazada<T> lista){
+        for (T elemento: lista){
+            if (!this.contiene(elemento)) {
+                agregar(elemento);
+            }
+        }
+    }
 }
