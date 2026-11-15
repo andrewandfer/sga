@@ -11,7 +11,7 @@ import model.estructuras.Cola.ColaPrioritaria;
 import model.estructuras.Conjunto;
 import model.estructuras.Grafo.Grafo;
 import model.estructuras.Grafo.NodoGrafo;
-import model.estructuras.Grafo.Tipo_nodos.Cuartos_aseo;
+import model.estructuras.Grafo.Tipo_nodos.CuartosAseo;
 import model.estructuras.Grafo.Tipo_nodos.Recepcion;
 import model.estructuras.ListaCircular;
 import model.estructuras.ListaDoblementeEnlazada;
@@ -915,8 +915,8 @@ public class Main {
         final Grafo grafo = new Grafo();
         final NodoGrafo<Recepcion> recepcion = new NodoGrafo<>(new Recepcion(1));
         final NodoGrafo<String> escalera = new NodoGrafo<>("Escaleras numero: 1");
-        final NodoGrafo<Cuartos_aseo> aseo1 = new NodoGrafo<>(new Cuartos_aseo(1));
-        final NodoGrafo<Cuartos_aseo> aseo2 = new NodoGrafo<>(new Cuartos_aseo(2));
+        final NodoGrafo<CuartosAseo> aseo1 = new NodoGrafo<>(new CuartosAseo(1));
+        final NodoGrafo<CuartosAseo> aseo2 = new NodoGrafo<>(new CuartosAseo(2));
         final NodoGrafo<?>[] todos;
 
         MapaEdificio(Entorno entorno) {
@@ -1066,7 +1066,9 @@ public class Main {
         }
         System.out.println("Orden natural con enteros (5,3,9,1,7 entran en desorden): " + enteros);
 
-        ColaPrioritaria<TareaPreparacion> cola = new ColaPrioritaria<>();
+        ColaPrioritaria<TareaPreparacion> cola = new ColaPrioritaria<>(Comparator.comparingInt(TareaPreparacion::getPrioridad)
+                .thenComparing(TareaPreparacion::getHoraLlegada);
+);
         TareaPreparacion[] tareas = {
                 new TareaPreparacion("C-101", null),
                 new TareaPreparacion("A-102", LocalTime.of(15, 0)),

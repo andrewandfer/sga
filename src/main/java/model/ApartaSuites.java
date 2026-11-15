@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 
 public class ApartaSuites {
+
+    private static ApartaSuites instance;
+
     private final ArbolBinarioBusqueda<Apartamento> apartamentos;
     private final ArbolBinarioBusqueda<Huesped> huespedes;
 
@@ -31,8 +34,8 @@ public class ApartaSuites {
     private final GestorAdministracion administracion;
     private final CargadorDatos cargador;
 
-    /** Crea el sistema vacio con todos sus servicios ya conectados. */
-    public ApartaSuites() {
+
+    private ApartaSuites() {
         this.apartamentos = new ArbolBinarioBusqueda<>();
         this.huespedes = new ArbolBinarioBusqueda<>();
         this.temporadas = new GestorTemporadas();
@@ -40,10 +43,19 @@ public class ApartaSuites {
         this.asignador = new AsignadorGrupos();
         this.reservas = new GestorReservas(cotizador, asignador);
         this.turnos = new GestorTurnos();
-        this.administracion = new GestorAdministracion(apartamentos, huespedes, turnos);
-        this.cargador = new CargadorDatos(apartamentos, huespedes, reservas, temporadas);
+        this.administracion =
+                new GestorAdministracion(apartamentos, huespedes, turnos);
+        this.cargador =
+                new CargadorDatos(apartamentos, huespedes, reservas, temporadas);
     }
 
+    // Punto único de acceso al sistema.
+    public static ApartaSuites getInstance() {
+        if (instance == null) {
+            instance = new ApartaSuites();
+        }
+        return instance;
+    }
     // ==================== Apartamentos ====================
 
     public void registrarApartamento(Apartamento apartamento) throws ExcepcionSGA {

@@ -1,49 +1,125 @@
+
 package model.estructuras.Cola;
 
-public class Cola<T> {
-    private NodoCola<T> Raiz;
+import model.excepciones.EstructuraVaciaException;
 
+import java.util.Iterator;
 
-    public Cola(){
-        Raiz=null;
+public class Cola<T> implements Iterable<T> {
+
+    private NodoCola<T> frente;
+    private NodoCola<T> finalCola;
+    private int tamanio;
+
+    public Cola() {
+        frente = null;
+        finalCola = null;
+        tamanio = 0;
     }
-    public Cola(NodoCola<T> Raiz){
-        this.Raiz=Raiz;
+
+    // Inserta un elemento al final de la cola.
+    public void add(T dato) {
+
+        NodoCola<T> nuevo = new NodoCola<>(dato);
+
+        if (isEmpty()) {
+            frente = nuevo;
+            finalCola = nuevo;
+        } else {
+            finalCola.setSiguiente(nuevo);
+            finalCola = nuevo;
+        }
+
+        tamanio++;
     }
-    public void setRaiz(NodoCola<T> Raiz){
-        this.Raiz=Raiz;
+
+    // Retira y devuelve el primer elemento.
+    public T poll() {
+
+        if (isEmpty()) {
+            throw new EstructuraVaciaException("La cola está vacía");
+        }
+
+        T dato = frente.getDato();
+        frente = frente.getSiguiente();
+
+        tamanio--;
+
+        if (frente == null) {
+            finalCola = null;
+        }
+
+        return dato;
     }
-    public NodoCola<T> peek(){
-        return Raiz;
+
+    // Consulta el primer elemento sin retirarlo.
+    public T peek() {
+
+        if (isEmpty()) {
+            throw new EstructuraVaciaException("La cola está vacía");
+        }
+
+        return frente.getDato();
     }
-    public T poll(){
-        if (isEmpty()) return null;
-        NodoCola<T> aux=Raiz;
-        Raiz=Raiz.getSiguiente();
-        return aux.getDato();
+
+    public boolean isEmpty() {
+        return frente == null;
     }
-    public void add(T dato){
-        if (Raiz==null) this.Raiz = new NodoCola<>(dato);
-        else {NodoCola<T> aux= new NodoCola<>(dato);
-        Raiz.add(dato);}
+
+    public int size() {
+        return tamanio;
     }
-    public boolean isEmpty(){
-        return Raiz==null;
+
+    public boolean contains(T dato) {
+
+        for (T elemento : this) {
+            if (dato == null ? elemento == null : dato.equals(elemento)) {
+                return true;
+            }
+        }
+
+        return false;
     }
-    public boolean contains(T dato){
-        if (isEmpty()) return false;
-        return Raiz.contains(dato);
+
+    public void clear() {
+        frente = null;
+        finalCola = null;
+        tamanio = 0;
     }
-    public void merge(Cola<T> cola){
-        if (cola.isEmpty()) throw new IllegalArgumentException("La cola a fusionar esta vacia");
-        while (!cola.isEmpty()){
-            T aux=cola.poll();
-            this.add(aux);
+
+    // Agrega los elementos de otra cola sin vaciarla.
+    public void merge(Cola<T> otra) {
+
+        if (otra == this) {
+            throw new IllegalArgumentException(
+                    "No se puede fusionar una cola consigo misma"
+            );
+        }
+
+        for (T elemento : otra) {
+            this.add(elemento);
         }
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new IteradorCola<>(frente);
+    }
+
+    @Override
     public String toString() {
-        if (isEmpty()) return "[]";
-        return Raiz.toString();
+
+        StringBuilder resultado = new StringBuilder("[");
+        Iterator<T> iterador = iterator();
+
+        while (iterador.hasNext()) {
+            resultado.append(iterador.next());
+
+            if (iterador.hasNext()) {
+                resultado.append(", ");
+            }
+        }
+
+        return resultado.append("]").toString();
     }
 }

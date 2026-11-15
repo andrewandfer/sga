@@ -4,7 +4,7 @@ import model.estructuras.Cola.Cola;
 import model.estructuras.Cola.ColaPrioritaria;
 import model.estructuras.Grafo.Grafo;
 import model.estructuras.Grafo.NodoGrafo;
-import model.estructuras.Grafo.Tipo_nodos.Cuartos_aseo;
+import model.estructuras.Grafo.Tipo_nodos.CuartosAseo;
 import model.estructuras.Grafo.Tipo_nodos.Pasillo;
 import model.estructuras.Grafo.Tipo_nodos.Recepcion;
 import model.estructuras.Pila.Pila;
@@ -16,28 +16,28 @@ public class Test {
     }
     public static void test_grafo(){
         Apartamento apartamento=new Apartamento("123456");
-        Cuartos_aseo cuartos_aseo=new Cuartos_aseo(1);
+        CuartosAseo cuartos_aseo=new CuartosAseo(1);
         Pasillo pasillo=new Pasillo(1);
         Pasillo pasillo2=new Pasillo(2);
         Pasillo pasillo3=new Pasillo(3);
         Apartamento apartamento4=new Apartamento("112233");
-        Cuartos_aseo cuartos_aseo4=new Cuartos_aseo(4);
+        CuartosAseo cuartos_aseo4=new CuartosAseo(4);
         Recepcion recepcion=new Recepcion(1);
         Recepcion recepcion2=new Recepcion(2);
         Recepcion recepcion3=new Recepcion(3);
         Apartamento apartamento5=new Apartamento("445566");
-        Cuartos_aseo cuartos_aseo5=new Cuartos_aseo(5);
+        CuartosAseo cuartos_aseo5=new CuartosAseo(5);
 
         NodoGrafo<Apartamento> nodo=new NodoGrafo<>(apartamento);
-        NodoGrafo<Cuartos_aseo> nodo2=new NodoGrafo<>(cuartos_aseo);
+        NodoGrafo<CuartosAseo> nodo2=new NodoGrafo<>(cuartos_aseo);
         NodoGrafo<Pasillo> nodo3=new NodoGrafo<>(pasillo);
         NodoGrafo<Recepcion> nodo4=new NodoGrafo<>(recepcion);
         NodoGrafo<Apartamento> nodo5=new NodoGrafo<>(apartamento5);
-        NodoGrafo<Cuartos_aseo> nodo6=new NodoGrafo<>(cuartos_aseo5);
+        NodoGrafo<CuartosAseo> nodo6=new NodoGrafo<>(cuartos_aseo5);
         NodoGrafo<Pasillo> nodo7=new NodoGrafo<>(pasillo3);
         NodoGrafo<Recepcion> nodo8=new NodoGrafo<>(recepcion2);
         NodoGrafo<Apartamento> nodo9=new NodoGrafo<>(apartamento4);
-        NodoGrafo<Cuartos_aseo> nodo10=new NodoGrafo<>(cuartos_aseo4);
+        NodoGrafo<CuartosAseo> nodo10=new NodoGrafo<>(cuartos_aseo4);
         NodoGrafo<Pasillo> nodo11=new NodoGrafo<>(pasillo2);
         NodoGrafo<Recepcion> nodo12=new NodoGrafo<>(recepcion3);
         Grafo grafo=new Grafo();
