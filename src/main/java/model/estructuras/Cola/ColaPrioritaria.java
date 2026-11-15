@@ -40,7 +40,11 @@ public class ColaPrioritaria<T extends Comparable<T>> extends Cola<T>{
             else{
                 cola_vieja.add(dato_actual);
             }
-            dato_actual = cola.poll();
+            try {
+                dato_actual = cola.poll();
+            }catch (Exception e){
+                break;
+            }
         }
         cola_mayor.add(dato_mayor);
         Cola<T> aux= this.ordenar(cola_vieja);

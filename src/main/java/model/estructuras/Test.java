@@ -15,6 +15,10 @@ import model.modelo.Apartamento;
 public class Test {
     public static void main(String[] args) {
         test_grafo();
+        test_cola();
+        test_colaprio();
+        test_pila();
+
     }
     public static void test_grafo(){
         Apartamento apartamento=new Apartamento("123456");
