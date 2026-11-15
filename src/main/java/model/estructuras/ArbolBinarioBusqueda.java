@@ -1,4 +1,6 @@
 package model.estructuras;
+import model.excepciones.EstructuraVaciaException;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
