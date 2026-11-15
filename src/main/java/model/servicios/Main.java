@@ -1,14 +1,21 @@
 package model.servicios;
 
 import model.enums.CanalReserva;
-import model.enums.CriterioOrden;
 import model.enums.EstadoApartamento;
 import model.enums.EstadoReserva;
 import model.enums.RolEmpleado;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
+import model.estructuras.Cola.Cola;
+import model.estructuras.Cola.ColaPrioritaria;
+import model.estructuras.Conjunto;
+import model.estructuras.Grafo.Grafo;
+import model.estructuras.Grafo.NodoGrafo;
+import model.estructuras.Grafo.Tipo_nodos.Cuartos_aseo;
+import model.estructuras.Grafo.Tipo_nodos.Recepcion;
 import model.estructuras.ListaCircular;
 import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.Pila.Pila;
 import model.excepciones.CapacidadExcedidaException;
 import model.excepciones.EstructuraVaciaException;
 import model.excepciones.ExcepcionSGA;
@@ -30,17 +37,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * Programa de prueba del Sistema de Gestion de Apartamentos (SGA).
+ * Main centralizado del Sistema de Gestion de Alojamiento (SGA): recorre, en un solo programa,
+ * todo lo que hoy existe en la rama Dev.
  *
- * Recorre los casos de uso principales sobre el escenario de prueba incorporado en
- * {@link CargadorDatos}: catalogo, temporadas, disponibilidad, cotizacion, reservas
- * por canal, solapamiento, grupos grandes (backtracking), cancelaciones, no-show,
- * favoritos, historial y carga desde archivo plano.
+ * PARTE 1 - Dominio principal (secciones 1 a 14), sobre el escenario de prueba de {@link CargadorDatos}:
+ * catalogo, temporadas, disponibilidad, cotizacion, reservas por canal, solapamiento, grupos grandes
+ * (backtracking), cancelaciones, no-show, favoritos, historial, archivo plano, recorridos del arbol,
+ * turnos (lista circular), administracion, excepciones propias y persistencia.
+ *
+ * PARTE 2 - Topologia, colas y pilas (secciones 15 a 19), sobre un escenario limpio propio: cola FIFO del
+ * canal externo, pila, grafo del edificio (Dijkstra, DFS, BFS), cola prioritaria de preparacion con su
+ * ruta y analisis de inalcanzables al cerrar un pasillo.
+ *
+ * Importante: el canal externo, la cola de preparacion y la ruta se SIMULAN aqui con las estructuras
+ * propias; todavia no existen como servicios del sistema (ver las notas de cada seccion).
  */
-public class Main_Prueba_andres {
+public class Main {
 
     /** Fecha fija de "hoy" para que las politicas de devolucion den resultados reproducibles. */
     private static final LocalDate HOY = LocalDate.of(2026, 11, 14);
@@ -56,6 +73,7 @@ public class Main_Prueba_andres {
         CargadorDatos cargador = new CargadorDatos(apartamentos, huespedes, reservas, temporadas);
 
         try {
+            System.out.println("############ PARTE 1: DOMINIO PRINCIPAL ############");
             pruebaCarga(cargador, apartamentos, huespedes);
             pruebaTemporadas(temporadas);
             pruebaCotizacion(apartamentos, reservas);
@@ -70,6 +88,11 @@ public class Main_Prueba_andres {
             pruebaTurnosYAdministracion(apartamentos, huespedes);
             pruebaExcepcionesPropias(apartamentos);
             pruebaPersistencia(cargador, reservas, temporadas, apartamentos, huespedes);
+
+            System.out.println();
+            System.out.println("############ PARTE 2: TOPOLOGIA, COLAS Y PILAS ############");
+            pruebaParteDos();
+
             System.out.println();
             System.out.println("=== FIN DE LA PRUEBA ===");
         } catch (ExcepcionSGA e) {
@@ -770,6 +793,352 @@ public class Main_Prueba_andres {
     // ==================== 15. Controlador (fachada para la GUI) ====================
 
 
+
+    // ==================== PARTE 2: topologia, colas y pilas ====================
+
+    /** Entorno limpio (escenario de prueba recien cargado) para que la Parte 2 no dependa de la Parte 1. */
+    private static final class Entorno {
+        final ArbolBinarioBusqueda<Apartamento> apartamentos = new ArbolBinarioBusqueda<>();
+        final ArbolBinarioBusqueda<Huesped> huespedes = new ArbolBinarioBusqueda<>();
+        final GestorTemporadas temporadas = new GestorTemporadas();
+        final GestorReservas reservas =
+                new GestorReservas(new CotizadorService(temporadas), new AsignadorGrupos());
+
+        Entorno() throws ExcepcionSGA {
+            new CargadorDatos(apartamentos, huespedes, reservas, temporadas).cargarEscenarioPrueba();
+        }
+
+        Apartamento apartamento(String codigo) {
+            return apartamentos.buscar(Apartamento.paraBusqueda(codigo));
+        }
+
+        Huesped huesped(String documento) {
+            return huespedes.buscar(Huesped.paraBusqueda(documento));
+        }
+    }
+
+    private static void pruebaParteDos() throws ExcepcionSGA {
+        Entorno entorno = new Entorno();
+        pruebaColaCanalExterno(entorno);
+        pruebaPilaNavegacion();
+        MapaEdificio mapa = new MapaEdificio(entorno);
+        pruebaGrafoDelEdificio(mapa);
+        pruebaColaPrioritariaYRuta(entorno, mapa);
+        pruebaCierreDePasillo(mapa);
+    }
+
+    // ---------- 15. Cola FIFO: canal externo ----------
+
+    /** Solicitud que envia la plataforma de terceros (simulada). */
+    private record SolicitudExterna(String documento, String codigoApartamento, LocalDate entrada, LocalDate salida) {
+        @Override
+        public String toString() {
+            return "EXT[" + codigoApartamento + " " + entrada + "->" + salida + " titular " + documento + "]";
+        }
+    }
+
+    private static void pruebaColaCanalExterno(Entorno entorno) throws ExcepcionSGA {
+        titulo("15. COLA FIFO: SOLICITUDES DEL CANAL EXTERNO (simulado)");
+        System.out.println("Nota: el procesador del canal externo aun no existe como servicio; aqui se simula con Cola<T>.");
+
+        Cola<SolicitudExterna> cola = new Cola<>();
+        System.out.println("Cola vacia? " + cola.isEmpty() + " | contenido: " + cola);
+
+        SolicitudExterna s1 = new SolicitudExterna("1094000005", "A-201", LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 4));
+        SolicitudExterna s2 = new SolicitudExterna("1094000002", "C-101", LocalDate.of(2026, 12, 24), LocalDate.of(2026, 12, 26));
+        SolicitudExterna s3 = new SolicitudExterna("1094000001", "B-102", LocalDate.of(2026, 12, 5), LocalDate.of(2026, 12, 7));
+        cola.add(s1);
+        cola.add(s2);
+        cola.add(s3);
+
+        Cola<SolicitudExterna> lote = new Cola<>();
+        lote.add(new SolicitudExterna("1094000004", "A-201", LocalDate.of(2026, 12, 3), LocalDate.of(2026, 12, 6)));
+        cola.merge(lote);
+        System.out.println("Llegaron 3 solicitudes y luego un lote de 1 (merge): " + cola);
+        System.out.println("Primera en la fila (peek): " + cola.peek().getDato());
+        System.out.println("Contiene la solicitud de C-101? " + cola.contains(s2));
+        try {
+            cola.merge(new Cola<>());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Fusionar una cola vacia -> " + e.getMessage());
+        }
+
+        ListaDoblementeEnlazada<String> conflictos = new ListaDoblementeEnlazada<>();
+        int aceptadas = 0;
+        System.out.println("Procesando en orden de llegada (FIFO):");
+        while (!cola.isEmpty()) {
+            SolicitudExterna s = cola.poll();
+            Huesped titular = entorno.huesped(s.documento());
+            ListaDoblementeEnlazada<Ocupante> ocupantes = new ListaDoblementeEnlazada<>();
+            ocupantes.agregar(new Ocupante(titular.getNombre(), titular.getFechaNacimiento()));
+            try {
+                Reserva r = entorno.reservas.crearReserva(titular, entorno.apartamento(s.codigoApartamento()),
+                        new Estancia(s.entrada(), s.salida()), ocupantes, CanalReserva.EXTERNA);
+                aceptadas++;
+                System.out.println("   ACEPTADA  " + s + " -> " + r.getId());
+            } catch (ReservaSolapadaException e) {
+                conflictos.agregar(s.toString());
+                System.out.println("   RECHAZADA " + s + " -> conflicto de canal: " + e.getMessage());
+            }
+        }
+        System.out.println("Cola vacia al terminar? " + cola.isEmpty());
+        System.out.println("Resumen: " + aceptadas + " aceptadas, " + conflictos.tamano() + " conflictos de canal " + conflictos);
+        System.out.println("(la ultima solicitud choca con la primera porque comparten la noche del 2026-12-03: el orden de llegada decide)");
+    }
+
+    // ---------- 16. Pila: navegacion "atras" ----------
+
+    private static void pruebaPilaNavegacion() {
+        titulo("16. PILA: NAVEGACION \"ATRAS\" ENTRE PANTALLAS");
+        System.out.println("Nota: el deshacer del folio aun no existe; aqui se muestra la pila con la navegacion entre pantallas.");
+        Pila<String> pantallas = new Pila<>();
+        System.out.println("Pila vacia? " + pantallas.isEmpty() + " | contenido: " + pantallas);
+        pantallas.push("Inicio");
+        pantallas.push("Panel de reservas");
+        pantallas.push("Calendario de ocupacion");
+        System.out.println("Tras 3 push (cima primero): " + pantallas);
+        System.out.println("Pantalla actual (peek): " + pantallas.peek().getDato());
+        System.out.println("Atras -> sale " + pantallas.pop() + " | queda: " + pantallas);
+        System.out.println("Atras -> sale " + pantallas.pop() + " | queda: " + pantallas);
+        pantallas.push("Mapa del edificio");
+        System.out.println("Nueva pantalla -> " + pantallas + " (la cima es " + pantallas.peek().getDato() + ")");
+    }
+
+    // ---------- Mapa del edificio ----------
+
+    /**
+     * Mapa del alojamiento: nodos = apartamentos, recepcion, escaleras y cuartos de aseo;
+     * aristas = pasillos con peso en metros. Las escaleras se modelan con NodoGrafo&lt;String&gt; porque el
+     * constructor de Escaleras no es publico (solo se puede crear dentro de su propio paquete).
+     */
+    private static final class MapaEdificio {
+        final Grafo grafo = new Grafo();
+        final NodoGrafo<Recepcion> recepcion = new NodoGrafo<>(new Recepcion(1));
+        final NodoGrafo<String> escalera = new NodoGrafo<>("Escaleras numero: 1");
+        final NodoGrafo<Cuartos_aseo> aseo1 = new NodoGrafo<>(new Cuartos_aseo(1));
+        final NodoGrafo<Cuartos_aseo> aseo2 = new NodoGrafo<>(new Cuartos_aseo(2));
+        final NodoGrafo<?>[] todos;
+
+        MapaEdificio(Entorno entorno) {
+            NodoGrafo<Apartamento> a101 = new NodoGrafo<>(entorno.apartamento("A-101"));
+            NodoGrafo<Apartamento> a102 = new NodoGrafo<>(entorno.apartamento("A-102"));
+            NodoGrafo<Apartamento> a201 = new NodoGrafo<>(entorno.apartamento("A-201"));
+            NodoGrafo<Apartamento> b101 = new NodoGrafo<>(entorno.apartamento("B-101"));
+            NodoGrafo<Apartamento> b102 = new NodoGrafo<>(entorno.apartamento("B-102"));
+            NodoGrafo<Apartamento> b201 = new NodoGrafo<>(entorno.apartamento("B-201"));
+            NodoGrafo<Apartamento> c101 = new NodoGrafo<>(entorno.apartamento("C-101"));
+            NodoGrafo<Apartamento> c201 = new NodoGrafo<>(entorno.apartamento("C-201"));
+            todos = new NodoGrafo<?>[] {recepcion, escalera, aseo1, aseo2,
+                    a101, a102, a201, b101, b102, b201, c101, c201};
+
+            // Piso 1
+            grafo.agregarNodo(recepcion, a101, 10);
+            grafo.agregarNodo(a101, a102, 5);
+            grafo.agregarNodo(recepcion, b101, 12);
+            grafo.agregarNodo(b101, b102, 5);
+            grafo.agregarNodo(recepcion, c101, 15);
+            grafo.agregarNodo(recepcion, aseo1, 8);
+            // Escaleras y piso 2
+            grafo.agregarNodo(recepcion, escalera, 6);
+            grafo.agregarNodo(a102, escalera, 11);
+            grafo.agregarNodo(escalera, a201, 7);
+            grafo.agregarNodo(escalera, b201, 9);
+            grafo.agregarNodo(b201, c201, 6);
+            grafo.agregarNodo(escalera, aseo2, 4);
+        }
+
+        /** Nodo cuyo contenido es el apartamento con ese codigo (null si no existe). */
+        NodoGrafo<?> nodoDe(String codigo) {
+            for (NodoGrafo<?> nodo : todos) {
+                if (nodo.getContenido() instanceof Apartamento a && a.getCodigo().equals(codigo)) {
+                    return nodo;
+                }
+            }
+            return null;
+        }
+
+        /** Cierra el pasillo entre dos nodos quitando la arista de ambos extremos. */
+        boolean cerrarPasillo(NodoGrafo<?> uno, NodoGrafo<?> otro) {
+            for (var arista : uno.getAdyacentes()) {
+                if (arista.getExtremo(uno) == otro) {
+                    uno.quitarAdyacente(arista);
+                    otro.quitarAdyacente(arista);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /** Nombre corto de un nodo para imprimir rutas. */
+    private static String nombre(NodoGrafo<?> nodo) {
+        if (nodo.getContenido() instanceof Apartamento a) {
+            return a.getCodigo();
+        }
+        return String.valueOf(nodo.getContenido()).replace(" numero: ", " "); // "Recepcion numero: 1" -> "Recepcion 1"
+    }
+
+    private static String ruta(ListaDoblementeEnlazada<NodoGrafo<?>> camino) {
+        if (camino.estaVacia()) {
+            return "(sin ruta)";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (NodoGrafo<?> n : camino) {
+            if (sb.length() > 0) {
+                sb.append(" -> ");
+            }
+            sb.append(nombre(n));
+        }
+        return sb.toString();
+    }
+
+    // ---------- 17. Grafo: recorridos y ruta mas corta ----------
+
+    private static void pruebaGrafoDelEdificio(MapaEdificio mapa) {
+        titulo("17. GRAFO DEL EDIFICIO: DFS, BFS Y DIJKSTRA");
+        System.out.println("Nodos: " + mapa.todos.length + " (8 apartamentos, recepcion, escaleras y 2 cuartos de aseo)."
+                + " Pasillos con peso en metros.");
+        System.out.println("Pasillos que salen de recepcion:");
+        System.out.print(mapa.grafo.imprimir(mapa.recepcion));
+
+        try {
+            mapa.grafo.agregarNodo(mapa.recepcion, mapa.escalera, 99);
+            System.out.println("ERROR: se acepto un pasillo repetido");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Pasillo repetido rechazado -> " + e.getMessage());
+        }
+
+        ListaDoblementeEnlazada<NodoGrafo<?>> componente =
+                mapa.grafo.obtenerGrafo(mapa.recepcion, new ListaDoblementeEnlazada<>());
+        System.out.println("obtenerGrafo desde recepcion: " + componente.tamano() + " nodos conectados");
+
+        Conjunto<NodoGrafo<?>> dfs = mapa.grafo.dfs(mapa.recepcion);
+        System.out.println("DFS desde recepcion alcanza " + dfs.tamano() + " nodos (sin repetidos)");
+
+        NodoGrafo<?> destino = mapa.nodoDe("C-201");
+        System.out.println("BFS recepcion -> C-201 (orden de visita): " + ruta(mapa.grafo.BFS(mapa.recepcion, destino)));
+
+        System.out.println("Dijkstra desde recepcion (ruta y metros):");
+        String[] codigos = {"A-101", "A-102", "A-201", "B-102", "C-101", "C-201"};
+        for (String codigo : codigos) {
+            NodoGrafo<?> fin = mapa.nodoDe(codigo);
+            System.out.println("   " + codigo + ": " + ruta(mapa.grafo.armarCamino(mapa.recepcion, fin))
+                    + " | " + mapa.grafo.costoCamino(mapa.recepcion, fin) + " m");
+        }
+        System.out.println("(A-102 se alcanza por A-101: 10+5=15 m, mejor que por las escaleras: 6+11=17 m)");
+    }
+
+    // ---------- 18. Cola prioritaria: preparacion y su ruta ----------
+
+    /** Tarea de preparacion. Su orden natural es la prioridad que pide el enunciado. */
+    private static final class TareaPreparacion implements Comparable<TareaPreparacion> {
+        private static final Comparator<TareaPreparacion> PRIORIDAD = Comparator
+                .comparing((TareaPreparacion t) -> t.horaLlegada == null)               // entrada hoy primero
+                .thenComparing(t -> t.horaLlegada, Comparator.nullsLast(Comparator.<LocalTime>naturalOrder()))
+                .thenComparing(t -> t.codigo);                                          // desempate estable
+
+        final String codigo;
+        final LocalTime horaLlegada; // null = sin entrada hoy
+
+        TareaPreparacion(String codigo, LocalTime horaLlegada) {
+            this.codigo = codigo;
+            this.horaLlegada = horaLlegada;
+        }
+
+        @Override
+        public int compareTo(TareaPreparacion otra) {
+            return PRIORIDAD.compare(this, otra);
+        }
+
+        @Override
+        public String toString() {
+            return codigo + (horaLlegada == null ? " (P2, sin entrada hoy)" : " (P1, llega " + horaLlegada + ")");
+        }
+    }
+
+    private static void pruebaColaPrioritariaYRuta(Entorno entorno, MapaEdificio mapa) {
+        titulo("18. COLA PRIORITARIA DE PREPARACION Y RUTA CON DIJKSTRA (simulado)");
+        System.out.println("Nota: el servicio de preparacion aun no existe; aqui la cola se arma con ColaPrioritaria<T>.");
+
+        ColaPrioritaria<Integer> enteros = new ColaPrioritaria<>();
+        for (int n : new int[] {5, 3, 9, 1, 7}) {
+            enteros.add(n);
+        }
+        System.out.println("Orden natural con enteros (5,3,9,1,7 entran en desorden): " + enteros);
+
+        ColaPrioritaria<TareaPreparacion> cola = new ColaPrioritaria<>();
+        TareaPreparacion[] tareas = {
+                new TareaPreparacion("C-101", null),
+                new TareaPreparacion("A-102", LocalTime.of(15, 0)),
+                new TareaPreparacion("B-102", null),
+                new TareaPreparacion("B-101", LocalTime.of(11, 30)),
+        };
+        for (TareaPreparacion t : tareas) {
+            entorno.apartamento(t.codigo).cambiarEstado(EstadoApartamento.PENDIENTE_PREPARACION);
+            cola.add(t);
+        }
+        System.out.println("Tras el check-out quedan PENDIENTE_PREPARACION: C-101, A-102, B-102, B-101");
+        System.out.println("Cola (prioridad 1 por hora de llegada, luego prioridad 2): " + cola);
+
+        NodoGrafo<?> posicion = mapa.recepcion;
+        int total = 0;
+        System.out.println("Atencion en orden de prioridad, partiendo de recepcion:");
+        while (!cola.isEmpty()) {
+            TareaPreparacion t = cola.poll();
+            NodoGrafo<?> destino = mapa.nodoDe(t.codigo);
+            Integer metros = mapa.grafo.costoCamino(posicion, destino);
+            System.out.println("   " + t.codigo + ": " + ruta(mapa.grafo.armarCamino(posicion, destino)) + " | " + metros + " m");
+            total += metros;
+            Apartamento apto = entorno.apartamento(t.codigo);
+            apto.cambiarEstado(EstadoApartamento.EN_PREPARACION);
+            apto.cambiarEstado(EstadoApartamento.PREPARADO);
+            posicion = destino;
+        }
+        System.out.println("Recorrido total: " + total + " m | cola vacia? " + cola.isEmpty()
+                + " | estado final de B-101: " + entorno.apartamento("B-101").getEstadoOperativo());
+    }
+
+    // ---------- 19. Cierre de pasillo e inalcanzables ----------
+
+    private static void pruebaCierreDePasillo(MapaEdificio mapa) {
+        titulo("19. ANALISIS DEL GRAFO: PASILLOS CERRADOS E INALCANZABLES");
+        NodoGrafo<?> a201 = mapa.nodoDe("A-201");
+        NodoGrafo<?> a102 = mapa.nodoDe("A-102");
+        System.out.println("Con todo abierto: recepcion -> A-201 = " + mapa.grafo.costoCamino(mapa.recepcion, a201) + " m");
+
+        mapa.cerrarPasillo(mapa.recepcion, mapa.escalera);
+        System.out.println("Se cierra el pasillo recepcion-escaleras:");
+        listarInalcanzables(mapa);
+        System.out.println("   A-201 ahora: " + ruta(mapa.grafo.armarCamino(mapa.recepcion, a201))
+                + " | " + mapa.grafo.costoCamino(mapa.recepcion, a201) + " m (da la vuelta por A-101 y A-102)");
+
+        mapa.cerrarPasillo(a102, mapa.escalera);
+        System.out.println("Se cierra tambien A-102 - escaleras:");
+        listarInalcanzables(mapa);
+        System.out.println("   A-201 ahora: " + ruta(mapa.grafo.armarCamino(mapa.recepcion, a201))
+                + " | costo: " + mapa.grafo.costoCamino(mapa.recepcion, a201));
+
+        mapa.grafo.agregarNodo(mapa.recepcion, mapa.escalera, 6);
+        mapa.grafo.agregarNodo(a102, mapa.escalera, 11);
+        System.out.println("Se reabren ambos pasillos: recepcion -> A-201 = "
+                + mapa.grafo.costoCamino(mapa.recepcion, a201) + " m");
+        listarInalcanzables(mapa);
+    }
+
+    private static void listarInalcanzables(MapaEdificio mapa) {
+        Conjunto<NodoGrafo<?>> alcanzables = mapa.grafo.dfs(mapa.recepcion);
+        StringBuilder sb = new StringBuilder();
+        for (NodoGrafo<?> nodo : mapa.todos) {
+            if (!alcanzables.contiene(nodo)) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append(nombre(nodo));
+            }
+        }
+        System.out.println("   Alcanzables desde recepcion: " + alcanzables.tamano() + " de " + mapa.todos.length
+                + " | inalcanzables: " + (sb.length() == 0 ? "ninguno" : sb));
+    }
 
     // ==================== Utilidades ====================
 
