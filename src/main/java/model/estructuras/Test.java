@@ -8,6 +8,8 @@ import model.estructuras.Grafo.Tipo_nodos.Cuartos_aseo;
 import model.estructuras.Grafo.Tipo_nodos.Pasillo;
 import model.estructuras.Grafo.Tipo_nodos.Recepcion;
 import model.estructuras.Pila.Pila;
+import model.excepciones.CapacidadExcedidaException;
+import model.excepciones.EstructuraVaciaException;
 import model.modelo.Apartamento;
 
 public class Test {
@@ -72,7 +74,7 @@ public class Test {
         System.out.println(grafo.costoCamino(nodo,nodo12));
 
     }
-    public static void test_cola() {
+    public static void test_cola() throws EstructuraVaciaException {
         Cola<Integer> cola = new Cola<>();
         cola.add(1);
         cola.add(2);
@@ -102,7 +104,7 @@ public class Test {
         cola.merge(cola2);
         System.out.println(cola);
     }
-    public static void test_colaprio(){
+    public static void test_colaprio() throws EstructuraVaciaException {
         ColaPrioritaria<Integer> cola=new ColaPrioritaria<>();
         cola.add(1);
         cola.add(2);
@@ -115,6 +117,7 @@ public class Test {
         cola.add(9);
         cola.add(10);
         System.out.println(cola);
+
         cola.poll();
         cola.poll();
         cola.poll();
@@ -130,7 +133,7 @@ public class Test {
         cola.add(4);
         System.out.println(cola);
     }
-    public static void test_pila(){
+    public static void test_pila() throws EstructuraVaciaException {
         Pila<Integer> pila=new Pila<>();
         pila.push(1);
         pila.push(2);
