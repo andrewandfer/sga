@@ -28,5 +28,8 @@ public class Arista{
     public String toString(){
         return valor.toString();
     }
-
+    public NodoGrafo<?> getExtremo(NodoGrafo<?> nodo){
+        if (nodo.equals(siguiente)) return anterior;
+        return siguiente;
+    }
 }

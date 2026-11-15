@@ -7,11 +7,12 @@ import model.estructuras.Grafo.NodoGrafo;
 import model.estructuras.Grafo.Tipo_nodos.Cuartos_aseo;
 import model.estructuras.Grafo.Tipo_nodos.Pasillo;
 import model.estructuras.Grafo.Tipo_nodos.Recepcion;
+import model.estructuras.Pila.Pila;
 import model.modelo.Apartamento;
 
 public class Test {
     public static void main(String[] args) {
-        test_colaprio();
+        test_grafo();
     }
     public static void test_grafo(){
         Apartamento apartamento=new Apartamento("123456");
@@ -22,6 +23,8 @@ public class Test {
         Apartamento apartamento4=new Apartamento("112233");
         Cuartos_aseo cuartos_aseo4=new Cuartos_aseo(4);
         Recepcion recepcion=new Recepcion(1);
+        Recepcion recepcion2=new Recepcion(2);
+        Recepcion recepcion3=new Recepcion(3);
         Apartamento apartamento5=new Apartamento("445566");
         Cuartos_aseo cuartos_aseo5=new Cuartos_aseo(5);
 
@@ -32,11 +35,11 @@ public class Test {
         NodoGrafo<Apartamento> nodo5=new NodoGrafo<>(apartamento5);
         NodoGrafo<Cuartos_aseo> nodo6=new NodoGrafo<>(cuartos_aseo5);
         NodoGrafo<Pasillo> nodo7=new NodoGrafo<>(pasillo3);
-        NodoGrafo<Recepcion> nodo8=new NodoGrafo<>(recepcion);
+        NodoGrafo<Recepcion> nodo8=new NodoGrafo<>(recepcion2);
         NodoGrafo<Apartamento> nodo9=new NodoGrafo<>(apartamento4);
         NodoGrafo<Cuartos_aseo> nodo10=new NodoGrafo<>(cuartos_aseo4);
         NodoGrafo<Pasillo> nodo11=new NodoGrafo<>(pasillo2);
-        NodoGrafo<Recepcion> nodo12=new NodoGrafo<>(recepcion);
+        NodoGrafo<Recepcion> nodo12=new NodoGrafo<>(recepcion3);
         Grafo grafo=new Grafo();
         grafo.agregarNodo(nodo,nodo2,1);
         grafo.agregarNodo(nodo2,nodo3,2);
@@ -54,11 +57,20 @@ public class Test {
         grafo.agregarNodo(nodo12,nodo9,4);
         grafo.agregarNodo(nodo4,nodo10,6);
 
-        ListaDoblementeEnlazada<NodoGrafo<?>> GrafoList = grafo.obtenerGrafo(nodo,new ListaDoblementeEnlazada<NodoGrafo<?>>());
-        for (NodoGrafo<?> nodoGrafo : GrafoList) {
-            System.out.println(nodoGrafo);
-        }
-        System.out.println(grafo.imprimir(nodo4));
+//        ListaDoblementeEnlazada<NodoGrafo<?>> GrafoList = grafo.obtenerGrafo(nodo,new ListaDoblementeEnlazada<NodoGrafo<?>>());
+//        System.out.println(grafo.imprimir(nodo));
+        System.out.println("BFS");
+        ListaDoblementeEnlazada<NodoGrafo<?>> BFSList = grafo.BFS(nodo,nodo12);
+        System.out.println(BFSList);
+        System.out.println("DFS");
+        Conjunto<NodoGrafo<?>> dfsList = grafo.dfs(nodo);
+        System.out.println(dfsList);
+        System.out.println("Djijstra");
+        ListaDoblementeEnlazada<NodoGrafo<?>> camino = grafo.armarCamino(nodo,nodo12);
+        System.out.println(camino);
+        System.out.println("Costo camino");
+        System.out.println(grafo.costoCamino(nodo,nodo12));
+
     }
     public static void test_cola() {
         Cola<Integer> cola = new Cola<>();
@@ -117,5 +129,28 @@ public class Test {
         System.out.println(cola);
         cola.add(4);
         System.out.println(cola);
+    }
+    public static void test_pila(){
+        Pila<Integer> pila=new Pila<>();
+        pila.push(1);
+        pila.push(2);
+        pila.push(3);
+        pila.push(4);
+        pila.push(5);
+        pila.push(6);
+        pila.push(7);
+        pila.push(8);
+        pila.push(9);
+        pila.push(10);
+        System.out.println(pila);
+        pila.pop();
+        pila.pop();
+        pila.pop();
+        pila.pop();
+        System.out.println(pila);
+        pila.push(11);
+        pila.push(12);
+        pila.push(13);
+        System.out.println(pila);
     }
 }
