@@ -2,6 +2,7 @@ package model.modelo;
 import model.enums.CanalReserva;
 import model.enums.EstadoReserva;
 import model.estructuras.ListaDoblementeEnlazada;
+import model.excepciones.TransicionInvalidaException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -66,7 +67,7 @@ public class Reserva implements Comparable<Reserva> {
                 return;
             }
         }
-        throw new IllegalStateException("Transicion invalida en la reserva " + id + ": " + estado + " -> " + destino);
+        throw new TransicionInvalidaException("Transicion invalida en la reserva " + id + ": " + estado + " -> " + destino);
     }
 
     public boolean ocupaNoches() {

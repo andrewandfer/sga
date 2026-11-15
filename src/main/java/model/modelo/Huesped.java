@@ -48,6 +48,11 @@ public class Huesped implements Comparable<Huesped> {
         historial.agregar(reserva);
     }
 
+    /** Solo para deshacer una reserva que no llego a completarse (rollback de grupos). */
+    public boolean quitarDelHistorial(Reserva reserva) {
+        return historial.eliminar(reserva);
+    }
+
     public String getDocumento() {
         return documento;
     }

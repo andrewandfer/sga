@@ -1,6 +1,7 @@
 package model.estructuras;
 
 import model.estructuras.ListaDoblementeEnlazada.NodoDoble;
+import model.excepciones.EstructuraVaciaException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class ListaCircular<T> implements Iterable<T> {
 
     public T siguiente() {
         if (actual == null) {
-            throw new NoSuchElementException("La lista circular esta vacia");
+            throw new EstructuraVaciaException("La lista circular esta vacia");
         }
         T dato = actual.getDato();
         actual = actual.getSiguiente();
@@ -42,7 +43,7 @@ public class ListaCircular<T> implements Iterable<T> {
 
     public T actual() {
         if (actual == null) {
-            throw new NoSuchElementException("La lista circular esta vacia");
+            throw new EstructuraVaciaException("La lista circular esta vacia");
         }
         return actual.getDato();
     }
