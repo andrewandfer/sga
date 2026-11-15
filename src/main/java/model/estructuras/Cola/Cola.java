@@ -1,4 +1,7 @@
 package model.estructuras.Cola;
+
+import model.excepciones.EstructuraVaciaException;
+
 /**
  * Representa una cola genérica implementada mediante nodos enlazados.
  * Permite almacenar, consultar, insertar y extraer elementos siguiendo
@@ -49,8 +52,8 @@ public class Cola<T> {
      *
      * @return Dato almacenado en el nodo extraído, o null si está vacía.
      */
-    public T poll(){
-        if (isEmpty()) return null;
+    public T poll() throws EstructuraVaciaException {
+        if (isEmpty()) throw new EstructuraVaciaException("La pila esta vacia");
         NodoCola<T> aux=Raiz;
         Raiz=Raiz.getSiguiente();
         return aux.getDato();

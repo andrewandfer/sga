@@ -1,4 +1,7 @@
 package model.estructuras.Pila;
+
+import model.excepciones.EstructuraVaciaException;
+
 /**
  * Implementa una estructura de datos Pila genérica mediante nodos enlazados.
  *
@@ -67,9 +70,10 @@ public class Pila<T>{
      * desvincula el nodo extraído del resto de la estructura.
      *
      * @return Dato almacenado en el nodo extraído.
+     * @throws EstructuraVaciaException si la pila esta vacia
      */
-    public T pop(){
-        if (isEmpty()) return null;
+    public T pop() throws EstructuraVaciaException {
+        if (isEmpty()) throw new EstructuraVaciaException("La pila esta vacia");
         NodoPila<T> aux=Raiz;
         this.setRaiz(Raiz.getSiguiente());
         aux.setSiguiente(null);
