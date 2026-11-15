@@ -1,4 +1,4 @@
-package model.servicios;
+package model;
 
 import model.enums.CanalReserva;
 import model.enums.CriterioOrden;
@@ -11,32 +11,15 @@ import model.excepciones.CapacidadExcedidaException;
 import model.excepciones.ExcepcionSGA;
 import model.excepciones.FechasInvalidasException;
 import model.excepciones.ReservaSolapadaException;
-import model.modelo.Apartamento;
-import model.modelo.Cotizacion;
-import model.modelo.Empleado;
-import model.modelo.Estancia;
-import model.modelo.Huesped;
-import model.modelo.Ocupante;
-import model.modelo.PeriodoTemporada;
-import model.modelo.Reserva;
+import model.modelo.*;
+import model.servicios.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 
-/**
- * Fachada unica del Sistema de Gestion de Apartamentos (SGA).
- *
- * Construye y conecta todos los servicios (administracion, reservas, cotizacion,
- * temporadas, turnos, asignacion de grupos y persistencia) y expone sus operaciones
- * en un solo punto de entrada. La capa de presentacion (JavaFX, consola, pruebas)
- * solo necesita conocer esta clase.
- *
- * La fachada no duplica logica: cada metodo delega en el servicio responsable.
- */
-public class SgaFachada {
-
+public class ApartaSuites {
     private final ArbolBinarioBusqueda<Apartamento> apartamentos;
     private final ArbolBinarioBusqueda<Huesped> huespedes;
 
@@ -49,7 +32,7 @@ public class SgaFachada {
     private final CargadorDatos cargador;
 
     /** Crea el sistema vacio con todos sus servicios ya conectados. */
-    public SgaFachada() {
+    public ApartaSuites() {
         this.apartamentos = new ArbolBinarioBusqueda<>();
         this.huespedes = new ArbolBinarioBusqueda<>();
         this.temporadas = new GestorTemporadas();
@@ -376,3 +359,4 @@ public class SgaFachada {
         return h;
     }
 }
+

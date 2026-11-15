@@ -243,7 +243,7 @@ public class CargadorDatos {
         return sb.toString();
     }
 
-    /** Evita que el texto de un campo rompa el formato (separador ; y saltos de linea). */
+    /** Evita que el texto de un campo rompa el formato (separador; y saltos de linea). */
     private String campo(String texto) {
         return texto == null ? "" : texto.replace(';', ',').replace('\n', ' ').replace('\r', ' ');
     }
