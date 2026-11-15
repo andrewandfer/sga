@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../styles/login.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+
+    <HBox prefHeight="650.0" prefWidth="1000.0">
+
+        <!-- LEFT SIDE - BRAND SECTION -->
+        <VBox alignment="CENTER" prefWidth="400.0" spacing="25.0" style="-fx-background-color: linear-gradient(to bottom right, #123B46, #205966);">
+
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: white;" text="APARTA-SUITES">
+                <font>
+                    <Font name="System Bold" size="25.0" />
+                </font>
+            </Label>
+
+            <Label style="-fx-text-fill: #A9C9CC;" text="UQ">
+                <font>
+                    <Font name="System Bold" size="52.0" />
+                </font>
+            </Label>
+
+            <Label style="-fx-text-fill: #D0E1E3; -fx-font-weight: bold;">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+
+            <Separator prefWidth="230.0" style="-fx-background-color: #A9C9CC;" />
+
+            <VBox alignment="CENTER" spacing="12.0" style="-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 12; -fx-padding: 20;">
+
+                <Label style="-fx-text-fill: white; -fx-font-weight: bold; -fx-text-alignment: center;" text="Tu estancia, nuestra prioridad" wrapText="true">
+                    <font>
+                        <Font size="17.0" />
+                    </font>
+                </Label>
+
+                <Label style="-fx-text-fill: #D0E1E3; -fx-text-alignment: center;" text="Un espacio diseñado para ofrecer comodidad, tranquilidad y una experiencia inolvidable en el corazón del Quindío." wrapText="true">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
+
+            </VBox>
+
+            <VBox spacing="13.0">
+
+                <Label style="-fx-text-fill: white;" text="  Atención personalizada">
+                    <font><Font size="12.0" /></font>
+                </Label>
+
+                <Label style="-fx-text-fill: white;" text="  Comodidad y tranquilidad">
+                    <font><Font size="12.0" /></font>
+                </Label>
+
+                <Label style="-fx-text-fill: white;" text="  Experiencia en Salento">
+                    <font><Font size="12.0" /></font>
+                </Label>
+
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Label style="-fx-text-fill: #A9C9CC; -fx-font-weight: bold;" text="SISTEMA DE ALOJAMIENTO">
+                <font>
+                    <Font size="9.0" />
+                </font>
+            </Label>
+
+        </VBox>
+
+        <!-- RIGHT SIDE - LOGIN SECTION -->
+        <VBox alignment="CENTER" prefWidth="600.0" spacing="22.0" style="-fx-background-color: #FFFFFF; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+
+            <padding>
+                <Insets bottom="35.0" left="75.0" right="75.0" top="40.0" />
+            </padding>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <!-- LOGIN HEADER -->
+            <VBox alignment="CENTER" spacing="10.0">
+
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #123B46;" text="Bienvenido">
+                    <font>
+                        <Font name="System Bold" size="30.0" />
+                    </font>
+                </Label>
+
+                <Label style="-fx-text-fill: #829095;" text="Ingresa tus credenciales para continuar">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+
+            </VBox>
+
+            <!-- LOGIN FORM -->
+            <VBox alignment="CENTER" prefWidth="350.0" spacing="18.0">
+
+                <VBox spacing="9.0">
+
+                    <Label style="-fx-text-fill: #29444B; -fx-font-weight: bold;" text="Usuario">
+                        <font>
+                            <Font size="13.0" />
+                        </font>
+                    </Label>
+
+                    <TextField fx:id="usernameField" prefHeight="48.0" prefWidth="350.0" promptText="👤  Ingresa tu usuario" style="-fx-background-color: #F7F9FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #DCE4E6; -fx-border-width: 1; -fx-padding: 12;">
+                        <font>
+                            <Font size="13.0" />
+                        </font>
+                    </TextField>
+
+                </VBox>
+
+                <VBox spacing="9.0">
+
+                    <Label style="-fx-text-fill: #29444B; -fx-font-weight: bold;" text="Contraseña">
+                        <font>
+                            <Font size="13.0" />
+                        </font>
+                    </Label>
+
+                    <PasswordField fx:id="passwordField" prefHeight="48.0" prefWidth="350.0" promptText="🔒  Ingresa tu contraseña" style="-fx-background-color: #F7F9FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #DCE4E6; -fx-border-width: 1; -fx-padding: 12;">
+                        <font>
+                            <Font size="13.0" />
+                        </font>
+                    </PasswordField>
+
+                </VBox>
+
+                <Label fx:id="errorLabel" prefWidth="350.0" style="-fx-text-fill: #C65D5D; -fx-font-weight: bold;" wrapText="true">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+
+                <!-- LOGIN BUTTON -->
+                <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleLogin" prefHeight="50.0" prefWidth="350.0" styleClass="login-button" text="Iniciar sesión">
+
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+
+                </Button>
+
+            </VBox>
+
+            <Separator prefWidth="350.0">
+                <padding>
+                    <Insets bottom="5.0" top="5.0" />
+                </padding>
+            </Separator>
+
+            <!-- GUEST REGISTRATION -->
+            <VBox alignment="CENTER" prefWidth="350.0" spacing="12.0">
+
+                <Label style="-fx-text-fill: #829095;" text="¿No tienes una cuenta todavía?">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
+
+                <Button fx:id="registerButton" mnemonicParsing="false" onAction="#handleRegister" prefHeight="42.0" prefWidth="250.0" styleClass="register-button" text="Crear cuenta de huésped">
+
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+
+                </Button>
+
+            </VBox>
+
+            <!-- FOOTER -->
+            <VBox alignment="CENTER" spacing="8.0">
+
+                <Label style="-fx-text-fill: #123B46; -fx-font-weight: bold;" text="Aparta-Suites UQ">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+
+                <Label style="-fx-text-fill: #9AA6AA;">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+        </VBox>
+
+    </HBox>
+
+</StackPane>
