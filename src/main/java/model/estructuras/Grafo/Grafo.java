@@ -53,6 +53,16 @@ public class Grafo{
         arista.setSiguiente(destino);
         arista.setAnterior(origen);
     }
+    public void disolverNodo(NodoGrafo<?> origen,NodoGrafo<?> destino){
+        for (Arista arista: origen.getAdyacentes()){
+            NodoGrafo<?> aux=arista.getExtremo(origen);
+            if (aux.equals(destino)){
+                origen.quitarAdyacente(arista);
+                destino.quitarAdyacente(arista);
+                break;
+            }
+        }
+    }
     /**
      * Genera una representación textual de un nodo y sus conexiones.
      *
