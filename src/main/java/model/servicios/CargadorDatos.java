@@ -11,14 +11,25 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
-
+/**
+ * Carga los datos iniciales del sistema desde archivos planos o mediante
+ * un escenario de prueba incorporado.
+ * Registra apartamentos, huéspedes, temporadas y reservas en los gestores correspondientes.
+ */
 public class CargadorDatos {
 
     private final ArbolBinarioBusqueda<Apartamento> apartamentos;
     private final ArbolBinarioBusqueda<Huesped> huespedes;
     private final GestorReservas gestorReservas;
     private final GestorTemporadas gestorTemporadas;
-
+    /**
+     * Crea un cargador asociado a las estructuras y gestores del sistema.
+     *
+     * @param apartamentos árbol donde se registran los apartamentos
+     * @param huespedes árbol donde se registran los huéspedes
+     * @param gestorReservas gestor encargado de administrar las reservas
+     * @param gestorTemporadas gestor encargado de administrar las temporadas
+     */
     public CargadorDatos(ArbolBinarioBusqueda<Apartamento> apartamentos, ArbolBinarioBusqueda<Huesped> huespedes,
                          GestorReservas gestorReservas, GestorTemporadas gestorTemporadas) {
         this.apartamentos = apartamentos;
@@ -28,7 +39,14 @@ public class CargadorDatos {
     }
 
     // ==================== Archivo plano ====================
-
+    /**
+     * Carga registros desde un archivo de texto.
+     * Ignora las líneas vacías y aquellas que comienzan con el carácter '#'.
+     *
+     * @param ruta ruta del archivo que contiene los datos
+     * @throws IOException si ocurre un error al leer el archivo
+     * @throws ExcepcionSGA si algún registro contiene datos inválidos o no puede procesarse
+     */
     public void cargarDesdeArchivo(String ruta) throws IOException, ExcepcionSGA {
         try (BufferedReader lector = new BufferedReader(new FileReader(ruta))) {
             String linea;
@@ -49,7 +67,12 @@ public class CargadorDatos {
             }
         }
     }
-
+    /**
+     * Interpreta y procesa una línea del archivo según el tipo de registro indicado.
+     *
+     * @param linea contenido de la línea que se va a procesar
+     * @throws ExcepcionSGA si el tipo de registro es desconocido o sus datos no pueden procesarse
+     */
     private void procesarLinea(String linea) throws ExcepcionSGA {
         String[] c = linea.split(";");
         switch (c[0].trim().toUpperCase()) {
@@ -79,6 +102,13 @@ public class CargadorDatos {
         }
     }
 
+    /**
+     * Construye y registra una reserva a partir de los datos de un registro.
+     * Busca previamente al huésped titular y al apartamento correspondiente.
+     *
+     * @param c arreglo con los campos del registro de reserva
+     * @throws ExcepcionSGA si el huésped o el apartamento no existen, o si la reserva no puede crearse
+     */
     private void cargarReserva(String[] c) throws ExcepcionSGA {
         Huesped titular = huespedes.buscar(Huesped.paraBusqueda(c[1].trim()));
         Apartamento apartamento = apartamentos.buscar(Apartamento.paraBusqueda(c[2].trim()));
@@ -97,13 +127,23 @@ public class CargadorDatos {
         }
         gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal);
     }
-
+    /**
+     * Inserta un apartamento en el árbol de apartamentos.
+     *
+     * @param a apartamento que se desea registrar
+     * @throws ExcepcionSGA si ya existe un apartamento con el mismo identificador
+     */
     private void registrar(Apartamento a) throws ExcepcionSGA {
         if (!apartamentos.insertar(a)) {
             throw new ExcepcionSGA("Apartamento repetido: " + a.getCodigo());
         }
     }
-
+    /**
+     * Inserta un huésped en el árbol de huéspedes.
+     *
+     * @param h huésped que se desea registrar
+     * @throws ExcepcionSGA si ya existe un huésped con el mismo documento
+     */
     private void registrar(Huesped h) throws ExcepcionSGA {
         if (!huespedes.insertar(h)) {
             throw new ExcepcionSGA("Huesped repetido: " + h.getDocumento());
@@ -145,7 +185,21 @@ public class CargadorDatos {
         reserva("1094000004", "A-101", LocalDate.of(2027, 1, 2), LocalDate.of(2027, 1, 5), CanalReserva.PORTAL,
                 "Andres Perez:1995-08-30|Camila Diaz:1996-02-20");
     }
-
+    /**
+     * Crea un apartamento con sus tarifas y lo registra en el sistema.
+     *
+     * @param codigo identificador del apartamento
+     * @param nombre nombre del apartamento
+     * @param bloque bloque al que pertenece
+     * @param piso número de piso
+     * @param dormitorios cantidad de dormitorios
+     * @param capacidad capacidad máxima del apartamento
+     * @param baja tarifa por persona y noche en temporada baja
+     * @param media tarifa por persona y noche en temporada media
+     * @param alta tarifa por persona y noche en temporada alta
+     * @param caracteristicas descripción de las características del apartamento
+     * @throws ExcepcionSGA si el apartamento no puede registrarse
+     */
     private void apto(String codigo, String nombre, String bloque, int piso, int dormitorios, int capacidad,
                       double baja, double media, double alta, String caracteristicas) throws ExcepcionSGA {
         Apartamento a = new Apartamento(codigo, nombre, bloque, piso, dormitorios, capacidad, caracteristicas);
@@ -154,12 +208,31 @@ public class CargadorDatos {
         a.definirTarifa(Temporada.ALTA, alta);
         registrar(a);
     }
-
+    /**
+     * Crea un huésped y lo registra en el sistema.
+     *
+     * @param documento documento de identidad del huésped
+     * @param nombre nombre completo del huésped
+     * @param nacimiento fecha de nacimiento del huésped
+     * @param telefono número de teléfono del huésped
+     * @param correo dirección de correo electrónico del huésped
+     * @throws ExcepcionSGA si el huésped no puede registrarse
+     */
     private void huesped(String documento, String nombre, LocalDate nacimiento, String telefono, String correo)
             throws ExcepcionSGA {
         registrar(new Huesped(documento, nombre, nacimiento, telefono, correo));
     }
-
+    /**
+     * Construye los datos de una reserva y los envía al método encargado de cargarla.
+     *
+     * @param documento documento del huésped titular
+     * @param codigoApto código del apartamento reservado
+     * @param entrada fecha de entrada
+     * @param salida fecha de salida
+     * @param canal canal por el que se realiza la reserva
+     * @param ocupantes ocupantes representados mediante pares de nombre y fecha de nacimiento
+     * @throws ExcepcionSGA si la reserva no puede crearse
+     */
     private void reserva(String documento, String codigoApto, LocalDate entrada, LocalDate salida,
                          CanalReserva canal, String ocupantes) throws ExcepcionSGA {
         cargarReserva(new String[] {"RESERVA", documento, codigoApto, entrada.toString(), salida.toString(),
