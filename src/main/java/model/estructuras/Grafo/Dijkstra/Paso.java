@@ -2,40 +2,21 @@ package model.estructuras.Grafo.Dijkstra;
 
 import model.estructuras.Grafo.NodoGrafo;
 
-public class Paso {
+public class Paso<T> {
 
-    private final NodoGrafo<?> nodo;
+    private final NodoGrafo<T> nodo;
     private final int distancia;
-    private final Paso anterior;
+    private final Paso<T> anterior;
 
-    public Paso(NodoGrafo<?> nodo, int distancia, Paso anterior) {
-
-        if (nodo == null) {
-            throw new IllegalArgumentException(
-                    "El nodo del paso no puede ser null"
-            );
-        }
-
-        if (distancia < 0) {
-            throw new IllegalArgumentException(
-                    "La distancia no puede ser negativa"
-            );
-        }
-
+    public Paso(NodoGrafo<T> nodo, int distancia, Paso<T> anterior) {
+        if (nodo == null) throw new IllegalArgumentException("El nodo no puede ser null");
+        if (distancia < 0) throw new IllegalArgumentException("La distancia no puede ser negativa");
         this.nodo = nodo;
         this.distancia = distancia;
         this.anterior = anterior;
     }
 
-    public NodoGrafo<?> getNodo() {
-        return nodo;
-    }
-
-    public int getDistancia() {
-        return distancia;
-    }
-
-    public Paso getAnterior() {
-        return anterior;
-    }
+    public NodoGrafo<T> getNodo() { return nodo; }
+    public int getDistancia() { return distancia; }
+    public Paso<T> getAnterior() { return anterior; }
 }

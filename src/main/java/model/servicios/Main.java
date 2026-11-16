@@ -41,6 +41,7 @@ public class Main {
         probar("CONJUNTO", Main::probarConjunto);
         probar("ARBOL BINARIO DE BUSQUEDA", Main::probarArbol);
         probar("GRAFO Y DIJKSTRA", Main::probarGrafo);
+        probar("GESTOR DEL EDIFICIO", Main::probarGestorEdificio);
         probar("MODELO: ESTANCIA Y TEMPORADAS", Main::probarFechasYTemporadas);
         probar("MODELO: APARTAMENTO Y TARIFAS", Main::probarApartamento);
         probar("MODELO: HUESPED Y EMPLEADO", Main::probarPersonas);
@@ -278,7 +279,7 @@ public class Main {
     }
 
     private static void probarGrafo() {
-        Grafo g = new Grafo();
+        Grafo<String> g = new Grafo<>();
         NodoGrafo<String> a = new NodoGrafo<>("A");
         NodoGrafo<String> b = new NodoGrafo<>("B");
         NodoGrafo<String> c = new NodoGrafo<>("C");
@@ -292,18 +293,78 @@ public class Main {
         igual(4, g.BFS(a, d).tamano(), "BFS encuentra los cuatro nodos alcanzables");
         igual(4, g.dfs(a).tamano(), "DFS encuentra los cuatro nodos alcanzables");
         igual(Integer.valueOf(5), g.costoCamino(a, d), "Dijkstra costo A-B-C-D");
-        ListaDoblementeEnlazada<NodoGrafo<?>> camino = g.armarCamino(a, d);
+        ListaDoblementeEnlazada<NodoGrafo<String>> camino = g.armarCamino(a, d);
         igual("A", camino.primero().getContenido(), "Inicio camino");
         igual("D", camino.ultimo().getContenido(), "Fin camino");
         verificar(g.costoCamino(a, aislado) == null, "No existe camino al nodo aislado");
-        ListaDoblementeEnlazada<NodoGrafo<?>> alcanzables = g.obtenerGrafo(a,
+        ListaDoblementeEnlazada<NodoGrafo<String>> alcanzables = g.obtenerGrafo(a,
                 new ListaDoblementeEnlazada<>());
         igual(4, alcanzables.tamano(), "DFS recursivo del componente conectado");
         verificar(g.imprimir(a).contains("B"), "Imprimir adyacencias");
+        int nodosIterados = 0;
+        for (NodoGrafo<String> nodo : g) nodosIterados++;
+        igual(4, nodosIterados, "El grafo permite iterar sus nodos registrados");
         esperaExcepcion(IllegalArgumentException.class, () -> g.agregarNodo(a, a, 1),
                 "No permitir lazos");
         esperaExcepcion(IllegalArgumentException.class, () -> g.agregarNodo(a, b, 1),
                 "No permitir arista duplicada");
+    }
+
+    private static void probarGestorEdificio() {
+        GestorEdificio gestor = new GestorEdificio();
+
+        model.estructuras.Grafo.Tipo_nodos.Recepcion recepcion =
+                new model.estructuras.Grafo.Tipo_nodos.Recepcion(1);
+        model.estructuras.Grafo.Tipo_nodos.Pasillo pasillo =
+                new model.estructuras.Grafo.Tipo_nodos.Pasillo(1);
+        model.estructuras.Grafo.Tipo_nodos.Escaleras escaleras =
+                new model.estructuras.Grafo.Tipo_nodos.Escaleras(1);
+        model.estructuras.Grafo.Tipo_nodos.CuartosAseo aseo =
+                new model.estructuras.Grafo.Tipo_nodos.CuartosAseo(1);
+
+        Apartamento aptoA = apartamento("ED-1", 2, 1);
+        aptoA.setBloque("A");
+        Apartamento aptoB = apartamento("ED-2", 3, 2);
+        aptoB.setBloque("A");
+        Apartamento aptoAislado = apartamento("ED-3", 2, 1);
+        aptoAislado.setBloque("B");
+
+        gestor.registrarRecepcion(recepcion);
+        gestor.registrarPasillo(pasillo);
+        gestor.registrarEscaleras(escaleras);
+        gestor.registrarCuartoAseo(aseo);
+        gestor.registrarApartamento(aptoA);
+        gestor.registrarApartamento(aptoB);
+        gestor.registrarApartamento(aptoAislado);
+
+        gestor.conectar(recepcion, pasillo, 2);
+        gestor.conectar(pasillo, escaleras, 3);
+        gestor.conectar(escaleras, aptoA, 4);
+        gestor.conectar(pasillo, aptoB, 5);
+
+        igual(9, gestor.distanciaDesdeRecepcion(aptoA),
+                "Dijkstra calcula distancia desde recepción");
+        igual(4, gestor.rutaMasCortaDesdeRecepcion(aptoA).tamano(),
+                "La ruta contiene recepción, pasillo y apartamento");
+        igual(1, gestor.apartamentosInaccesibles(
+                        listaApartamentos(aptoA, aptoB, aptoAislado)).tamano(),
+                "Detectar apartamento aislado");
+        igual(2, gestor.apartamentosPorBloque("A").tamano(),
+                "Agrupar apartamentos por bloque");
+
+        gestor.cerrarConexion(pasillo, escaleras);
+        verificar(gestor.distanciaDesdeRecepcion(aptoA) == null,
+                "Un pasillo cerrado impide el acceso");
+        gestor.abrirConexion(pasillo, escaleras);
+        igual(Integer.valueOf(9), gestor.distanciaDesdeRecepcion(aptoA),
+                "Reabrir conexión recupera la ruta");
+        igual(7, gestor.cantidadNodos(), "El grafo conserva nodos registrados, incluso aislados");
+    }
+
+    private static ListaDoblementeEnlazada<Apartamento> listaApartamentos(Apartamento... apartamentos) {
+        ListaDoblementeEnlazada<Apartamento> lista = new ListaDoblementeEnlazada<>();
+        for (Apartamento apartamento : apartamentos) lista.agregar(apartamento);
+        return lista;
     }
 
     private static void probarFechasYTemporadas() throws Exception {

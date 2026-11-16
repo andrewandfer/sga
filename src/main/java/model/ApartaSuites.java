@@ -33,6 +33,7 @@ public class ApartaSuites {
     private final GestorReservas reservas;
     private final GestorCanalExterno canalExterno;
     private final GestorPreparacion preparacion;
+    private final GestorEdificio edificio;
     private final GestorTurnos turnos;
     private final GestorAdministracion administracion;
     private final CargadorDatos cargador;
@@ -48,6 +49,7 @@ public class ApartaSuites {
         this.reservas = new GestorReservas(cotizador, asignador, vencimientos);
         this.canalExterno = new GestorCanalExterno(reservas);
         this.preparacion = new GestorPreparacion();
+        this.edificio = new GestorEdificio();
         this.turnos = new GestorTurnos();
         this.administracion =
                 new GestorAdministracion(apartamentos, huespedes, turnos);
@@ -155,6 +157,13 @@ public class ApartaSuites {
 
     public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolEmpleado rol) {
         return administracion.listarEmpleadosPorRol(rol);
+    }
+
+    // ==================== Edificio y recorridos ====================
+
+    /** Gestor del grafo físico: recepción, pasillos, escaleras, aseo y apartamentos. */
+    public GestorEdificio getGestorEdificio() {
+        return edificio;
     }
 
     // ==================== Turnos de recepcion ====================
@@ -405,6 +414,11 @@ public class ApartaSuites {
 
     public ListaDoblementeEnlazada<SolicitudPreparacion> listarPreparacionesPendientes() {
         return preparacion.listarPendientes();
+    }
+
+    /** Recorrido desde recepción siguiendo la prioridad de las preparaciones pendientes. */
+    public ListaDoblementeEnlazada<model.estructuras.Grafo.NodoGrafo<Object>> rutaPreparacionesPendientes() {
+        return edificio.rutaPreparacion(preparacion.listarPendientes());
     }
 
     public int cantidadPreparacionesPendientes() {

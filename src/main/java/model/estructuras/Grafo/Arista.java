@@ -1,73 +1,42 @@
 package model.estructuras.Grafo;
 
-import java.util.Objects;
-
-public class Arista {
+public class Arista<T> {
 
     private final int valor;
-    private final NodoGrafo<?> origen;
-    private final NodoGrafo<?> destino;
+    private final NodoGrafo<T> origen;
+    private final NodoGrafo<T> destino;
+    private boolean activa = true;
 
-    public Arista(int valor, NodoGrafo<?> origen, NodoGrafo<?> destino) {
-
+    public Arista(int valor, NodoGrafo<T> origen, NodoGrafo<T> destino) {
         if (origen == null || destino == null) {
-            throw new IllegalArgumentException(
-                    "Los extremos de una arista no pueden ser null"
-            );
+            throw new IllegalArgumentException("Los extremos no pueden ser null");
         }
-
         if (origen == destino) {
-            throw new IllegalArgumentException(
-                    "Una arista no puede conectar un nodo consigo mismo"
-            );
+            throw new IllegalArgumentException("Una arista no puede conectar un nodo consigo mismo");
         }
-
         if (valor < 0) {
-            throw new IllegalArgumentException(
-                    "El peso de una arista no puede ser negativo"
-            );
+            throw new IllegalArgumentException("El peso no puede ser negativo");
         }
-
         this.valor = valor;
         this.origen = origen;
         this.destino = destino;
     }
 
-    public int getValor() {
-        return valor;
-    }
+    public int getValor() { return valor; }
+    public NodoGrafo<T> getOrigen() { return origen; }
+    public NodoGrafo<T> getDestino() { return destino; }
+    public boolean isActiva() { return activa; }
+    public void cerrar() { activa = false; }
+    public void abrir() { activa = true; }
 
-    public NodoGrafo<?> getOrigen() {
-        return origen;
-    }
-
-    public NodoGrafo<?> getDestino() {
-        return destino;
-    }
-
-    public NodoGrafo<?> getExtremo(NodoGrafo<?> nodo) {
-
-        if (nodo == null) {
-            throw new IllegalArgumentException(
-                    "El nodo no puede ser null"
-            );
-        }
-
-        if (nodo == origen) {
-            return destino;
-        }
-
-        if (nodo == destino) {
-            return origen;
-        }
-
-        throw new IllegalArgumentException(
-                "El nodo no pertenece a esta arista"
-        );
+    public NodoGrafo<T> getExtremo(NodoGrafo<T> nodo) {
+        if (nodo == origen) return destino;
+        if (nodo == destino) return origen;
+        throw new IllegalArgumentException("El nodo no pertenece a esta arista");
     }
 
     @Override
     public String toString() {
-        return String.valueOf(valor);
+        return valor + (activa ? "" : " (cerrada)");
     }
 }

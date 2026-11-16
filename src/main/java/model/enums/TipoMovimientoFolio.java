@@ -3,5 +3,7 @@ package model.enums;
 public enum TipoMovimientoFolio {
     CARGO,
     PAGO,
-    DEVOLUCION
+    DEVOLUCION,
+    ANULACION_CARGO,
+    ANULACION_PAGO
 }

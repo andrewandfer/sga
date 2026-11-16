@@ -35,16 +35,31 @@ public class GestorReservas {
     private final CotizadorService cotizador;
     private final AsignadorGrupos asignador;
     private final GestorVencimientos vencimientos;
+    private final GestorFolios gestorFolios;
     private int consecutivo = 0;
 
-    public GestorReservas(CotizadorService cotizador, AsignadorGrupos asignador, GestorVencimientos vencimientos) {
+    public GestorReservas(CotizadorService cotizador, AsignadorGrupos asignador,
+                          GestorVencimientos vencimientos) {
+        this(cotizador, asignador, vencimientos, new GestorFolios());
+    }
+
+    public GestorReservas(CotizadorService cotizador, AsignadorGrupos asignador,
+                          GestorVencimientos vencimientos, GestorFolios gestorFolios) {
+        if (cotizador == null || asignador == null || vencimientos == null || gestorFolios == null) {
+            throw new IllegalArgumentException("Los gestores y servicios de reservas son obligatorios");
+        }
         this.cotizador = cotizador;
         this.asignador = asignador;
         this.vencimientos = vencimientos;
+        this.gestorFolios = gestorFolios;
     }
 
     public GestorVencimientos getVencimientos() {
         return vencimientos;
+    }
+
+    public GestorFolios getGestorFolios() {
+        return gestorFolios;
     }
 
 
@@ -121,7 +136,7 @@ public class GestorReservas {
         // despues; en Portal la reserva sigue pendiente hasta completar el 30 %.
         if (totalAlojamiento > 0) {
             BigDecimal cargo = dinero(totalAlojamiento);
-            reserva.getFolio().registrarCargo(new MovimientoFolio(
+            gestorFolios.registrarCargo(reserva.getFolio(), new MovimientoFolio(
                     "CARGO-" + id,
                     TipoMovimientoFolio.CARGO,
                     "Alojamiento de la reserva " + id,
@@ -298,7 +313,7 @@ public class GestorReservas {
         }
 
         String idMovimiento = "PAGO-" + reserva.getId() + "-" + (reserva.getFolio().numeroMovimientos() + 1);
-        reserva.getFolio().registrarPago(new MovimientoFolio(
+        gestorFolios.registrarPago(reserva.getFolio(), new MovimientoFolio(
                 idMovimiento,
                 TipoMovimientoFolio.PAGO,
                 "Abono de anticipo por Portal",
