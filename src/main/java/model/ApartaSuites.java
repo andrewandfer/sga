@@ -37,6 +37,7 @@ public class ApartaSuites {
     private final GestorEdificio edificio;
     private final GestorTurnos turnos;
     private final GestorAdministracion administracion;
+    private final GestorReportes reportes;
     private final CargadorDatos cargador;
 
 
@@ -54,6 +55,7 @@ public class ApartaSuites {
         this.turnos = new GestorTurnos();
         this.administracion =
                 new GestorAdministracion(apartamentos, huespedes, turnos);
+        this.reportes = new GestorReportes(apartamentos, huespedes, temporadas);
         this.cargador =
                 new CargadorDatos(apartamentos, huespedes, reservas, temporadas);
     }
@@ -218,6 +220,23 @@ public class ApartaSuites {
 
     public ListaDoblementeEnlazada<PeriodoTemporada> getPeriodos() {
         return temporadas.getPeriodos();
+    }
+
+    // ==================== Reportes administrativos ====================
+
+    /** Ocupacion por apartamento y temporada en el intervalo [desde, hasta). */
+    public ListaDoblementeEnlazada<ReporteOcupacion> reporteOcupacion(LocalDate desde, LocalDate hasta) {
+        return reportes.generarOcupacion(desde, hasta);
+    }
+
+    /** Pagos netos recibidos en el intervalo [desde, hasta). */
+    public ReporteIngresos reporteIngresos(LocalDate desde, LocalDate hasta) {
+        return reportes.generarIngresos(desde, hasta);
+    }
+
+    /** Cantidad de reservas por canal y estado, incluyendo canceladas y no-show. */
+    public ListaDoblementeEnlazada<ReporteReservasCanal> reporteReservasPorCanal() {
+        return reportes.generarReservasPorCanal();
     }
 
     // ==================== Disponibilidad ====================
