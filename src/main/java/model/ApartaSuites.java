@@ -31,6 +31,8 @@ public class ApartaSuites {
     private final AsignadorGrupos asignador;
     private final GestorVencimientos vencimientos;
     private final GestorReservas reservas;
+    private final GestorCanalExterno canalExterno;
+    private final GestorPreparacion preparacion;
     private final GestorTurnos turnos;
     private final GestorAdministracion administracion;
     private final CargadorDatos cargador;
@@ -44,6 +46,8 @@ public class ApartaSuites {
         this.asignador = new AsignadorGrupos();
         this.vencimientos = new GestorVencimientos();
         this.reservas = new GestorReservas(cotizador, asignador, vencimientos);
+        this.canalExterno = new GestorCanalExterno(reservas);
+        this.preparacion = new GestorPreparacion();
         this.turnos = new GestorTurnos();
         this.administracion =
                 new GestorAdministracion(apartamentos, huespedes, turnos);
@@ -267,7 +271,7 @@ public class ApartaSuites {
 
     // ==================== Reservas ====================
 
-    /** Crea una reserva. En el canal Portal queda PENDIENTE; en los demas, CONFIRMADA. */
+    /** Crea una reserva directa (confirmada) o del Portal (pendiente). EXTERNA usa la cola FIFO. */
     public Reserva crearReserva(Huesped titular, Apartamento apartamento, Estancia estancia,
                                 ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal)
             throws ReservaSolapadaException, CapacidadExcedidaException {
@@ -307,14 +311,108 @@ public class ApartaSuites {
         reservas.confirmar(reserva);
     }
 
-    /** El huesped llego: CONFIRMADA -> EN_CURSO. */
-    public void iniciarEstancia(Reserva reserva) {
-        reserva.iniciar();
+    /** Registra un abono del Portal y confirma al completar el anticipo minimo del 30 %. */
+    public boolean registrarPagoPortal(Reserva reserva, double monto, LocalDateTime fecha) {
+        return reservas.registrarPagoPortal(reserva, monto, fecha);
     }
 
-    /** El huesped se fue: EN_CURSO -> FINALIZADA. */
+    // ==================== Canal externo (cola FIFO) ====================
+
+    /** Recibe una peticion del tercero y la encola sin bloquear noches todavia. */
+    public SolicitudReservaExterna recibirSolicitudExterna(Huesped titular, Apartamento apartamento,
+                                                           Estancia estancia,
+                                                           ListaDoblementeEnlazada<Ocupante> ocupantes) {
+        return canalExterno.recibirSolicitud(titular, apartamento, estancia, ocupantes);
+    }
+
+    /** Variante con hora de recepcion controlada, util para pruebas y simulacion. */
+    public SolicitudReservaExterna recibirSolicitudExterna(Huesped titular, Apartamento apartamento,
+                                                           Estancia estancia,
+                                                           ListaDoblementeEnlazada<Ocupante> ocupantes,
+                                                           LocalDateTime recibidaEn) {
+        return canalExterno.recibirSolicitud(titular, apartamento, estancia, ocupantes, recibidaEn);
+    }
+
+    /** Procesa la solicitud mas antigua; retorna null si no hay solicitudes pendientes. */
+    public SolicitudReservaExterna procesarSiguienteSolicitudExterna() {
+        return canalExterno.procesarSiguiente();
+    }
+
+    /** Procesa todas las solicitudes pendientes en el orden FIFO. */
+    public ListaDoblementeEnlazada<SolicitudReservaExterna> procesarSolicitudesExternas() {
+        return canalExterno.procesarTodas();
+    }
+
+    public int cantidadSolicitudesExternasPendientes() {
+        return canalExterno.cantidadPendientes();
+    }
+
+    public ListaDoblementeEnlazada<SolicitudReservaExterna> listarSolicitudesExternasPendientes() {
+        return canalExterno.listarPendientes();
+    }
+
+    public ListaDoblementeEnlazada<SolicitudReservaExterna> getHistorialCanalExterno() {
+        return canalExterno.getHistorial();
+    }
+
+    public ListaDoblementeEnlazada<SolicitudReservaExterna> getConflictosCanalExterno() {
+        return canalExterno.getConflictos();
+    }
+
+    /** El huésped llega: solo puede iniciar si el apartamento está preparado. */
+    public void iniciarEstancia(Reserva reserva) {
+        if (reserva == null) {
+            throw new IllegalArgumentException("La reserva es obligatoria");
+        }
+        Apartamento apartamento = reserva.getApartamento();
+        if (apartamento.getEstadoOperativo() != model.enums.EstadoApartamento.PREPARADO) {
+            throw new IllegalStateException("El apartamento " + apartamento.getCodigo()
+                    + " no está preparado para recibir huéspedes");
+        }
+        reserva.iniciar();
+        apartamento.cambiarEstado(model.enums.EstadoApartamento.OCUPADO);
+    }
+
+    /** Checkout sin hora de llegada siguiente conocida: queda al final de prioridad 2. */
     public void finalizarEstancia(Reserva reserva) {
+        finalizarEstancia(reserva, null);
+    }
+
+    /**
+     * Checkout y registro en la cola de preparación. Si la llegada estimada es hoy,
+     * el apartamento obtiene prioridad 1 y se ordena por esa hora.
+     */
+    public void finalizarEstancia(Reserva reserva, LocalDateTime llegadaEstimada) {
+        if (reserva == null) {
+            throw new IllegalArgumentException("La reserva es obligatoria");
+        }
+        Apartamento apartamento = reserva.getApartamento();
+        if (apartamento.getEstadoOperativo() != model.enums.EstadoApartamento.OCUPADO) {
+            throw new IllegalStateException("El apartamento no está ocupado");
+        }
         reserva.finalizar();
+        apartamento.cambiarEstado(model.enums.EstadoApartamento.PENDIENTE_PREPARACION);
+        preparacion.registrarPendiente(apartamento, llegadaEstimada, LocalDateTime.now());
+    }
+
+    public SolicitudPreparacion iniciarSiguientePreparacion(LocalDateTime ahora) {
+        return preparacion.iniciarSiguiente(ahora);
+    }
+
+    public SolicitudPreparacion finalizarPreparacionActual(LocalDateTime ahora) {
+        return preparacion.finalizarActual(ahora);
+    }
+
+    public ListaDoblementeEnlazada<SolicitudPreparacion> listarPreparacionesPendientes() {
+        return preparacion.listarPendientes();
+    }
+
+    public int cantidadPreparacionesPendientes() {
+        return preparacion.cantidadPendientes();
+    }
+
+    public double promedioMinutosPreparacion() {
+        return preparacion.promedioMinutosPreparacion();
     }
 
     /** Cuanto se devolveria si se cancelara hoy, sin cancelar. */

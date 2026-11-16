@@ -15,7 +15,6 @@ public class GestorVencimientos {
     private final Conjunto<String> idsRegistrados;
 
     public GestorVencimientos() {
-
         Comparator<Reserva> comparador =
                 Comparator.comparing(Reserva::getVenceEn);
 
@@ -24,8 +23,10 @@ public class GestorVencimientos {
     }
 
     /**
-     * Agrega una reserva pendiente a la cola de vencimientos.
+     * Registra una reserva pendiente en la cola de vencimientos.
      * Evita registrar dos veces la misma reserva.
+     *
+     * @return true si se agregó; false si ya estaba registrada.
      */
     public boolean agregarReserva(Reserva reserva) {
 
@@ -46,7 +47,8 @@ public class GestorVencimientos {
     }
 
     /**
-     * Consulta la reserva que tiene el vencimiento más próximo.
+     * Consulta la reserva con el vencimiento más próximo.
+     * No la retira de la cola.
      */
     public Reserva consultarProximoVencimiento() {
 
@@ -58,13 +60,19 @@ public class GestorVencimientos {
     }
 
     /**
-     * Cancela las reservas pendientes cuyo plazo ya venció.
+     * Procesa las reservas cuyo plazo de vencimiento ya llegó.
      *
-     * @return cantidad de reservas canceladas.
+     * Retira de la cola las reservas vencidas, independientemente
+     * de su estado actual. Solo cancela las que siguen pendientes.
+     *
+     * @return cantidad de reservas que fueron canceladas.
      */
     public int procesarVencimientos(LocalDateTime ahora) {
 
-        Objects.requireNonNull(ahora, "La fecha actual no puede ser null");
+        Objects.requireNonNull(
+                ahora,
+                "La fecha actual no puede ser null"
+        );
 
         int cantidadCanceladas = 0;
 
@@ -72,20 +80,28 @@ public class GestorVencimientos {
 
             Reserva reserva = reservasPendientes.peek();
 
-            // La cola esta ordenada por hora de vencimiento: si el plazo de la primera
-            // aun no llega, el de las siguientes tampoco. Se compara solo por tiempo (no por
-            // estado) para que una reserva ya confirmada o cancelada no bloquee la cola.
+            /*
+             * La cola está ordenada por fecha de vencimiento.
+             * Si la primera todavía no vence, las siguientes tampoco.
+             */
             if (ahora.isBefore(reserva.getVenceEn())) {
                 break;
             }
 
+            // Ya llegó el vencimiento: se retira de la cola.
             reservasPendientes.poll();
 
-            // Puede haber sido confirmada o cancelada previamente.
+            /*
+             * Puede que la reserva haya sido confirmada o cancelada
+             * manualmente antes de llegar a su vencimiento.
+             */
             if (reserva.getEstado() == EstadoReserva.PENDIENTE) {
+
                 reserva.cancelar();
+
                 // Libera las noches del apartamento.
                 reserva.getApartamento().quitarReserva(reserva);
+
                 cantidadCanceladas++;
             }
         }
@@ -93,11 +109,26 @@ public class GestorVencimientos {
         return cantidadCanceladas;
     }
 
+    /**
+     * Cuenta únicamente las reservas que siguen pendientes.
+     * No cuenta las confirmadas ni las canceladas que aún esperan
+     * a que llegue su fecha de vencimiento para salir de la cola.
+     */
     public int cantidadEnCola() {
-        return reservasPendientes.size();
+
+        int cantidad = 0;
+
+        for (Reserva reserva : reservasPendientes) {
+
+            if (reserva.getEstado() == EstadoReserva.PENDIENTE) {
+                cantidad++;
+            }
+        }
+
+        return cantidad;
     }
 
     public boolean estaVacio() {
-        return reservasPendientes.isEmpty();
+        return cantidadEnCola() == 0;
     }
 }

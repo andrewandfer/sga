@@ -10,10 +10,13 @@ import model.excepciones.ReservaSolapadaException;
 import model.excepciones.TransicionInvalidaException;
 import model.modelo.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import model.enums.TipoMovimientoFolio;
 import java.util.Iterator;
 
 /**
@@ -58,7 +61,31 @@ public class GestorReservas {
                                 ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal,
                                 LocalDateTime creadaEn)
             throws ReservaSolapadaException, CapacidadExcedidaException {
-        if (titular == null || apartamento == null || estancia == null || ocupantes == null || canal == null) {
+        if (canal == CanalReserva.EXTERNA) {
+            throw new IllegalArgumentException(
+                    "Las solicitudes EXTERNAS deben ingresar por la cola FIFO del canal externo");
+        }
+        return crearReservaInterna(titular, apartamento, estancia, ocupantes, canal, creadaEn, false);
+    }
+
+    /**
+     * Crea y confirma una reserva EXTERNA. Solo debe invocarlo GestorCanalExterno
+     * despues de retirar la solicitud de la cola FIFO y validar disponibilidad.
+     */
+    Reserva crearReservaExternaConfirmada(Huesped titular, Apartamento apartamento, Estancia estancia,
+                                          ListaDoblementeEnlazada<Ocupante> ocupantes,
+                                          LocalDateTime creadaEn)
+            throws ReservaSolapadaException, CapacidadExcedidaException {
+        return crearReservaInterna(titular, apartamento, estancia, ocupantes,
+                CanalReserva.EXTERNA, creadaEn, true);
+    }
+
+    private Reserva crearReservaInterna(Huesped titular, Apartamento apartamento, Estancia estancia,
+                                        ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal,
+                                        LocalDateTime creadaEn, boolean confirmarExterna)
+            throws ReservaSolapadaException, CapacidadExcedidaException {
+        if (titular == null || apartamento == null || estancia == null || ocupantes == null || canal == null
+                || creadaEn == null) {
             throw new IllegalArgumentException("Titular, apartamento, estancia, ocupantes y canal son obligatorios");
         }
         if (ocupantes.estaVacia()) {
@@ -73,10 +100,14 @@ public class GestorReservas {
         }
         verificarSolapamiento(apartamento, estancia);
 
+        // Se calcula antes de registrar la reserva para no dejar noches ocupadas
+        // si la cotizacion falla por alguna validacion.
+        double totalAlojamiento = cotizador.cotizar(apartamento, estancia, ocupantes).getTotal();
+
         consecutivo++;
         String id = String.format("RES-%04d", consecutivo);
         Reserva reserva = new Reserva(id, canal, titular, apartamento, estancia, ocupantes, creadaEn);
-        if (canal != CanalReserva.PORTAL) {
+        if (canal == CanalReserva.DIRECTA || confirmarExterna) {
             reserva.confirmar();
         }
         // Si el arbol rechaza la reserva no se puede dejar creada: el apartamento quedaria
@@ -85,8 +116,23 @@ public class GestorReservas {
             throw new IllegalStateException("No se pudo registrar la reserva " + id + " en el apartamento "
                     + apartamento.getCodigo() + ": ya existe una reserva vigente con la misma fecha de entrada");
         }
+
+        // El folio inicia con el cargo total del alojamiento. Los pagos se registran
+        // despues; en Portal la reserva sigue pendiente hasta completar el 30 %.
+        if (totalAlojamiento > 0) {
+            BigDecimal cargo = dinero(totalAlojamiento);
+            reserva.getFolio().registrarCargo(new MovimientoFolio(
+                    "CARGO-" + id,
+                    TipoMovimientoFolio.CARGO,
+                    "Alojamiento de la reserva " + id,
+                    cargo,
+                    creadaEn,
+                    null
+            ));
+        }
+
         titular.agregarAlHistorial(reserva);
-        if (reserva.getEstado() == EstadoReserva.PENDIENTE) {
+        if (canal == CanalReserva.PORTAL && reserva.getEstado() == EstadoReserva.PENDIENTE) {
             vencimientos.agregarReserva(reserva);
         }
         return reserva;
@@ -200,8 +246,85 @@ public class GestorReservas {
     }
 
 
+    /**
+     * Confirma una reserva. Las reservas del Portal requieren que el folio
+     * tenga registrado, como minimo, el 30 % del valor cotizado.
+     */
     public void confirmar(Reserva reserva) {
+        if (reserva == null) {
+            throw new IllegalArgumentException("La reserva es obligatoria");
+        }
+
+        if (reserva.getCanal() == CanalReserva.PORTAL
+                && reserva.getEstado() == EstadoReserva.PENDIENTE) {
+            BigDecimal anticipoRequerido;
+            try {
+                anticipoRequerido = dinero(calcularAnticipo(reserva));
+            } catch (CapacidadExcedidaException e) {
+                throw new IllegalStateException("No fue posible validar el anticipo de la reserva", e);
+            }
+
+            if (reserva.getFolio().calcularTotalPagos().compareTo(anticipoRequerido) < 0) {
+                throw new IllegalStateException("La reserva del Portal requiere un anticipo minimo de $"
+                        + anticipoRequerido + " para ser confirmada");
+            }
+        }
+
         reserva.confirmar();
+    }
+
+    /**
+     * Registra un pago realizado por el Portal. Admite abonos parciales y confirma
+     * automaticamente la reserva cuando los pagos acumulados alcanzan el 30 %.
+     * @return true si el pago dejo la reserva confirmada; false si sigue pendiente.
+     */
+    public boolean registrarPagoPortal(Reserva reserva, double monto, LocalDateTime fecha) {
+        if (reserva == null || fecha == null) {
+            throw new IllegalArgumentException("La reserva y la fecha del pago son obligatorias");
+        }
+        if (reserva.getCanal() != CanalReserva.PORTAL) {
+            throw new IllegalArgumentException("Este registro de pago aplica unicamente a reservas del Portal");
+        }
+        if (reserva.getEstado() != EstadoReserva.PENDIENTE) {
+            throw new IllegalStateException("Solo se pueden registrar anticipos de reservas pendientes");
+        }
+        if (!Double.isFinite(monto) || monto <= 0) {
+            throw new IllegalArgumentException("El monto del pago debe ser positivo y finito");
+        }
+
+        BigDecimal valor = dinero(monto);
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El pago debe ser de al menos un centavo");
+        }
+
+        String idMovimiento = "PAGO-" + reserva.getId() + "-" + (reserva.getFolio().numeroMovimientos() + 1);
+        reserva.getFolio().registrarPago(new MovimientoFolio(
+                idMovimiento,
+                TipoMovimientoFolio.PAGO,
+                "Abono de anticipo por Portal",
+                valor,
+                fecha,
+                null
+        ));
+
+        BigDecimal requerido;
+        try {
+            requerido = dinero(calcularAnticipo(reserva));
+        } catch (CapacidadExcedidaException e) {
+            throw new IllegalStateException("No fue posible calcular el anticipo de la reserva", e);
+        }
+
+        if (reserva.getFolio().calcularTotalPagos().compareTo(requerido) >= 0) {
+            confirmar(reserva);
+        }
+        return reserva.getEstado() == EstadoReserva.CONFIRMADA;
+    }
+
+    private BigDecimal dinero(double valor) {
+        if (!Double.isFinite(valor)) {
+            throw new IllegalArgumentException("El valor monetario debe ser finito");
+        }
+        return BigDecimal.valueOf(valor).setScale(2, RoundingMode.HALF_UP);
     }
 
     /** Muestra cuanto se devolveria si se cancelara hoy, sin cancelar. */
@@ -249,6 +372,6 @@ public class GestorReservas {
 
     /** Anticipo del 30 % que debe pagar el huesped en el canal Portal. */
     public double calcularAnticipo(Reserva reserva) throws CapacidadExcedidaException {
-        return cotizarReserva(reserva).getTotal() * PORCENTAJE_ANTICIPO;
+        return dinero(cotizarReserva(reserva).getTotal() * PORCENTAJE_ANTICIPO).doubleValue();
     }
 }
