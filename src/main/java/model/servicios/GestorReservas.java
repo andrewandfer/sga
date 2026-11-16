@@ -31,11 +31,17 @@ public class GestorReservas {
     public static final double PORCENTAJE_DEVOLUCION_PARCIAL = 0.50;
     private final CotizadorService cotizador;
     private final AsignadorGrupos asignador;
+    private final GestorVencimientos vencimientos;
     private int consecutivo = 0;
 
-    public GestorReservas(CotizadorService cotizador, AsignadorGrupos asignador) {
+    public GestorReservas(CotizadorService cotizador, AsignadorGrupos asignador, GestorVencimientos vencimientos) {
         this.cotizador = cotizador;
         this.asignador = asignador;
+        this.vencimientos = vencimientos;
+    }
+
+    public GestorVencimientos getVencimientos() {
+        return vencimientos;
     }
 
 
@@ -73,8 +79,16 @@ public class GestorReservas {
         if (canal != CanalReserva.PORTAL) {
             reserva.confirmar();
         }
-        apartamento.agregarReserva(reserva);
+        // Si el arbol rechaza la reserva no se puede dejar creada: el apartamento quedaria
+        // sin registrar sus noches y se podria vender dos veces.
+        if (!apartamento.agregarReserva(reserva)) {
+            throw new IllegalStateException("No se pudo registrar la reserva " + id + " en el apartamento "
+                    + apartamento.getCodigo() + ": ya existe una reserva vigente con la misma fecha de entrada");
+        }
         titular.agregarAlHistorial(reserva);
+        if (reserva.getEstado() == EstadoReserva.PENDIENTE) {
+            vencimientos.agregarReserva(reserva);
+        }
         return reserva;
     }
 

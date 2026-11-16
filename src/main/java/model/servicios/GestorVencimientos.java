@@ -72,9 +72,10 @@ public class GestorVencimientos {
 
             Reserva reserva = reservasPendientes.peek();
 
-            // Como la cola está ordenada, si la primera no venció,
-            // ninguna de las siguientes ha vencido.
-            if (!reserva.estaVencida(ahora)) {
+            // La cola esta ordenada por hora de vencimiento: si el plazo de la primera
+            // aun no llega, el de las siguientes tampoco. Se compara solo por tiempo (no por
+            // estado) para que una reserva ya confirmada o cancelada no bloquee la cola.
+            if (ahora.isBefore(reserva.getVenceEn())) {
                 break;
             }
 
@@ -83,6 +84,8 @@ public class GestorVencimientos {
             // Puede haber sido confirmada o cancelada previamente.
             if (reserva.getEstado() == EstadoReserva.PENDIENTE) {
                 reserva.cancelar();
+                // Libera las noches del apartamento.
+                reserva.getApartamento().quitarReserva(reserva);
                 cantidadCanceladas++;
             }
         }

@@ -29,6 +29,7 @@ public class ApartaSuites {
     private final GestorTemporadas temporadas;
     private final CotizadorService cotizador;
     private final AsignadorGrupos asignador;
+    private final GestorVencimientos vencimientos;
     private final GestorReservas reservas;
     private final GestorTurnos turnos;
     private final GestorAdministracion administracion;
@@ -41,7 +42,8 @@ public class ApartaSuites {
         this.temporadas = new GestorTemporadas();
         this.cotizador = new CotizadorService(temporadas);
         this.asignador = new AsignadorGrupos();
-        this.reservas = new GestorReservas(cotizador, asignador);
+        this.vencimientos = new GestorVencimientos();
+        this.reservas = new GestorReservas(cotizador, asignador, vencimientos);
         this.turnos = new GestorTurnos();
         this.administracion =
                 new GestorAdministracion(apartamentos, huespedes, turnos);
@@ -333,6 +335,16 @@ public class ApartaSuites {
         return reservas.cancelar(reserva, montoPagado, hoy);
     }
 
+    /** Cancela las reservas Pendientes vencidas y libera sus noches. Retorna cuantas cancelo. */
+    public int procesarVencimientos(LocalDateTime ahora) {
+        return vencimientos.procesarVencimientos(ahora);
+    }
+
+    /** Cuantas reservas Pendientes siguen esperando su vencimiento. */
+    public int reservasPorVencer() {
+        return vencimientos.cantidadEnCola();
+    }
+
     /** El huesped no llego: la reserva pasa a NO_SHOW y libera sus noches. */
     public void marcarNoShow(Reserva reserva) {
         reservas.marcarNoShow(reserva);
@@ -371,4 +383,3 @@ public class ApartaSuites {
         return h;
     }
 }
-
