@@ -52,6 +52,7 @@ public class Main {
         probar("ANTICIPO DEL PORTAL", Main::probarAnticipoPortal);
         probar("CANAL EXTERNO FIFO", Main::probarCanalExterno);
         probar("VENCIMIENTOS", Main::probarVencimientos);
+        probar("REPORTES ADMINISTRATIVOS", Main::probarReportes);
         probar("ASIGNADOR DE GRUPOS", Main::probarAsignador);
         probar("TURNOS", Main::probarTurnos);
         probar("ADMINISTRACION", Main::probarAdministracion);
@@ -713,6 +714,93 @@ public class Main {
         igual(EstadoReserva.CANCELADA, vencida.getEstado(), "Cambiar a cancelada");
         verificar(!a.getReservas().contiene(vencida), "Liberar reserva vencida del árbol");
         igual(0, gv.cantidadEnCola(), "Cola sin pendientes");
+    }
+
+
+    private static void probarReportes() throws Exception {
+        ArbolBinarioBusqueda<Apartamento> apartamentos = new ArbolBinarioBusqueda<>();
+        ArbolBinarioBusqueda<Huesped> huespedes = new ArbolBinarioBusqueda<>();
+        GestorTemporadas temporadas = new GestorTemporadas();
+        temporadas.definirPeriodo(new PeriodoTemporada(
+                LocalDate.of(2027, 1, 2), LocalDate.of(2027, 1, 3), Temporada.MEDIA));
+
+        Apartamento a = apartamento("REP-1", 3, 2);
+        Apartamento b = apartamento("REP-2", 2, 1);
+        apartamentos.insertar(a);
+        apartamentos.insertar(b);
+
+        Huesped directaHuesped = huesped("REP-H1");
+        Huesped portalHuesped = huesped("REP-H2");
+        Huesped externaHuesped = huesped("REP-H3");
+        huespedes.insertar(directaHuesped);
+        huespedes.insertar(portalHuesped);
+        huespedes.insertar(externaHuesped);
+
+        GestorReservas gestorReservas = new GestorReservas(
+                new CotizadorService(temporadas), new AsignadorGrupos(), new GestorVencimientos());
+        LocalDateTime creada = LocalDateTime.of(2027, 1, 1, 8, 0);
+        Reserva directa = gestorReservas.crearReserva(directaHuesped, a,
+                estancia(LocalDate.of(2027, 1, 1), 3),
+                ocupantes(1, LocalDate.of(1990, 1, 1)), CanalReserva.DIRECTA, creada);
+        Reserva portal = gestorReservas.crearReserva(portalHuesped, b,
+                estancia(LocalDate.of(2027, 1, 1), 1),
+                ocupantes(1, LocalDate.of(1990, 1, 1)), CanalReserva.PORTAL, creada);
+        gestorReservas.cancelar(portal, LocalDate.of(2027, 1, 1));
+        Reserva externa = gestorReservas.crearReservaExternaConfirmada(externaHuesped, b,
+                estancia(LocalDate.of(2027, 1, 2), 1),
+                ocupantes(1, LocalDate.of(1990, 1, 1)), creada);
+        gestorReservas.marcarNoShow(externa);
+
+        // Los movimientos del folio se prueban por separado y deben reflejarse
+        // como pagos, devoluciones y anulaciones dentro del periodo consultado.
+        LocalDateTime pago1 = LocalDateTime.of(2027, 1, 5, 10, 0);
+        gestorReservas.registrarPago(directa, "Primer abono", new BigDecimal("50000"), pago1);
+        gestorReservas.getGestorFolios().deshacerUltimaOperacion(
+                directa.getFolio(), LocalDateTime.of(2027, 1, 6, 10, 0));
+        gestorReservas.registrarPago(directa, "Segundo abono", new BigDecimal("100000"),
+                LocalDateTime.of(2027, 1, 7, 10, 0));
+        gestorReservas.getGestorFolios().registrarDevolucion(directa.getFolio(), new MovimientoFolio(
+                "REP-DEV-1", TipoMovimientoFolio.DEVOLUCION, "Devolucion de prueba",
+                new BigDecimal("20000"), LocalDateTime.of(2027, 1, 8, 10, 0), null));
+
+        GestorReportes reportes = new GestorReportes(apartamentos, huespedes, temporadas);
+        ListaDoblementeEnlazada<ReporteOcupacion> ocupacion = reportes.generarOcupacion(
+                LocalDate.of(2027, 1, 1), LocalDate.of(2027, 1, 4));
+        igual(4, ocupacion.tamano(), "Una fila por apartamento y temporada presente en el periodo");
+        ReporteOcupacion baja = null;
+        ReporteOcupacion media = null;
+        for (ReporteOcupacion fila : ocupacion) {
+            if (fila.getCodigoApartamento().equals("REP-1") && fila.getTemporada() == Temporada.BAJA) baja = fila;
+            if (fila.getCodigoApartamento().equals("REP-1") && fila.getTemporada() == Temporada.MEDIA) media = fila;
+        }
+        verificar(baja != null && media != null, "Reporte contiene temporada baja y media");
+        igual(1, baja.getNochesDisponibles(), "Una noche baja en el periodo");
+        igual(1, baja.getNochesOcupadas(), "La noche baja de la reserva directa está ocupada");
+        igual(2, media.getNochesDisponibles(), "Dos noches medias en el periodo");
+        igual(2, media.getNochesOcupadas(), "Las dos noches medias de la reserva directa están ocupadas");
+        cerca(100.0, media.getPorcentajeOcupacion(), "Porcentaje de ocupación por temporada");
+
+        ReporteIngresos ingresos = reportes.generarIngresos(
+                LocalDate.of(2027, 1, 1), LocalDate.of(2027, 2, 1));
+        igual(new BigDecimal("150000.00"), ingresos.getPagos(), "Sumar los dos pagos recibidos");
+        igual(new BigDecimal("20000"), ingresos.getDevoluciones(), "Restar devolución real por separado");
+        igual(new BigDecimal("50000.00"), ingresos.getAnulacionesPagos(), "Contabilizar anulación de pago");
+        igual(new BigDecimal("80000.00"), ingresos.getIngresosNetos(), "Calcular ingreso neto del periodo");
+
+        ListaDoblementeEnlazada<ReporteReservasCanal> canales = reportes.generarReservasPorCanal();
+        igual(3, canales.tamano(), "Generar una fila por cada canal");
+        for (ReporteReservasCanal fila : canales) {
+            if (fila.getCanal() == CanalReserva.DIRECTA) {
+                igual(1, fila.getCantidad(EstadoReserva.CONFIRMADA), "Contar reserva directa confirmada");
+            } else if (fila.getCanal() == CanalReserva.PORTAL) {
+                igual(1, fila.getCantidad(EstadoReserva.CANCELADA), "Conservar canceladas en el historial");
+            } else if (fila.getCanal() == CanalReserva.EXTERNA) {
+                igual(1, fila.getCantidad(EstadoReserva.NO_SHOW), "Conservar no-show en el historial");
+            }
+        }
+        esperaExcepcion(IllegalArgumentException.class,
+                () -> reportes.generarOcupacion(LocalDate.of(2027, 2, 1), LocalDate.of(2027, 2, 1)),
+                "Rechazar periodos de reporte vacíos");
     }
 
     private static void probarAsignador() throws Exception {

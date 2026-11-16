@@ -19,9 +19,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ApartaSuites {
 
+    private static final Logger LOGGER = Logger.getLogger(ApartaSuites.class.getName());
     private static ApartaSuites instance;
 
     private final ArbolBinarioBusqueda<Apartamento> apartamentos;
@@ -39,6 +45,7 @@ public class ApartaSuites {
     private final GestorAdministracion administracion;
     private final GestorReportes reportes;
     private final CargadorDatos cargador;
+    private final ScheduledExecutorService procesadorAutomaticoVencimientos;
 
 
     private ApartaSuites() {
@@ -58,6 +65,23 @@ public class ApartaSuites {
         this.reportes = new GestorReportes(apartamentos, huespedes, temporadas);
         this.cargador =
                 new CargadorDatos(apartamentos, huespedes, reservas, temporadas);
+
+        // El procesador es daemon: no impide cerrar la aplicación. Se ejecuta
+        // periódicamente sin depender de que el usuario abra un panel o pulse un botón.
+        this.procesadorAutomaticoVencimientos = Executors.newSingleThreadScheduledExecutor(tarea -> {
+            Thread hilo = new Thread(tarea, "sga-vencimientos");
+            hilo.setDaemon(true);
+            return hilo;
+        });
+        this.procesadorAutomaticoVencimientos.scheduleAtFixedRate(() -> {
+            synchronized (ApartaSuites.this) {
+                try {
+                    vencimientos.procesarVencimientos(LocalDateTime.now());
+                } catch (RuntimeException e) {
+                    LOGGER.log(Level.SEVERE, "No fue posible procesar los vencimientos de reservas", e);
+                }
+            }
+        }, 0, 30, TimeUnit.SECONDS);
     }
 
     // Punto único de acceso al sistema.
@@ -225,17 +249,17 @@ public class ApartaSuites {
     // ==================== Reportes administrativos ====================
 
     /** Ocupacion por apartamento y temporada en el intervalo [desde, hasta). */
-    public ListaDoblementeEnlazada<ReporteOcupacion> reporteOcupacion(LocalDate desde, LocalDate hasta) {
+    public synchronized ListaDoblementeEnlazada<ReporteOcupacion> reporteOcupacion(LocalDate desde, LocalDate hasta) {
         return reportes.generarOcupacion(desde, hasta);
     }
 
     /** Pagos netos recibidos en el intervalo [desde, hasta). */
-    public ReporteIngresos reporteIngresos(LocalDate desde, LocalDate hasta) {
+    public synchronized ReporteIngresos reporteIngresos(LocalDate desde, LocalDate hasta) {
         return reportes.generarIngresos(desde, hasta);
     }
 
     /** Cantidad de reservas por canal y estado, incluyendo canceladas y no-show. */
-    public ListaDoblementeEnlazada<ReporteReservasCanal> reporteReservasPorCanal() {
+    public synchronized ListaDoblementeEnlazada<ReporteReservasCanal> reporteReservasPorCanal() {
         return reportes.generarReservasPorCanal();
     }
 
@@ -301,31 +325,31 @@ public class ApartaSuites {
     // ==================== Reservas ====================
 
     /** Crea una reserva directa (confirmada) o del Portal (pendiente). EXTERNA usa la cola FIFO. */
-    public Reserva crearReserva(Huesped titular, Apartamento apartamento, Estancia estancia,
-                                ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal)
+    public synchronized Reserva crearReserva(Huesped titular, Apartamento apartamento, Estancia estancia,
+                                             ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal)
             throws ReservaSolapadaException, CapacidadExcedidaException {
         return reservas.crearReserva(titular, apartamento, estancia, ocupantes, canal);
     }
 
-    public Reserva crearReserva(Huesped titular, Apartamento apartamento, Estancia estancia,
-                                ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal,
-                                LocalDateTime creadaEn)
+    public synchronized Reserva crearReserva(Huesped titular, Apartamento apartamento, Estancia estancia,
+                                             ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal,
+                                             LocalDateTime creadaEn)
             throws ReservaSolapadaException, CapacidadExcedidaException {
         return reservas.crearReserva(titular, apartamento, estancia, ocupantes, canal, creadaEn);
     }
 
     /** Version que resuelve titular y apartamento por documento y codigo. */
-    public Reserva crearReserva(String documentoTitular, String codigoApartamento, Estancia estancia,
-                                ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal)
+    public synchronized Reserva crearReserva(String documentoTitular, String codigoApartamento, Estancia estancia,
+                                             ListaDoblementeEnlazada<Ocupante> ocupantes, CanalReserva canal)
             throws ExcepcionSGA {
         return reservas.crearReserva(exigirHuesped(documentoTitular), exigirApartamento(codigoApartamento),
                 estancia, ocupantes, canal);
     }
 
     /** Reserva un grupo repartido en la combinacion minima de apartamentos libres (todo o nada). */
-    public ListaDoblementeEnlazada<Reserva> reservarGrupoGrande(Huesped titular, Estancia estancia,
-                                                                ListaDoblementeEnlazada<Ocupante> grupo,
-                                                                CanalReserva canal)
+    public synchronized ListaDoblementeEnlazada<Reserva> reservarGrupoGrande(Huesped titular, Estancia estancia,
+                                                                             ListaDoblementeEnlazada<Ocupante> grupo,
+                                                                             CanalReserva canal)
             throws ReservaSolapadaException, CapacidadExcedidaException {
         return reservas.reservarGrupoGrande(titular, estancia, grupo, apartamentos, canal);
     }
@@ -336,12 +360,12 @@ public class ApartaSuites {
         return reservas.asignarGrupo(personas, estancia, apartamentos);
     }
 
-    public void confirmarReserva(Reserva reserva) {
+    public synchronized void confirmarReserva(Reserva reserva) {
         reservas.confirmar(reserva);
     }
 
     /** Registra un abono del Portal y confirma al completar el anticipo minimo del 30 %. */
-    public boolean registrarPagoPortal(Reserva reserva, double monto, LocalDateTime fecha) {
+    public synchronized boolean registrarPagoPortal(Reserva reserva, double monto, LocalDateTime fecha) {
         return reservas.registrarPagoPortal(reserva, monto, fecha);
     }
 
@@ -384,12 +408,12 @@ public class ApartaSuites {
     }
 
     /** Procesa la solicitud mas antigua; retorna null si no hay solicitudes pendientes. */
-    public SolicitudReservaExterna procesarSiguienteSolicitudExterna() {
+    public synchronized SolicitudReservaExterna procesarSiguienteSolicitudExterna() {
         return canalExterno.procesarSiguiente();
     }
 
     /** Procesa todas las solicitudes pendientes en el orden FIFO. */
-    public ListaDoblementeEnlazada<SolicitudReservaExterna> procesarSolicitudesExternas() {
+    public synchronized ListaDoblementeEnlazada<SolicitudReservaExterna> procesarSolicitudesExternas() {
         return canalExterno.procesarTodas();
     }
 
@@ -410,7 +434,7 @@ public class ApartaSuites {
     }
 
     /** El huésped llega: solo puede iniciar si el apartamento está preparado. */
-    public void iniciarEstancia(Reserva reserva) {
+    public synchronized void iniciarEstancia(Reserva reserva) {
         if (reserva == null) {
             throw new IllegalArgumentException("La reserva es obligatoria");
         }
@@ -424,7 +448,7 @@ public class ApartaSuites {
     }
 
     /** Checkout sin hora de llegada siguiente conocida: queda al final de prioridad 2. */
-    public void finalizarEstancia(Reserva reserva) {
+    public synchronized void finalizarEstancia(Reserva reserva) {
         finalizarEstancia(reserva, null);
     }
 
@@ -432,7 +456,7 @@ public class ApartaSuites {
      * Checkout y registro en la cola de preparación. Si la llegada estimada es hoy,
      * el apartamento obtiene prioridad 1 y se ordena por esa hora.
      */
-    public void finalizarEstancia(Reserva reserva, LocalDateTime llegadaEstimada) {
+    public synchronized void finalizarEstancia(Reserva reserva, LocalDateTime llegadaEstimada) {
         if (reserva == null) {
             throw new IllegalArgumentException("La reserva es obligatoria");
         }
@@ -485,25 +509,25 @@ public class ApartaSuites {
     }
 
     /** Cancela usando los pagos reales del folio y registra la devolución correspondiente. */
-    public double cancelarReserva(Reserva reserva) {
+    public synchronized double cancelarReserva(Reserva reserva) {
         return reservas.cancelar(reserva);
     }
 
-    public double cancelarReserva(Reserva reserva, LocalDate hoy) {
+    public synchronized double cancelarReserva(Reserva reserva, LocalDate hoy) {
         return reservas.cancelar(reserva, hoy);
     }
 
     /** Cancela la reserva, libera sus noches y retorna el valor a devolver. */
-    public double cancelarReserva(Reserva reserva, double montoPagado) {
+    public synchronized double cancelarReserva(Reserva reserva, double montoPagado) {
         return reservas.cancelar(reserva, montoPagado);
     }
 
-    public double cancelarReserva(Reserva reserva, double montoPagado, LocalDate hoy) {
+    public synchronized double cancelarReserva(Reserva reserva, double montoPagado, LocalDate hoy) {
         return reservas.cancelar(reserva, montoPagado, hoy);
     }
 
     /** Cancela las reservas Pendientes vencidas y libera sus noches. Retorna cuantas cancelo. */
-    public int procesarVencimientos(LocalDateTime ahora) {
+    public synchronized int procesarVencimientos(LocalDateTime ahora) {
         return vencimientos.procesarVencimientos(ahora);
     }
 
@@ -513,22 +537,22 @@ public class ApartaSuites {
     }
 
     /** El huesped no llego: la reserva pasa a NO_SHOW y libera sus noches. */
-    public void marcarNoShow(Reserva reserva) {
+    public synchronized void marcarNoShow(Reserva reserva) {
         reservas.marcarNoShow(reserva);
     }
 
     // ==================== Persistencia y datos de prueba ====================
 
-    public void cargarDesdeArchivo(String ruta) throws IOException, ExcepcionSGA {
+    public synchronized void cargarDesdeArchivo(String ruta) throws IOException, ExcepcionSGA {
         cargador.cargarDesdeArchivo(ruta);
     }
 
-    public void guardarEnArchivo(String ruta) throws IOException {
+    public synchronized void guardarEnArchivo(String ruta) throws IOException {
         cargador.guardarEnArchivo(ruta);
     }
 
     /** Carga temporadas, apartamentos, huespedes y reservas de ejemplo. */
-    public void cargarEscenarioPrueba() throws ExcepcionSGA {
+    public synchronized void cargarEscenarioPrueba() throws ExcepcionSGA {
         cargador.cargarEscenarioPrueba();
     }
 
