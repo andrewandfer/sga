@@ -14,18 +14,15 @@ public class Empleado implements Comparable<Empleado>, Usuario {
     private String telefono;
     private String contrasena;
 
-    public Empleado(String documento, String nombre, RolUsuario rol, String telefono) {
-        if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank() || rol == null || rol == RolUsuario.HUESPED) {
+    public Empleado(String documento, String nombre, RolUsuario rol, String telefono, String contrasena) {
+        if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank()
+                || rol == null || rol == RolUsuario.HUESPED) {
             throw new IllegalArgumentException("Documento, nombre y rol son obligatorios");
         }
         this.documento = documento;
         this.nombre = nombre;
         this.rol = rol;
         this.telefono = telefono;
-    }
-
-    public Empleado(String documento, String nombre, RolUsuario rol, String telefono, String contrasena) {
-        this(documento, nombre, rol, telefono);
         cambiarContrasena(contrasena);
     }
 

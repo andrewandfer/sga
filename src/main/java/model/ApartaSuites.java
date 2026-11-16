@@ -3,7 +3,6 @@ package model;
 import model.enums.CanalReserva;
 import model.enums.CriterioOrden;
 import model.enums.RolUsuario;
-import model.enums.RolUsuario;
 import model.interfaces.Usuario;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
