@@ -1,6 +1,6 @@
 package model.servicios;
 
-import model.enums.RolEmpleado;
+import model.enums.RolUsuario;
 import model.estructuras.ListaCircular;
 import model.excepciones.ExcepcionSGA;
 import model.modelo.Empleado;
@@ -17,7 +17,7 @@ public class GestorTurnos {
         if (empleado == null) {
             throw new IllegalArgumentException("El empleado es obligatorio");
         }
-        if (empleado.getRol() != RolEmpleado.RECEPCIONISTA) {
+        if (empleado.getRol() != RolUsuario.RECEPCIONISTA) {
             throw new ExcepcionSGA("Solo los recepcionistas participan en la rotacion de turnos: " + empleado);
         }
         for (Empleado existente : turnos) {

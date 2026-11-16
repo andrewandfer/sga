@@ -1,6 +1,6 @@
 package model.servicios;
 
-import model.enums.RolEmpleado;
+import model.enums.RolUsuario;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
 import model.estructuras.listaDoble.ListaDoblementeEnlazada;
@@ -148,7 +148,7 @@ public class GestorAdministracion {
         if (!empleados.insertar(empleado)) {
             throw new ExcepcionSGA("Ya existe un empleado con el documento " + empleado.getDocumento());
         }
-        if (empleado.getRol() == RolEmpleado.RECEPCIONISTA) {
+        if (empleado.getRol() == RolUsuario.RECEPCIONISTA) {
             turnos.agregarRecepcionista(empleado);
         }
     }
@@ -171,7 +171,7 @@ public class GestorAdministracion {
         return empleados.inOrden();
     }
 
-    public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolEmpleado rol) {
+    public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolUsuario rol) {
         ListaDoblementeEnlazada<Empleado> resultado = new ListaDoblementeEnlazada<>();
         for (Empleado e : empleados) {
             if (e.getRol() == rol) {

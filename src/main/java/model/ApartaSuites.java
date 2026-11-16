@@ -2,7 +2,9 @@ package model;
 
 import model.enums.CanalReserva;
 import model.enums.CriterioOrden;
-import model.enums.RolEmpleado;
+import model.enums.RolUsuario;
+import model.enums.RolUsuario;
+import model.interfaces.Usuario;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
 import model.estructuras.Conjunto;
@@ -29,6 +31,7 @@ public class ApartaSuites {
 
     private static final Logger LOGGER = Logger.getLogger(ApartaSuites.class.getName());
     private static ApartaSuites instance;
+    private Usuario usuarioAutenticado;
 
     private final ArbolBinarioBusqueda<Apartamento> apartamentos;
     private final ArbolBinarioBusqueda<Huesped> huespedes;
@@ -91,6 +94,33 @@ public class ApartaSuites {
         }
         return instance;
     }
+    // ==================== Autenticacion y sesion ====================
+
+    /** Busca el documento en los arboles existentes y valida su contrasena. */
+    public synchronized boolean iniciarSesion(String documento, String contrasena) {
+        if (documento == null || documento.isBlank() || contrasena == null) return false;
+        Usuario usuario = buscarHuesped(documento.trim());
+        if (usuario == null) usuario = buscarEmpleado(documento.trim());
+        if (usuario == null || !usuario.tieneContrasena() || !usuario.validarContrasena(contrasena)) {
+            usuarioAutenticado = null;
+            return false;
+        }
+        usuarioAutenticado = usuario;
+        return true;
+    }
+
+    public synchronized Usuario getUsuarioAutenticado() {
+        return usuarioAutenticado;
+    }
+
+    public synchronized RolUsuario getRolAutenticado() {
+        return usuarioAutenticado == null ? null : usuarioAutenticado.getRolUsuario();
+    }
+
+    public synchronized void cerrarSesion() {
+        usuarioAutenticado = null;
+    }
+
     // ==================== Apartamentos ====================
 
     public void registrarApartamento(Apartamento apartamento) throws ExcepcionSGA {
@@ -121,6 +151,10 @@ public class ApartaSuites {
     // ==================== Huespedes ====================
 
     public Huesped registrarHuesped(Huesped huesped) throws ExcepcionSGA {
+        if (huesped == null) throw new IllegalArgumentException("El huesped es obligatorio");
+        if (buscarEmpleado(huesped.getDocumento()) != null) {
+            throw new ExcepcionSGA("Ya existe un usuario con ese documento");
+        }
         return administracion.registrarHuesped(huesped);
     }
 
@@ -166,6 +200,10 @@ public class ApartaSuites {
 
     /** Registra al empleado; si es recepcionista tambien entra a la rotacion de turnos. */
     public void registrarEmpleado(Empleado empleado) throws ExcepcionSGA {
+        if (empleado == null) throw new IllegalArgumentException("El empleado es obligatorio");
+        if (buscarHuesped(empleado.getDocumento()) != null) {
+            throw new ExcepcionSGA("Ya existe un usuario con ese documento");
+        }
         administracion.registrarEmpleado(empleado);
     }
 
@@ -182,7 +220,7 @@ public class ApartaSuites {
         return administracion.listarEmpleados();
     }
 
-    public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolEmpleado rol) {
+    public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolUsuario rol) {
         return administracion.listarEmpleadosPorRol(rol);
     }
 

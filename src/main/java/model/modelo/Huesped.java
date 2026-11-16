@@ -3,10 +3,12 @@ package model.modelo;
 
 import model.estructuras.Conjunto;
 import model.estructuras.listaDoble.ListaDoblementeEnlazada;
+import model.enums.RolUsuario;
+import model.interfaces.Usuario;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Huesped implements Comparable<Huesped> {
+public class Huesped implements Comparable<Huesped>, Usuario {
 
     private final String documento;
     private String nombre;
@@ -14,6 +16,7 @@ public class Huesped implements Comparable<Huesped> {
     private String telefono;
     private String correo;
     private String rutaFotografia;
+    private String contrasena;
     private final Conjunto<Apartamento> favoritos = new Conjunto<>();
     private final ListaDoblementeEnlazada<Reserva> historial = new ListaDoblementeEnlazada<>();
 
@@ -26,6 +29,12 @@ public class Huesped implements Comparable<Huesped> {
         this.fechaNacimiento = fechaNacimiento;
         this.telefono = telefono;
         this.correo = correo;
+    }
+
+    public Huesped(String documento, String nombre, LocalDate fechaNacimiento, String telefono,
+                   String correo, String contrasena) {
+        this(documento, nombre, fechaNacimiento, telefono, correo);
+        cambiarContrasena(contrasena);
     }
 
     private Huesped(String documento) {
@@ -53,8 +62,32 @@ public class Huesped implements Comparable<Huesped> {
         return historial.eliminar(reserva);
     }
 
+    @Override
     public String getDocumento() {
         return documento;
+    }
+
+    @Override
+    public void cambiarContrasena(String contrasena) {
+        if (contrasena == null || contrasena.isBlank()) {
+            throw new IllegalArgumentException("La contrasena es obligatoria");
+        }
+        this.contrasena = contrasena;
+    }
+
+    @Override
+    public boolean validarContrasena(String contrasena) {
+        return this.contrasena != null && this.contrasena.equals(contrasena);
+    }
+
+    @Override
+    public boolean tieneContrasena() {
+        return contrasena != null && !contrasena.isBlank();
+    }
+
+    @Override
+    public RolUsuario getRolUsuario() {
+        return RolUsuario.HUESPED;
     }
 
     public String getNombre() {

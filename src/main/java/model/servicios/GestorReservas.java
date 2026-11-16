@@ -36,6 +36,8 @@ public class GestorReservas {
     private final AsignadorGrupos asignador;
     private final GestorVencimientos vencimientos;
     private final GestorFolios gestorFolios;
+    /** Historial global de todas las reservas creadas, incluso canceladas y no-show. */
+    private final ListaDoblementeEnlazada<Reserva> reservasRegistradas = new ListaDoblementeEnlazada<>();
     private int consecutivo = 0;
 
     public GestorReservas(CotizadorService cotizador, AsignadorGrupos asignador,
@@ -60,6 +62,18 @@ public class GestorReservas {
 
     public GestorFolios getGestorFolios() {
         return gestorFolios;
+    }
+
+    /**
+     * Devuelve una copia del listado global de reservas registradas.
+     * Incluye reservas activas, finalizadas, canceladas y no-show.
+     */
+    public ListaDoblementeEnlazada<Reserva> listarReservas() {
+        ListaDoblementeEnlazada<Reserva> copia = new ListaDoblementeEnlazada<>();
+        for (Reserva reserva : reservasRegistradas) {
+            copia.agregar(reserva);
+        }
+        return copia;
     }
 
 
@@ -147,6 +161,7 @@ public class GestorReservas {
         }
 
         titular.agregarAlHistorial(reserva);
+        reservasRegistradas.agregar(reserva);
         if (canal == CanalReserva.PORTAL && reserva.getEstado() == EstadoReserva.PENDIENTE) {
             vencimientos.agregarReserva(reserva);
         }
@@ -186,6 +201,7 @@ public class GestorReservas {
             r.cancelar();
             r.getApartamento().quitarReserva(r);
             r.getTitular().quitarDelHistorial(r);
+            reservasRegistradas.eliminar(r);
         }
     }
 

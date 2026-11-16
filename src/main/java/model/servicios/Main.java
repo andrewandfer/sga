@@ -423,7 +423,7 @@ public class Main {
         verificar(!h.agregarFavorito(a), "No duplicar favorito");
         verificar(h.quitarFavorito(a), "Quitar favorito");
         verificar(!h.quitarFavorito(a), "No quitar favorito inexistente");
-        Empleado e = new Empleado("2001", "Recepcionista", RolEmpleado.RECEPCIONISTA, "3001111111");
+        Empleado e = new Empleado("2001", "Recepcionista", RolUsuario.RECEPCIONISTA, "3001111111");
         igual("2001", Empleado.paraBusqueda("2001").getDocumento(), "Clave de búsqueda empleado");
         igual("1001", Huesped.paraBusqueda("1001").getDocumento(), "Clave de búsqueda huésped");
     }
@@ -820,8 +820,8 @@ public class Main {
 
     private static void probarTurnos() throws Exception {
         GestorTurnos gt = new GestorTurnos();
-        Empleado a = new Empleado("T-1", "Ana", RolEmpleado.RECEPCIONISTA, "3001");
-        Empleado b = new Empleado("T-2", "Luis", RolEmpleado.RECEPCIONISTA, "3002");
+        Empleado a = new Empleado("T-1", "Ana", RolUsuario.RECEPCIONISTA, "3001");
+        Empleado b = new Empleado("T-2", "Luis", RolUsuario.RECEPCIONISTA, "3002");
         gt.agregarRecepcionista(a); gt.agregarRecepcionista(b);
         igual(a, gt.turnoActual(), "Primer recepcionista tiene turno");
         igual(b, gt.pasarTurno(), "Rotar al segundo");
@@ -829,7 +829,7 @@ public class Main {
         verificar(gt.retirar(a), "Retirar recepcionista");
         igual(1, gt.cantidad(), "Cantidad tras retiro");
         esperaExcepcion(ExcepcionSGA.class,
-                () -> { try { gt.agregarRecepcionista(new Empleado("T-3", "Admin", RolEmpleado.ADMINISTRADOR, "3003")); }
+                () -> { try { gt.agregarRecepcionista(new Empleado("T-3", "Admin", RolUsuario.ADMINISTRADOR, "3003")); }
                 catch (ExcepcionSGA ex) { throw new RuntimeException(ex); } },
                 "No agregar administrador a turnos");
     }
@@ -1008,7 +1008,7 @@ public class Main {
         ga.registrarHuesped(h);
         igual(h, ga.buscarHuesped("ADM-H1"), "Buscar huésped por documento");
 
-        Empleado e = new Empleado("ADM-E1", "Recepción", RolEmpleado.RECEPCIONISTA, "3000");
+        Empleado e = new Empleado("ADM-E1", "Recepción", RolUsuario.RECEPCIONISTA, "3000");
         ga.registrarEmpleado(e);
         igual(e, ga.buscarEmpleado("ADM-E1"), "Buscar empleado");
         igual(1, turnos.cantidad(), "Registrar recepcionista también en turnos");
