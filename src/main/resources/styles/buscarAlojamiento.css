@@ -1,0 +1,328 @@
+
+/* COLORES GENERALES */
+
+.dashboard-root {
+    -fx-background-color: #F5F2EC;
+    -fx-font-family: "Segoe UI";
+}
+
+/* MENU LATERAL */
+
+.sidebar {
+    -fx-background-color: #243B4B;
+    -fx-padding: 35 22 25 22;
+}
+
+.brand-small {
+    -fx-text-fill: #DCE4E5;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.brand-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 58px;
+    -fx-font-weight: bold;
+}
+
+.brand-caption {
+    -fx-text-fill: #D8AD68;
+    -fx-font-size: 9px;
+}
+
+.menu-heading {
+    -fx-text-fill: #AABBC2;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 8 5;
+}
+
+/* BOTONES DEL MENU */
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E2E8EA;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 13 15;
+    -fx-background-radius: 9px;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #385565;
+}
+
+.nav-active {
+    -fx-background-color: #557985;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.logout-button {
+    -fx-background-color: #314C5B;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 12;
+    -fx-background-radius: 9px;
+    -fx-cursor: hand;
+}
+
+.sidebar-footer {
+    -fx-text-fill: #AABBC2;
+    -fx-font-size: 9px;
+    -fx-alignment: CENTER;
+}
+
+/* AYUDA */
+
+.help-card {
+    -fx-background-color: #314C5B;
+    -fx-padding: 16;
+    -fx-background-radius: 12px;
+}
+
+.help-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.help-description {
+    -fx-text-fill: #D0DADD;
+    -fx-font-size: 11px;
+}
+
+.help-button {
+    -fx-background-color: #D8AD68;
+    -fx-text-fill: #243B4B;
+    -fx-font-weight: bold;
+    -fx-background-radius: 7px;
+    -fx-cursor: hand;
+}
+
+/* CONTENIDO */
+
+.main-content {
+    -fx-padding: 35 40 30 40;
+    -fx-background-color: #F5F2EC;
+}
+
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.content-scroll > .viewport {
+    -fx-background-color: #F5F2EC;
+}
+
+.content-scroll > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+/* ENCABEZADO */
+
+.eyebrow {
+    -fx-text-fill: #A5844F;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.welcome-title {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 29px;
+    -fx-font-weight: bold;
+}
+
+.welcome-subtitle {
+    -fx-text-fill: #78868A;
+    -fx-font-size: 13px;
+}
+
+.profile-caption {
+    -fx-text-fill: #9A9D98;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.profile-name {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* SECCIONES */
+
+.section-card {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 24;
+    -fx-background-radius: 14px;
+    -fx-border-color: #E9E3D8;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+}
+
+.section-title {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+.section-description {
+    -fx-text-fill: #899497;
+    -fx-font-size: 12px;
+}
+
+.field-label {
+    -fx-text-fill: #66777D;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.result-caption {
+    -fx-text-fill: #A5844F;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* CAMPOS */
+
+.text-field,
+.date-picker,
+.combo-box {
+    -fx-background-color: #F8F7F3;
+    -fx-border-color: #E3DED4;
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+    -fx-padding: 8;
+}
+
+.text-field:focused,
+.date-picker:focused,
+.combo-box:focused {
+    -fx-border-color: #557985;
+}
+
+/* BOTONES */
+
+.primary-button {
+    -fx-background-color: #243B4B;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 13 22;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #385565;
+}
+
+.secondary-button {
+    -fx-background-color: #D8AD68;
+    -fx-text-fill: #243B4B;
+    -fx-font-weight: bold;
+    -fx-padding: 10 16;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #E7C58F;
+}
+
+/* TARJETAS DE APARTAMENTOS */
+
+.apartment-card {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 17;
+    -fx-background-radius: 13px;
+    -fx-border-color: #E9E3D8;
+    -fx-border-radius: 13px;
+    -fx-border-width: 1px;
+}
+
+.apartment-placeholder {
+    -fx-background-color: #EAEDE9;
+    -fx-background-radius: 10px;
+}
+
+.apartment-symbol {
+    -fx-text-fill: #557985;
+    -fx-font-size: 42px;
+}
+
+.placeholder-caption {
+    -fx-text-fill: #899497;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.apartment-title {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.apartment-detail {
+    -fx-text-fill: #66777D;
+    -fx-font-size: 11px;
+}
+
+.apartment-price {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+/* TABLA DE COTIZACION */
+
+.quote-header {
+    -fx-background-color: #243B4B;
+    -fx-padding: 13;
+    -fx-background-radius: 7px;
+}
+
+.quote-header .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.quote-table {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E9E3D8;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.quote-row {
+    -fx-padding: 16 13;
+    -fx-border-color: transparent transparent #E9E3D8 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.quote-cell {
+    -fx-text-fill: #66777D;
+    -fx-font-size: 11px;
+}
+
+.quote-value {
+    -fx-text-fill: #243B4B;
+    -fx-font-weight: bold;
+}
+
+.total-price {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* PIE DE PAGINA */
+
+.footer-text {
+    -fx-text-fill: #A2A29B;
+    -fx-font-size: 10px;
+    -fx-alignment: CENTER;
+}
