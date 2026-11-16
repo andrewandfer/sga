@@ -5,8 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.ApartaSuites;
+import model.enums.RolUsuario;
+import model.excepciones.ExcepcionSGA;
+import model.modelo.Empleado;
 
 public class App extends Application {
+    ApartaSuites apartaSuites = ApartaSuites.getInstance();
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -24,7 +29,10 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExcepcionSGA {
+        ApartaSuites apartaSuites = ApartaSuites.getInstance();
+        Empleado empleado = new Empleado("1","j", RolUsuario.ADMINISTRADOR,"2","1");
+        apartaSuites.registrarEmpleado(empleado);
         launch(args);
     }
 }

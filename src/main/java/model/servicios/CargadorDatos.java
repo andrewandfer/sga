@@ -73,11 +73,14 @@ public class CargadorDatos {
                 registrar(a);
                 break;
             case "HUESPED":
+                if (c.length < 7 || c[6].trim().isEmpty()) {
+                    throw new ExcepcionSGA("El registro HUESPED debe incluir una contrasena en el campo 7");
+                }
                 Huesped h = new Huesped(c[1].trim(), c[2].trim(),
                         c[3].trim().isEmpty() ? null : LocalDate.parse(c[3].trim()),
-                        c[4].trim(), c[5].trim());
-                if (c.length > 6 && !c[6].trim().isEmpty()) {
-                    h.setRutaFotografia(c[6].trim());
+                        c[4].trim(), c[5].trim(), c[6].trim());
+                if (c.length > 7 && !c[7].trim().isEmpty()) {
+                    h.setRutaFotografia(c[7].trim());
                 }
                 registrar(h);
                 break;
@@ -195,11 +198,12 @@ public class CargadorDatos {
                         + tarifa(a, Temporada.MEDIA) + ";" + tarifa(a, Temporada.ALTA) + ";"
                         + campo(a.getCaracteristicas()));
             }
-            escribir(w, "# HUESPED;documento;nombre;nacimiento;telefono;correo;foto");
+            escribir(w, "# HUESPED;documento;nombre;nacimiento;telefono;correo;contrasena;foto");
             for (Huesped h : huespedes) {
                 escribir(w, "HUESPED;" + campo(h.getDocumento()) + ";" + campo(h.getNombre()) + ";"
                         + (h.getFechaNacimiento() == null ? "" : h.getFechaNacimiento()) + ";"
-                        + campo(h.getTelefono()) + ";" + campo(h.getCorreo()) + ";" + campo(h.getRutaFotografia()));
+                        + campo(h.getTelefono()) + ";" + campo(h.getCorreo()) + ";"
+                        + campo(h.getContrasena()) + ";" + campo(h.getRutaFotografia()));
             }
             escribir(w, "# FAVORITO;documento;codigoApartamento");
             for (Huesped h : huespedes) {
@@ -311,7 +315,7 @@ public class CargadorDatos {
 
     private void huesped(String documento, String nombre, LocalDate nacimiento, String telefono, String correo)
             throws ExcepcionSGA {
-        registrar(new Huesped(documento, nombre, nacimiento, telefono, correo));
+        registrar(new Huesped(documento, nombre, nacimiento, telefono, correo, "prueba123"));
     }
 
     private void reserva(String documento, String codigoApto, LocalDate entrada, LocalDate salida,

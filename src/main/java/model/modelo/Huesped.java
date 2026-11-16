@@ -20,7 +20,8 @@ public class Huesped implements Comparable<Huesped>, Usuario {
     private final Conjunto<Apartamento> favoritos = new Conjunto<>();
     private final ListaDoblementeEnlazada<Reserva> historial = new ListaDoblementeEnlazada<>();
 
-    public Huesped(String documento, String nombre, LocalDate fechaNacimiento, String telefono, String correo) {
+    public Huesped(String documento, String nombre, LocalDate fechaNacimiento, String telefono,
+                   String correo, String contrasena) {
         if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("Documento y nombre son obligatorios");
         }
@@ -29,11 +30,6 @@ public class Huesped implements Comparable<Huesped>, Usuario {
         this.fechaNacimiento = fechaNacimiento;
         this.telefono = telefono;
         this.correo = correo;
-    }
-
-    public Huesped(String documento, String nombre, LocalDate fechaNacimiento, String telefono,
-                   String correo, String contrasena) {
-        this(documento, nombre, fechaNacimiento, telefono, correo);
         cambiarContrasena(contrasena);
     }
 
@@ -88,6 +84,10 @@ public class Huesped implements Comparable<Huesped>, Usuario {
     @Override
     public RolUsuario getRolUsuario() {
         return RolUsuario.HUESPED;
+    }
+
+    public String getContrasena() {
+        return contrasena;
     }
 
     public String getNombre() {
