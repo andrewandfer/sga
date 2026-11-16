@@ -1,139 +1,71 @@
 package model.estructuras;
-import java.util.Comparator;
+
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
+import model.estructuras.Pila.Pila;
 import model.excepciones.EstructuraVaciaException;
 
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T> {
-    /**
-     * Representa un nodo individual del árbol binario de búsqueda.
-     *
-     * Cada nodo almacena un dato y referencias a sus dos posibles
-     * subárboles: izquierdo y derecho.
-     *
-     * @param <T> Tipo de dato almacenado en el nodo.
-     */
+
     public static class NodoArbol<T> {
-        /**
-         * Dato almacenado en el nodo.
-         */
+
         private T dato;
-        /**
-         * Referencia al hijo izquierdo del nodo.
-         */
         private NodoArbol<T> izquierdo;
-        /**
-         * Referencia al hijo derecho del nodo.
-         */
         private NodoArbol<T> derecho;
-        /**
-         * Construye un nodo con el dato especificado.
-         *
-         * @param dato Elemento que se almacenará en el nodo.
-         */
+
         public NodoArbol(T dato) {
             this.dato = dato;
         }
-        /**
-         * Obtiene el dato almacenado en el nodo.
-         *
-         * @return Dato del nodo.
-         */
+
         public T getDato() {
             return dato;
         }
-        /**
-         * Modifica el dato almacenado en el nodo.
-         *
-         * @param dato Nuevo dato del nodo.
-         */
+
         public void setDato(T dato) {
             this.dato = dato;
         }
-        /**
-         * Obtiene la referencia al hijo izquierdo.
-         *
-         * @return Nodo hijo izquierdo, o null si no existe.
-         */
+
         public NodoArbol<T> getIzquierdo() {
             return izquierdo;
         }
-        /**
-         * Establece el hijo izquierdo del nodo.
-         *
-         * @param izquierdo Nodo que se establecerá como hijo izquierdo.
-         */
+
         public void setIzquierdo(NodoArbol<T> izquierdo) {
             this.izquierdo = izquierdo;
         }
-        /**
-         * Obtiene la referencia al hijo derecho.
-         *
-         * @return Nodo hijo derecho, o null si no existe.
-         */
+
         public NodoArbol<T> getDerecho() {
             return derecho;
         }
-        /**
-         * Establece el hijo derecho del nodo.
-         *
-         * @param derecho Nodo que se establecerá como hijo derecho.
-         */
+
         public void setDerecho(NodoArbol<T> derecho) {
             this.derecho = derecho;
         }
     }
-    /**
-     * Referencia al nodo raíz del árbol.
-     */
+
     private NodoArbol<T> raiz;
-    /**
-     * Cantidad de elementos almacenados en el árbol.
-     */
     private int tamano;
-    /**
-     * Comparador utilizado para determinar el orden de los elementos.
-     * Si es null, se utiliza el orden natural definido por Comparable.
-     */
     private final Comparator<T> comparador;
-    /**
-     * Construye un árbol binario de búsqueda vacío utilizando
-     * el orden natural de los elementos.
-     */
+
     public ArbolBinarioBusqueda() {
         this(null);
     }
-    /**
-     * Construye un árbol binario de búsqueda vacío utilizando
-     * el comparador especificado.
-     *
-     * @param comparador Criterio de comparación de los elementos.
-     *                   Si es null, se utiliza el orden natural.
-     */
+
     public ArbolBinarioBusqueda(Comparator<T> comparador) {
         this.comparador = comparador;
         this.raiz = null;
         this.tamano = 0;
     }
-    /**
-     * Compara dos elementos utilizando el comparador personalizado
-     * o el orden natural de Comparable.
-     *
-     * @param a Primer elemento de la comparación.
-     * @param b Segundo elemento de la comparación.
-     * @return Valor negativo si a es menor que b, cero si son
-     *         equivalentes según el criterio de comparación
-     *         o positivo si a es mayor que b.
-     */
+
     private int comparar(T a, T b) {
         return comparador != null
                 ? comparador.compare(a, b)
                 : a.compareTo(b);
     }
 
+    // Insertar un elemento.
     public boolean insertar(T dato) {
 
         if (dato == null) {
@@ -149,7 +81,10 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return tamano > antes;
     }
 
-    private NodoArbol<T> insertar(NodoArbol<T> nodo, T dato) {
+    private NodoArbol<T> insertar(
+            NodoArbol<T> nodo,
+            T dato) {
+
         if (nodo == null) {
             tamano++;
             return new NodoArbol<>(dato);
@@ -167,6 +102,7 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return nodo;
     }
 
+    // Buscar un elemento.
     public T buscar(T clave) {
 
         if (clave == null) {
@@ -178,7 +114,10 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return buscar(raiz, clave);
     }
 
-    private T buscar(NodoArbol<T> nodo, T clave) {
+    private T buscar(
+            NodoArbol<T> nodo,
+            T clave) {
+
         if (nodo == null) {
             return null;
         }
@@ -193,16 +132,12 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
                 ? buscar(nodo.getIzquierdo(), clave)
                 : buscar(nodo.getDerecho(), clave);
     }
-    /**
-     * Comprueba si un elemento se encuentra almacenado en el árbol.
-     *
-     * @param clave Elemento cuya existencia se desea verificar.
-     * @return true si el elemento está presente; false en caso contrario.
-     */
+
     public boolean contiene(T clave) {
         return buscar(clave) != null;
     }
 
+    // Eliminar un elemento.
     public boolean eliminar(T clave) {
 
         if (clave == null) {
@@ -218,7 +153,10 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return tamano < antes;
     }
 
-    private NodoArbol<T> eliminar(NodoArbol<T> nodo, T clave) {
+    private NodoArbol<T> eliminar(
+            NodoArbol<T> nodo,
+            T clave) {
+
         if (nodo == null) {
             return null;
         }
@@ -261,6 +199,7 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return nodo;
     }
 
+    // Encontrar el menor elemento de un subárbol.
     private NodoArbol<T> minimo(NodoArbol<T> nodo) {
 
         if (nodo.getIzquierdo() == null) {
@@ -270,6 +209,7 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return minimo(nodo.getIzquierdo());
     }
 
+    // Eliminar el menor elemento de un subárbol.
     private NodoArbol<T> eliminarMinimo(NodoArbol<T> nodo) {
 
         if (nodo.getIzquierdo() == null) {
@@ -283,18 +223,11 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return nodo;
     }
 
+    // Calcular altura.
     public int altura() {
         return altura(raiz);
     }
-    /**
-     * Calcula recursivamente la altura de un subárbol.
-     *
-     * Obtiene la mayor altura entre los subárboles izquierdo y
-     * derecho y agrega un nivel correspondiente al nodo actual.
-     *
-     * @param nodo Raíz del subárbol cuya altura se desea calcular.
-     * @return Altura del subárbol; 0 si el nodo es null.
-     */
+
     private int altura(NodoArbol<T> nodo) {
 
         if (nodo == null) {
@@ -307,6 +240,7 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         );
     }
 
+    // Recorrido inorden: izquierdo - raíz - derecho.
     public ListaDoblementeEnlazada<T> inOrden() {
 
         ListaDoblementeEnlazada<T> resultado =
@@ -317,7 +251,10 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         return resultado;
     }
 
-    private void inOrden(NodoArbol<T> nodo, ListaDoblementeEnlazada<T> resultado) {
+    private void inOrden(
+            NodoArbol<T> nodo,
+            ListaDoblementeEnlazada<T> resultado) {
+
         if (nodo == null) {
             return;
         }
@@ -329,20 +266,7 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
         inOrden(nodo.getDerecho(), resultado);
     }
 
-    public int tamano() {
-        return tamano;
-    }
-
-    public boolean estaVacio() {
-        return tamano == 0;
-    }
-
-
-    public NodoArbol<T> getRaiz() {
-        return raiz;
-    }
-
-    /** Recorrido raiz - izquierdo - derecho (recursivo). */
+    // Recorrido preorden: raíz - izquierdo - derecho.
     public ListaDoblementeEnlazada<T> preOrden() {
 
         ListaDoblementeEnlazada<T> resultado =
@@ -445,31 +369,39 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> implements Iterable<T
 
     private class IteradorInOrden implements Iterator<T> {
 
-        private final ListaDoblementeEnlazada<NodoArbol<T>> pendientes = new ListaDoblementeEnlazada<>();
+        private final Pila<NodoArbol<T>> pendientes =
+                new Pila<>();
 
         IteradorInOrden() {
             apilarRamaIzquierda(raiz);
         }
 
         private void apilarRamaIzquierda(NodoArbol<T> nodo) {
+
             while (nodo != null) {
-                pendientes.agregar(nodo);
+                pendientes.push(nodo);
                 nodo = nodo.getIzquierdo();
             }
         }
 
         @Override
         public boolean hasNext() {
-            return !pendientes.estaVacia();
+            return !pendientes.isEmpty();
         }
 
         @Override
         public T next() {
-            if (pendientes.estaVacia()) {
-                throw new NoSuchElementException("No hay mas elementos en el arbol");
+
+            if (!hasNext()) {
+                throw new NoSuchElementException(
+                        "No hay más elementos en el árbol"
+                );
             }
-            NodoArbol<T> nodo = pendientes.eliminarEn(pendientes.tamano() - 1);
+
+            NodoArbol<T> nodo = pendientes.pop();
+
             apilarRamaIzquierda(nodo.getDerecho());
+
             return nodo.getDato();
         }
     }

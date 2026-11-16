@@ -172,7 +172,7 @@ public class GestorReservas {
                 }
                 reservas.agregar(crearReserva(titular, apartamento, estancia, parte, canal));
             }
-        } catch (RuntimeException e) {
+        } catch (ReservaSolapadaException | CapacidadExcedidaException | RuntimeException e) {
             // Todo o nada: si una de las reservas del grupo falla, se deshacen las ya creadas.
             deshacerReservas(reservas);
             throw e;
