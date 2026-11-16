@@ -1,13 +1,22 @@
 package model.estructuras.Grafo;
 
+/**
+ * Conexion ponderada entre dos nodos. La etiqueta permite asociar informacion
+ * propia de la conexion (por ejemplo, el Pasillo fisico del edificio).
+ */
 public class Arista<T> {
 
     private final int valor;
     private final NodoGrafo<T> origen;
     private final NodoGrafo<T> destino;
+    private final Object etiqueta;
     private boolean activa = true;
 
     public Arista(int valor, NodoGrafo<T> origen, NodoGrafo<T> destino) {
+        this(valor, origen, destino, null);
+    }
+
+    public Arista(int valor, NodoGrafo<T> origen, NodoGrafo<T> destino, Object etiqueta) {
         if (origen == null || destino == null) {
             throw new IllegalArgumentException("Los extremos no pueden ser null");
         }
@@ -20,11 +29,13 @@ public class Arista<T> {
         this.valor = valor;
         this.origen = origen;
         this.destino = destino;
+        this.etiqueta = etiqueta;
     }
 
     public int getValor() { return valor; }
     public NodoGrafo<T> getOrigen() { return origen; }
     public NodoGrafo<T> getDestino() { return destino; }
+    public Object getEtiqueta() { return etiqueta; }
     public boolean isActiva() { return activa; }
     public void cerrar() { activa = false; }
     public void abrir() { activa = true; }
@@ -37,6 +48,7 @@ public class Arista<T> {
 
     @Override
     public String toString() {
-        return valor + (activa ? "" : " (cerrada)");
+        return valor + (activa ? "" : " (cerrada)")
+                + (etiqueta == null ? "" : " - " + etiqueta);
     }
 }

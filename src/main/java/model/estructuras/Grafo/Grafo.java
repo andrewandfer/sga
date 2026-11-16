@@ -26,13 +26,19 @@ public class Grafo<T> implements Iterable<NodoGrafo<T>> {
     }
 
     public void agregarNodo(NodoGrafo<T> origen, NodoGrafo<T> destino, Integer valor) {
+        agregarNodo(origen, destino, valor, null);
+    }
+
+    /** Agrega una conexion y conserva una etiqueta opcional asociada a la arista. */
+    public void agregarNodo(NodoGrafo<T> origen, NodoGrafo<T> destino,
+                            Integer valor, Object etiqueta) {
         Objects.requireNonNull(origen, "El nodo origen no puede ser null");
         Objects.requireNonNull(destino, "El nodo destino no puede ser null");
         if (valor == null || valor < 0) throw new IllegalArgumentException("El peso debe ser no negativo");
         if (origen == destino) throw new IllegalArgumentException("No se permiten lazos");
         if (origen.contieneAdyacente(destino)) throw new IllegalArgumentException("La conexión ya existe");
 
-        Arista<T> arista = new Arista<>(valor, origen, destino);
+        Arista<T> arista = new Arista<>(valor, origen, destino, etiqueta);
         origen.agregarAdyacente(arista);
         destino.agregarAdyacente(arista);
         registrarNodo(origen);
@@ -62,8 +68,11 @@ public class Grafo<T> implements Iterable<NodoGrafo<T>> {
                 .append(nodo.getContenido()).append(".\n");
         for (Arista<T> arista : nodo.getAdyacentes()) {
             resultado.append("[Valor: ").append(arista.getValor())
-                    .append(arista.isActiva() ? ", abierta] - " : ", cerrada] - ")
-                    .append(arista.getExtremo(nodo)).append("\n");
+                    .append(arista.isActiva() ? ", abierta" : ", cerrada");
+            if (arista.getEtiqueta() != null) {
+                resultado.append(", conexión: ").append(arista.getEtiqueta());
+            }
+            resultado.append("] - ").append(arista.getExtremo(nodo)).append("\n");
         }
         return resultado.toString();
     }

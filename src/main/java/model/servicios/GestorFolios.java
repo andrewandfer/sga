@@ -102,6 +102,19 @@ public class GestorFolios {
         return reversion;
     }
 
+    /** Devuelve el movimiento situado en el tope de la pila, sin retirarlo. */
+    public MovimientoFolio obtenerUltimaOperacion(Folio folio) {
+        if (folio == null) {
+            throw new IllegalArgumentException("El folio es obligatorio");
+        }
+        HistorialFolio historial = buscarHistorial(folio);
+        if (historial == null || historial.operaciones.isEmpty()) {
+            throw new EstructuraVaciaException(
+                    "No hay operaciones registradas para el folio " + folio.getId());
+        }
+        return historial.operaciones.peek().movimiento;
+    }
+
     public boolean puedeDeshacer(Folio folio) {
         if (folio == null) {
             return false;

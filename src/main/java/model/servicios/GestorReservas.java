@@ -335,6 +335,87 @@ public class GestorReservas {
         return reserva.getEstado() == EstadoReserva.CONFIRMADA;
     }
 
+    /** Registra un cargo adicional en el folio de una reserva. */
+    public MovimientoFolio registrarCargo(Reserva reserva, String concepto,
+                                          BigDecimal valor, LocalDateTime fecha) {
+        validarDatosFolio(reserva, concepto, valor, fecha);
+        MovimientoFolio movimiento = new MovimientoFolio(
+                generarIdMovimiento(reserva, "CARGO"),
+                TipoMovimientoFolio.CARGO,
+                concepto,
+                dinero(valor),
+                fecha,
+                null
+        );
+        gestorFolios.registrarCargo(reserva.getFolio(), movimiento);
+        return movimiento;
+    }
+
+    /** Registra un pago de recepción en el folio de una reserva. */
+    public MovimientoFolio registrarPago(Reserva reserva, String concepto,
+                                         BigDecimal valor, LocalDateTime fecha) {
+        validarDatosFolio(reserva, concepto, valor, fecha);
+        MovimientoFolio movimiento = new MovimientoFolio(
+                generarIdMovimiento(reserva, "PAGO"),
+                TipoMovimientoFolio.PAGO,
+                concepto,
+                dinero(valor),
+                fecha,
+                null
+        );
+        gestorFolios.registrarPago(reserva.getFolio(), movimiento);
+        return movimiento;
+    }
+
+    /** Deshace el último cargo o pago del folio, conservando ambos movimientos. */
+    public MovimientoFolio deshacerUltimaOperacion(Reserva reserva, LocalDateTime fecha) {
+        if (reserva == null || fecha == null) {
+            throw new IllegalArgumentException("La reserva y la fecha son obligatorias");
+        }
+        MovimientoFolio ultima = gestorFolios.obtenerUltimaOperacion(reserva.getFolio());
+        // Una reserva Portal ya confirmada debe conservar el anticipo mínimo del 30 %.
+        if (reserva.getCanal() == CanalReserva.PORTAL
+                && reserva.getEstado() == EstadoReserva.CONFIRMADA
+                && ultima.getTipo() == TipoMovimientoFolio.PAGO) {
+            BigDecimal pagosRestantes = reserva.getFolio().calcularTotalPagos()
+                    .subtract(reserva.getFolio().calcularTotalAnulacionesPagos())
+                    .subtract(ultima.getValor());
+            try {
+                if (pagosRestantes.compareTo(dinero(calcularAnticipo(reserva))) < 0) {
+                    throw new IllegalStateException(
+                            "No se puede deshacer este pago porque la reserva Portal quedaría por debajo del anticipo del 30 %");
+                }
+            } catch (CapacidadExcedidaException e) {
+                throw new IllegalStateException("No fue posible validar el anticipo de la reserva", e);
+            }
+        }
+        return gestorFolios.deshacerUltimaOperacion(reserva.getFolio(), fecha);
+    }
+
+    public boolean puedeDeshacer(Reserva reserva) {
+        return reserva != null && gestorFolios.puedeDeshacer(reserva.getFolio());
+    }
+
+    private void validarDatosFolio(Reserva reserva, String concepto,
+                                   BigDecimal valor, LocalDateTime fecha) {
+        if (reserva == null || concepto == null || concepto.isBlank()
+                || valor == null || fecha == null) {
+            throw new IllegalArgumentException(
+                    "Reserva, concepto, valor y fecha son obligatorios");
+        }
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El valor del movimiento debe ser positivo");
+        }
+    }
+
+    private String generarIdMovimiento(Reserva reserva, String prefijo) {
+        return prefijo + "-" + reserva.getId() + "-" + (reserva.getFolio().numeroMovimientos() + 1);
+    }
+
+    private BigDecimal dinero(BigDecimal valor) {
+        return valor.setScale(2, RoundingMode.HALF_UP);
+    }
+
     private BigDecimal dinero(double valor) {
         if (!Double.isFinite(valor)) {
             throw new IllegalArgumentException("El valor monetario debe ser finito");
@@ -342,36 +423,113 @@ public class GestorReservas {
         return BigDecimal.valueOf(valor).setScale(2, RoundingMode.HALF_UP);
     }
 
-    /** Muestra cuanto se devolveria si se cancelara hoy, sin cancelar. */
+    /** Calcula la devolución usando únicamente los pagos netos registrados en el folio. */
+    public double calcularDevolucion(Reserva reserva) {
+        return calcularDevolucion(reserva, dineroDisponibleParaDevolver(reserva).doubleValue(), LocalDate.now());
+    }
+
+    /** Muestra cuánto se devolvería del monto indicado, sin cancelar la reserva. */
     public double calcularDevolucion(Reserva reserva, double montoPagado) {
         return calcularDevolucion(reserva, montoPagado, LocalDate.now());
     }
 
     public double calcularDevolucion(Reserva reserva, double montoPagado, LocalDate hoy) {
-        if (reserva.getEstado() != EstadoReserva.PENDIENTE && reserva.getEstado() != EstadoReserva.CONFIRMADA) {
-            throw new TransicionInvalidaException("La reserva " + reserva.getId() + " no se puede cancelar en estado "
-                    + reserva.getEstado());
+        validarReservaCancelable(reserva);
+        if (hoy == null || !Double.isFinite(montoPagado) || montoPagado < 0) {
+            throw new IllegalArgumentException("La fecha y el monto pagado deben ser válidos");
+        }
+        BigDecimal disponible = dineroDisponibleParaDevolver(reserva);
+        BigDecimal solicitado = dinero(montoPagado);
+        if (solicitado.compareTo(disponible) > 0) {
+            throw new IllegalArgumentException(
+                    "El monto indicado supera los pagos netos registrados en el folio");
         }
         long dias = ChronoUnit.DAYS.between(hoy, reserva.getEstancia().getEntrada());
         if (dias >= DIAS_DEVOLUCION_TOTAL) {
-            return montoPagado;
+            return solicitado.doubleValue();
         }
         if (dias >= DIAS_DEVOLUCION_PARCIAL) {
-            return montoPagado * PORCENTAJE_DEVOLUCION_PARCIAL;
+            return solicitado.multiply(BigDecimal.valueOf(PORCENTAJE_DEVOLUCION_PARCIAL))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
         }
         return 0;
     }
 
-    /** Cancela la reserva, libera sus noches y retorna el valor a devolver. */
+    /** Cancela y devuelve el importe que corresponda según los pagos reales del folio. */
+    public double cancelar(Reserva reserva) {
+        return cancelar(reserva, LocalDate.now(), LocalDateTime.now());
+    }
+
+    public double cancelar(Reserva reserva, LocalDate hoy) {
+        return cancelar(reserva, hoy, LocalDateTime.now());
+    }
+
+    public double cancelar(Reserva reserva, LocalDate hoy, LocalDateTime fechaMovimiento) {
+        validarReservaCancelable(reserva);
+        if (hoy == null || fechaMovimiento == null) {
+            throw new IllegalArgumentException("Las fechas de cancelación son obligatorias");
+        }
+        BigDecimal disponible = dineroDisponibleParaDevolver(reserva);
+        double devolucion = calcularDevolucion(reserva, disponible.doubleValue(), hoy);
+        if (devolucion > 0) {
+            MovimientoFolio movimiento = new MovimientoFolio(
+                    generarIdMovimiento(reserva, "DEVOLUCION"),
+                    TipoMovimientoFolio.DEVOLUCION,
+                    "Devolución por cancelación de la reserva " + reserva.getId(),
+                    dinero(devolucion),
+                    fechaMovimiento,
+                    null
+            );
+            gestorFolios.registrarDevolucion(reserva.getFolio(), movimiento);
+        }
+        reserva.cancelar();
+        reserva.getApartamento().quitarReserva(reserva);
+        return devolucion;
+    }
+
+    /** Compatibilidad con llamadas que indican el monto pagado; nunca permite devolver dinero no recibido. */
     public double cancelar(Reserva reserva, double montoPagado) {
         return cancelar(reserva, montoPagado, LocalDate.now());
     }
 
     public double cancelar(Reserva reserva, double montoPagado, LocalDate hoy) {
+        validarReservaCancelable(reserva);
         double devolucion = calcularDevolucion(reserva, montoPagado, hoy);
+        if (devolucion > 0) {
+            MovimientoFolio movimiento = new MovimientoFolio(
+                    generarIdMovimiento(reserva, "DEVOLUCION"),
+                    TipoMovimientoFolio.DEVOLUCION,
+                    "Devolución por cancelación de la reserva " + reserva.getId(),
+                    dinero(devolucion),
+                    LocalDateTime.now(),
+                    null
+            );
+            gestorFolios.registrarDevolucion(reserva.getFolio(), movimiento);
+        }
         reserva.cancelar();
         reserva.getApartamento().quitarReserva(reserva);
         return devolucion;
+    }
+
+    private void validarReservaCancelable(Reserva reserva) {
+        if (reserva == null) {
+            throw new IllegalArgumentException("La reserva es obligatoria");
+        }
+        if (reserva.getEstado() != EstadoReserva.PENDIENTE
+                && reserva.getEstado() != EstadoReserva.CONFIRMADA) {
+            throw new TransicionInvalidaException("La reserva " + reserva.getId()
+                    + " no se puede cancelar en estado " + reserva.getEstado());
+        }
+    }
+
+    private BigDecimal dineroDisponibleParaDevolver(Reserva reserva) {
+        if (reserva == null) {
+            throw new IllegalArgumentException("La reserva es obligatoria");
+        }
+        Folio folio = reserva.getFolio();
+        return folio.calcularTotalPagos()
+                .subtract(folio.calcularTotalDevoluciones())
+                .subtract(folio.calcularTotalAnulacionesPagos());
     }
 
     /** El huesped no llego: la reserva pasa a NO_SHOW y libera sus noches. */

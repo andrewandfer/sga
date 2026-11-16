@@ -15,6 +15,7 @@ import model.modelo.*;
 import model.servicios.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -325,6 +326,27 @@ public class ApartaSuites {
         return reservas.registrarPagoPortal(reserva, monto, fecha);
     }
 
+    /** Registra un cargo adicional en el folio desde recepción. */
+    public MovimientoFolio registrarCargo(Reserva reserva, String concepto,
+                                          BigDecimal valor, LocalDateTime fecha) {
+        return reservas.registrarCargo(reserva, concepto, valor, fecha);
+    }
+
+    /** Registra un pago de recepción en el folio. */
+    public MovimientoFolio registrarPago(Reserva reserva, String concepto,
+                                         BigDecimal valor, LocalDateTime fecha) {
+        return reservas.registrarPago(reserva, concepto, valor, fecha);
+    }
+
+    /** Deshace el último cargo o pago, registrando su movimiento contrario. */
+    public MovimientoFolio deshacerUltimaOperacionFolio(Reserva reserva, LocalDateTime fecha) {
+        return reservas.deshacerUltimaOperacion(reserva, fecha);
+    }
+
+    public boolean puedeDeshacerOperacionFolio(Reserva reserva) {
+        return reservas.puedeDeshacer(reserva);
+    }
+
     // ==================== Canal externo (cola FIFO) ====================
 
     /** Recibe una peticion del tercero y la encola sin bloquear noches todavia. */
@@ -429,6 +451,11 @@ public class ApartaSuites {
         return preparacion.promedioMinutosPreparacion();
     }
 
+    /** Calcula la devolución a partir de los pagos netos reales del folio. */
+    public double calcularDevolucion(Reserva reserva) {
+        return reservas.calcularDevolucion(reserva);
+    }
+
     /** Cuanto se devolveria si se cancelara hoy, sin cancelar. */
     public double calcularDevolucion(Reserva reserva, double montoPagado) {
         return reservas.calcularDevolucion(reserva, montoPagado);
@@ -436,6 +463,15 @@ public class ApartaSuites {
 
     public double calcularDevolucion(Reserva reserva, double montoPagado, LocalDate hoy) {
         return reservas.calcularDevolucion(reserva, montoPagado, hoy);
+    }
+
+    /** Cancela usando los pagos reales del folio y registra la devolución correspondiente. */
+    public double cancelarReserva(Reserva reserva) {
+        return reservas.cancelar(reserva);
+    }
+
+    public double cancelarReserva(Reserva reserva, LocalDate hoy) {
+        return reservas.cancelar(reserva, hoy);
     }
 
     /** Cancela la reserva, libera sus noches y retorna el valor a devolver. */

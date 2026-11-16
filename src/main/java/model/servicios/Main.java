@@ -47,6 +47,7 @@ public class Main {
         probar("MODELO: HUESPED Y EMPLEADO", Main::probarPersonas);
         probar("COTIZADOR", Main::probarCotizador);
         probar("FOLIO", Main::probarFolio);
+        probar("GESTOR DE FOLIOS Y DESHACER", Main::probarGestorFolios);
         probar("CICLO DE VIDA DE RESERVAS", Main::probarReservas);
         probar("ANTICIPO DEL PORTAL", Main::probarAnticipoPortal);
         probar("CANAL EXTERNO FIFO", Main::probarCanalExterno);
@@ -315,8 +316,12 @@ public class Main {
 
         model.estructuras.Grafo.Tipo_nodos.Recepcion recepcion =
                 new model.estructuras.Grafo.Tipo_nodos.Recepcion(1);
-        model.estructuras.Grafo.Tipo_nodos.Pasillo pasillo =
+        model.estructuras.Grafo.Tipo_nodos.Pasillo pasillo1 =
                 new model.estructuras.Grafo.Tipo_nodos.Pasillo(1);
+        model.estructuras.Grafo.Tipo_nodos.Pasillo pasillo2 =
+                new model.estructuras.Grafo.Tipo_nodos.Pasillo(2);
+        model.estructuras.Grafo.Tipo_nodos.Pasillo pasillo3 =
+                new model.estructuras.Grafo.Tipo_nodos.Pasillo(3);
         model.estructuras.Grafo.Tipo_nodos.Escaleras escaleras =
                 new model.estructuras.Grafo.Tipo_nodos.Escaleras(1);
         model.estructuras.Grafo.Tipo_nodos.CuartosAseo aseo =
@@ -330,35 +335,38 @@ public class Main {
         aptoAislado.setBloque("B");
 
         gestor.registrarRecepcion(recepcion);
-        gestor.registrarPasillo(pasillo);
         gestor.registrarEscaleras(escaleras);
         gestor.registrarCuartoAseo(aseo);
         gestor.registrarApartamento(aptoA);
         gestor.registrarApartamento(aptoB);
         gestor.registrarApartamento(aptoAislado);
 
-        gestor.conectar(recepcion, pasillo, 2);
-        gestor.conectar(pasillo, escaleras, 3);
-        gestor.conectar(escaleras, aptoA, 4);
-        gestor.conectar(pasillo, aptoB, 5);
+        gestor.conectar(recepcion, escaleras, pasillo1, 2);
+        gestor.conectar(escaleras, aptoA, pasillo2, 7);
+        gestor.conectar(recepcion, aptoB, pasillo3, 7);
 
         igual(9, gestor.distanciaDesdeRecepcion(aptoA),
                 "Dijkstra calcula distancia desde recepción");
-        igual(4, gestor.rutaMasCortaDesdeRecepcion(aptoA).tamano(),
-                "La ruta contiene recepción, pasillo y apartamento");
+        igual(3, gestor.rutaMasCortaDesdeRecepcion(aptoA).tamano(),
+                "La ruta contiene recepción, escaleras y apartamento");
+        verificar(gestor.buscarArista(pasillo1) != null,
+                "El pasillo se conserva como etiqueta de una arista");
+        verificar(gestor.buscarNodo(pasillo1) == null,
+                "El pasillo no se registra como nodo");
         igual(1, gestor.apartamentosInaccesibles(
                         listaApartamentos(aptoA, aptoB, aptoAislado)).tamano(),
                 "Detectar apartamento aislado");
         igual(2, gestor.apartamentosPorBloque("A").tamano(),
                 "Agrupar apartamentos por bloque");
 
-        gestor.cerrarConexion(pasillo, escaleras);
+        gestor.cerrarPasillo(pasillo2);
         verificar(gestor.distanciaDesdeRecepcion(aptoA) == null,
-                "Un pasillo cerrado impide el acceso");
-        gestor.abrirConexion(pasillo, escaleras);
+                "Cerrar un pasillo impide el acceso");
+        gestor.abrirPasillo(pasillo2);
         igual(Integer.valueOf(9), gestor.distanciaDesdeRecepcion(aptoA),
-                "Reabrir conexión recupera la ruta");
-        igual(7, gestor.cantidadNodos(), "El grafo conserva nodos registrados, incluso aislados");
+                "Reabrir el pasillo recupera la ruta");
+        igual(6, gestor.cantidadNodos(),
+                "El grafo conserva los puntos físicos y apartamentos, no los pasillos");
     }
 
     private static ListaDoblementeEnlazada<Apartamento> listaApartamentos(Apartamento... apartamentos) {
@@ -465,6 +473,62 @@ public class Main {
                 "No aceptar devolución superior a pagos");
     }
 
+    private static void probarGestorFolios() throws Exception {
+        LocalDate entrada = LocalDate.of(2027, 2, 10);
+        LocalDateTime ahora = LocalDateTime.of(2026, 11, 16, 10, 0);
+        Apartamento apartamento = apartamento("FOLIO-GESTOR", 3, 1);
+        GestorReservas gestor = new GestorReservas(
+                new CotizadorService(new GestorTemporadas()),
+                new AsignadorGrupos(),
+                new GestorVencimientos()
+        );
+        Reserva reserva = gestor.crearReserva(
+                huesped("FOLIO-GESTOR-H"), apartamento,
+                new Estancia(entrada, entrada.plusDays(1)),
+                ocupantes(1, LocalDate.of(1990, 1, 1)), CanalReserva.DIRECTA, ahora
+        );
+
+        MovimientoFolio cargo = gestor.registrarCargo(
+                reserva, "Consumo adicional", new BigDecimal("20000"), ahora.plusMinutes(1));
+        verificar(gestor.puedeDeshacer(reserva), "El último cargo debe poder deshacerse");
+        MovimientoFolio anulacionCargo = gestor.deshacerUltimaOperacion(reserva, ahora.plusMinutes(2));
+        igual(TipoMovimientoFolio.ANULACION_CARGO, anulacionCargo.getTipo(),
+                "Deshacer cargo registra una anulación de cargo");
+        igual(cargo.getId(), anulacionCargo.getIdMovimientoRelacionado(),
+                "La anulación referencia el cargo original");
+
+        MovimientoFolio pago = gestor.registrarPago(
+                reserva, "Abono en recepción", new BigDecimal("30000"), ahora.plusMinutes(3));
+        MovimientoFolio anulacionPago = gestor.deshacerUltimaOperacion(reserva, ahora.plusMinutes(4));
+        igual(TipoMovimientoFolio.ANULACION_PAGO, anulacionPago.getTipo(),
+                "Deshacer pago registra una anulación de pago");
+        igual(pago.getId(), anulacionPago.getIdMovimientoRelacionado(),
+                "La anulación referencia el pago original");
+        verificar(gestor.puedeDeshacer(reserva),
+                "El cargo inicial del alojamiento también permanece en la pila");
+        gestor.deshacerUltimaOperacion(reserva, ahora.plusMinutes(5));
+        verificar(!gestor.puedeDeshacer(reserva), "La pila queda vacía tras deshacer el cargo inicial");
+        igual(6, reserva.getFolio().numeroMovimientos(),
+                "Los movimientos originales y compensatorios permanecen en el folio");
+
+        Apartamento apartamentoCancelacion = apartamento("FOLIO-DEV", 2, 1);
+        Reserva cancelable = gestor.crearReserva(
+                huesped("FOLIO-DEV-H"), apartamentoCancelacion,
+                new Estancia(entrada, entrada.plusDays(1)),
+                ocupantes(1, LocalDate.of(1990, 1, 1)), CanalReserva.DIRECTA, ahora
+        );
+        gestor.registrarPago(cancelable, "Pago recibido", new BigDecimal("50000"), ahora.plusMinutes(5));
+        double devuelto = gestor.cancelar(cancelable, entrada.minusDays(10), ahora.plusMinutes(6));
+        cerca(50_000, devuelto, "La cancelación devuelve lo realmente pagado");
+        igual(new BigDecimal("50000.00"), cancelable.getFolio().calcularTotalDevoluciones(),
+                "La devolución queda registrada en el folio");
+        igual(TipoMovimientoFolio.DEVOLUCION,
+                cancelable.getFolio().obtenerMovimiento(2).getTipo(),
+                "La devolución queda como movimiento inmutable");
+        verificar(!gestor.puedeDeshacer(cancelable),
+                "La devolución actúa como barrera para no deshacer movimientos anteriores");
+    }
+
     private static void probarReservas() throws Exception {
         LocalDate entrada = LocalDate.of(2027, 1, 10);
         Apartamento a = apartamento("R-1", 4, 2);
@@ -499,8 +563,12 @@ public class Main {
         Apartamento b = apartamento("R-2", 2, 1);
         Reserva cancelable = gr.crearReserva(h, b, primera, ocupantes(1, LocalDate.of(1990, 1, 1)),
                 CanalReserva.DIRECTA);
-        cerca(500_000, gr.cancelar(cancelable, 500_000, entrada.minusDays(10)),
-                "Devolución total con más de siete días");
+        gr.registrarPago(cancelable, "Pago recibido", new BigDecimal("200000"),
+                LocalDateTime.of(2026, 11, 1, 11, 0));
+        cerca(200_000, gr.cancelar(cancelable, 200_000, entrada.minusDays(10)),
+                "Devolución total limitada al dinero realmente pagado");
+        igual(new BigDecimal("200000.00"), cancelable.getFolio().calcularTotalDevoluciones(),
+                "La devolución se registra en el folio");
         igual(EstadoReserva.CANCELADA, cancelable.getEstado(), "Cancelación por el gestor");
         verificar(!b.getReservas().contiene(cancelable), "El gestor debe retirar la reserva del árbol");
 
@@ -551,6 +619,11 @@ public class Main {
         igual(new BigDecimal("140000.00"), reserva.getFolio().calcularSaldo(),
                 "Saldo pendiente despues del anticipo");
         igual(3, reserva.getFolio().numeroMovimientos(), "Cargo y dos pagos quedan en el historial");
+        esperaExcepcion(IllegalStateException.class,
+                () -> gr.deshacerUltimaOperacion(reserva, creada.plusHours(3)),
+                "No deshacer un pago que dejaría el Portal por debajo del anticipo mínimo");
+        igual(new BigDecimal("60000.00"), reserva.getFolio().calcularTotalPagos(),
+                "El pago se conserva si no se permite deshacerlo");
 
         Apartamento b = apartamento("PORTAL-2", 2, 1);
         Reserva directa = gr.crearReserva(h, b, new Estancia(entrada, entrada.plusDays(1)),

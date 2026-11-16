@@ -1,6 +1,7 @@
 package model.servicios;
 
 import model.estructuras.Conjunto;
+import model.estructuras.Grafo.Arista;
 import model.estructuras.Grafo.Grafo;
 import model.estructuras.Grafo.NodoGrafo;
 import model.estructuras.Grafo.Tipo_nodos.CuartosAseo;
@@ -11,7 +12,7 @@ import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.modelo.Apartamento;
 import model.modelo.SolicitudPreparacion;
 
-/** Administra el grafo físico reutilizando las clases de Tipo_nodos existentes. */
+/** Administra el mapa: los puntos fisicos son nodos y los pasillos son aristas. */
 public class GestorEdificio {
     private final Grafo<Object> grafo = new Grafo<>();
     private final ListaDoblementeEnlazada<NodoGrafo<Object>> nodos = new ListaDoblementeEnlazada<>();
@@ -25,7 +26,6 @@ public class GestorEdificio {
         return nodoRecepcion;
     }
 
-    public NodoGrafo<Object> registrarPasillo(Pasillo pasillo) { return registrar(pasillo); }
     public NodoGrafo<Object> registrarEscaleras(Escaleras escaleras) { return registrar(escaleras); }
     public NodoGrafo<Object> registrarCuartoAseo(CuartosAseo cuarto) { return registrar(cuarto); }
 
@@ -38,11 +38,42 @@ public class GestorEdificio {
         return nodo;
     }
 
-    public void conectar(Object a, Object b, int distancia) {
-        grafo.agregarNodo(exigirNodo(a), exigirNodo(b), distancia);
+    /**
+     * Conecta dos puntos del edificio mediante un pasillo. El pasillo se guarda
+     * como etiqueta de la arista; nunca se registra como nodo del grafo.
+     */
+    public void conectar(Object a, Object b, Pasillo pasillo, int distancia) {
+        if (pasillo == null) throw new IllegalArgumentException("El pasillo es obligatorio");
+        if (buscarArista(pasillo) != null) throw new IllegalArgumentException("El pasillo ya está registrado");
+        grafo.agregarNodo(exigirNodo(a), exigirNodo(b), distancia, pasillo);
     }
-    public void cerrarConexion(Object a, Object b) { grafo.cerrarConexion(exigirNodo(a), exigirNodo(b)); }
-    public void abrirConexion(Object a, Object b) { grafo.abrirConexion(exigirNodo(a), exigirNodo(b)); }
+
+    public void cerrarConexion(Object a, Object b) {
+        grafo.cerrarConexion(exigirNodo(a), exigirNodo(b));
+    }
+
+    public void abrirConexion(Object a, Object b) {
+        grafo.abrirConexion(exigirNodo(a), exigirNodo(b));
+    }
+
+    public void cerrarPasillo(Pasillo pasillo) { exigirArista(pasillo).cerrar(); }
+    public void abrirPasillo(Pasillo pasillo) { exigirArista(pasillo).abrir(); }
+
+    public Arista<Object> buscarArista(Pasillo pasillo) {
+        if (pasillo == null) return null;
+        for (NodoGrafo<Object> nodo : nodos) {
+            for (Arista<Object> arista : nodo.getAdyacentes()) {
+                if (arista.getOrigen() == nodo && arista.getEtiqueta() == pasillo) return arista;
+            }
+        }
+        return null;
+    }
+
+    private Arista<Object> exigirArista(Pasillo pasillo) {
+        Arista<Object> arista = buscarArista(pasillo);
+        if (arista == null) throw new IllegalArgumentException("El pasillo no está registrado");
+        return arista;
+    }
 
     public ListaDoblementeEnlazada<NodoGrafo<Object>> rutaMasCortaDesdeRecepcion(Apartamento apartamento) {
         exigirRecepcion();
@@ -54,38 +85,26 @@ public class GestorEdificio {
         return grafo.costoCamino(nodoRecepcion, exigirNodo(apartamento));
     }
 
-    /**
-     * Construye el recorrido del personal desde recepción visitando los apartamentos
-     * en el mismo orden de prioridad de la cola de preparación. Cada tramo utiliza Dijkstra.
-     */
+    /** Recorre los apartamentos según prioridad; cada tramo se calcula con Dijkstra. */
     public ListaDoblementeEnlazada<NodoGrafo<Object>> rutaPreparacion(
             ListaDoblementeEnlazada<SolicitudPreparacion> solicitudes) {
         exigirRecepcion();
-        if (solicitudes == null) {
-            throw new IllegalArgumentException("La lista de preparaciones no puede ser null");
-        }
+        if (solicitudes == null) throw new IllegalArgumentException("La lista de preparaciones no puede ser null");
 
         ListaDoblementeEnlazada<NodoGrafo<Object>> recorrido = new ListaDoblementeEnlazada<>();
         NodoGrafo<Object> actual = nodoRecepcion;
         recorrido.agregar(actual);
 
         for (SolicitudPreparacion solicitud : solicitudes) {
-            if (solicitud == null) {
-                throw new IllegalArgumentException("La solicitud no puede ser null");
-            }
+            if (solicitud == null) throw new IllegalArgumentException("La solicitud no puede ser null");
             NodoGrafo<Object> destino = exigirNodo(solicitud.getApartamento());
-            Integer distancia = grafo.costoCamino(actual, destino);
-            if (distancia == null) {
+            ListaDoblementeEnlazada<NodoGrafo<Object>> tramo = grafo.armarCamino(actual, destino);
+            if (tramo.estaVacia()) {
                 throw new IllegalStateException("No existe una ruta abierta hasta el apartamento "
                         + solicitud.getApartamento().getCodigo());
             }
-
-            ListaDoblementeEnlazada<NodoGrafo<Object>> tramo = grafo.armarCamino(actual, destino);
-            for (int i = 0; i < tramo.tamano(); i++) {
-                NodoGrafo<Object> nodo = tramo.obtener(i);
-                if (recorrido.ultimo() != nodo) {
-                    recorrido.agregar(nodo);
-                }
+            for (NodoGrafo<Object> nodo : tramo) {
+                if (recorrido.ultimo() != nodo) recorrido.agregar(nodo);
             }
             actual = destino;
         }
@@ -97,13 +116,13 @@ public class GestorEdificio {
         if (apartamentos == null) throw new IllegalArgumentException("La lista no puede ser null");
         ListaDoblementeEnlazada<Apartamento> resultado = new ListaDoblementeEnlazada<>();
         if (nodoRecepcion == null) {
-            for (Apartamento a : apartamentos) resultado.agregar(a);
+            for (Apartamento apartamento : apartamentos) resultado.agregar(apartamento);
             return resultado;
         }
-        model.estructuras.Conjunto<NodoGrafo<Object>> alcanzables = grafo.dfs(nodoRecepcion);
-        for (Apartamento a : apartamentos) {
-            NodoGrafo<Object> nodo = buscarNodo(a);
-            if (nodo == null || !alcanzables.contiene(nodo)) resultado.agregar(a);
+        Conjunto<NodoGrafo<Object>> alcanzables = grafo.dfs(nodoRecepcion);
+        for (Apartamento apartamento : apartamentos) {
+            NodoGrafo<Object> nodo = buscarNodo(apartamento);
+            if (nodo == null || !alcanzables.contiene(nodo)) resultado.agregar(apartamento);
         }
         return resultado;
     }
@@ -113,17 +132,17 @@ public class GestorEdificio {
         ListaDoblementeEnlazada<Apartamento> resultado = new ListaDoblementeEnlazada<>();
         Conjunto<NodoGrafo<Object>> visitados = new Conjunto<>();
 
-        // Se recorren todos los componentes para incluir también apartamentos aislados.
         for (NodoGrafo<Object> inicio : grafo) {
             if (visitados.contiene(inicio)) continue;
             Conjunto<NodoGrafo<Object>> componente = grafo.dfs(inicio);
             for (NodoGrafo<Object> nodo : componente) {
-                if (!visitados.contiene(nodo)) visitados.agregar(nodo);
-                Object contenido = nodo.getContenido();
-                if (contenido instanceof Apartamento a
-                        && bloque.equalsIgnoreCase(a.getBloque())
-                        && !resultado.contiene(a)) {
-                    resultado.agregar(a);
+                if (visitados.agregar(nodo)) {
+                    Object contenido = nodo.getContenido();
+                    if (contenido instanceof Apartamento apartamento
+                            && bloque.equalsIgnoreCase(apartamento.getBloque())
+                            && !resultado.contiene(apartamento)) {
+                        resultado.agregar(apartamento);
+                    }
                 }
             }
         }
@@ -143,9 +162,11 @@ public class GestorEdificio {
         if (nodo == null) throw new IllegalArgumentException("El elemento no está registrado");
         return nodo;
     }
+
     private void exigirRecepcion() {
         if (nodoRecepcion == null) throw new IllegalStateException("No se ha registrado la recepción");
     }
+
     public int cantidadNodos() { return grafo.cantidadNodos(); }
     public Grafo<Object> getGrafo() { return grafo; }
     public NodoGrafo<Object> getNodoRecepcion() { return nodoRecepcion; }
