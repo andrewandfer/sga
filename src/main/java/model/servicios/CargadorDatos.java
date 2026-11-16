@@ -5,7 +5,7 @@ import model.enums.EstadoApartamento;
 import model.enums.EstadoReserva;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.ExcepcionSGA;
 import model.modelo.*;
 
@@ -145,7 +145,11 @@ public class CargadorDatos {
         // Campos opcionales: c[7] = estado de la reserva, c[8] = fecha/hora de creacion (vencimiento de Portal)
         LocalDateTime creada = c.length > 8 && !c[8].trim().isEmpty()
                 ? LocalDateTime.parse(c[8].trim()) : LocalDateTime.now();
-        Reserva reserva = gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal, creada);
+        // Una reserva EXTERNA cargada desde persistencia ya fue procesada y aceptada
+        // en su momento; no debe volver a entrar a la cola FIFO.
+        Reserva reserva = canal == CanalReserva.EXTERNA
+                ? gestorReservas.crearReservaExternaConfirmada(titular, apartamento, estancia, ocupantes, creada)
+                : gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal, creada);
         if (c.length > 7 && !c[7].trim().isEmpty()) {
             aplicarEstado(reserva, c[7].trim());
         }
@@ -274,7 +278,7 @@ public class CargadorDatos {
         return sb.toString();
     }
 
-    /** Evita que el texto de un campo rompa el formato (separador ; y saltos de linea). */
+    /** Evita que el texto de un campo rompa el formato (separador; y saltos de linea). */
     private String campo(String texto) {
         return texto == null ? "" : texto.replace(';', ',').replace('\n', ' ').replace('\r', ' ');
     }

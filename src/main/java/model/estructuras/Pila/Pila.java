@@ -2,109 +2,91 @@ package model.estructuras.Pila;
 
 import model.excepciones.EstructuraVaciaException;
 
-/**
- * Implementa una estructura de datos Pila genérica mediante nodos enlazados.
- *
- * Sigue el principio LIFO (Last In, First Out), donde el último elemento
- * en ingresar es el primero en salir.
- *
- * Permite insertar, extraer y consultar elementos desde el inicio
- * de la estructura.
- *
- * @param <T> Tipo de dato de los elementos almacenados en la pila.
- */
-public class Pila<T>{
-    /**
-     * Referencia al nodo ubicado en la cima de la pila.
-     * Es null cuando la estructura está vacía.
-     */
-    NodoPila<T> Raiz;
-    /**
-     * Construye una pila vacía.
-     */
-    public Pila(){
-        Raiz=null;
+import java.util.Iterator;
+
+public class Pila<T> implements Iterable<T> {
+
+    private NodoPila<T> tope;
+    private int tamanio;
+
+    public Pila() {
+        tope = null;
+        tamanio = 0;
     }
-    /**
-     * Construye una pila estableciendo un nodo como cima inicial.
-     *
-     * @param raiz Nodo que se establecerá como inicio de la pila.
-     */
-    public Pila(NodoPila<T> raiz){
-        this.Raiz=raiz;
+
+    public void push(T dato) {
+        NodoPila<T> nuevo = new NodoPila<>(dato);
+
+        nuevo.setSiguiente(tope);
+        tope = nuevo;
+
+        tamanio++;
     }
-    /**
-     * Modifica la referencia al nodo ubicado en la cima de la pila.
-     *
-     * @param raiz Nueva referencia al nodo inicial.
-     */
-    public void setRaiz(NodoPila<T> raiz) {
-        Raiz = raiz;
-    }
-    /**
-     * Consulta el nodo ubicado en la cima de la pila sin extraerlo.
-     *
-     * @return Nodo ubicado en la cima, o null si la pila está vacía.
-     */
-    public NodoPila<T> peek() {
-        return Raiz;
-    }
-    /**
-     * Inserta un elemento en la cima de la pila.
-     *
-     * Crea un nuevo nodo, establece su referencia al nodo que
-     * anteriormente ocupaba la cima y actualiza la raíz para
-     * que apunte al nuevo nodo.
-     *
-     * @param dato Elemento que se desea insertar en la pila.
-     */
-    public void push(T dato){
-        NodoPila<T> nuevo=new NodoPila<>(dato);
-        nuevo.setSiguiente(Raiz);
-        this.setRaiz(nuevo);
-    }
-    /**
-     * Extrae y devuelve el elemento ubicado en la cima de la pila.
-     *
-     * Actualiza la raíz para que apunte al siguiente nodo y
-     * desvincula el nodo extraído del resto de la estructura.
-     *
-     * @return Dato almacenado en el nodo extraído.
-     * @throws EstructuraVaciaException si la pila esta vacia
-     */
+
     public T pop() {
-        if (isEmpty()) throw new EstructuraVaciaException("La pila esta vacia");
-        NodoPila<T> aux=Raiz;
-        this.setRaiz(Raiz.getSiguiente());
-        aux.setSiguiente(null);
-        return aux.getDato();
-    }
-    /**
-     * Comprueba si la pila está vacía.
-     *
-     * @return true si la raíz es null; false si existe al menos un nodo.
-     */
-    public boolean isEmpty(){
-        return Raiz==null;
-    }
-    /**
-     * Genera una representación textual de los elementos de la pila.
-     *
-     * Recorre los nodos desde la cima hasta el último elemento,
-     * separando sus contenidos mediante flechas.
-     *
-     * @return Cadena con los elementos de la pila, o "[]" si está vacía.
-     */
-    public String toString(){
-        if (isEmpty()) return "[]";
-        NodoPila<T> aux=Raiz;
-        StringBuilder cadena=new StringBuilder();
-        while (aux!=null){
-            cadena.append(aux.getDato());
-            if (aux.nextExist()) {
-                cadena.append("->");}
-            aux=aux.getSiguiente();
+        if (isEmpty()) {
+            throw new EstructuraVaciaException("La pila está vacía");
         }
+
+        NodoPila<T> eliminado = tope;
+        T dato = eliminado.getDato();
+
+        tope = eliminado.getSiguiente();
+
+        eliminado.setSiguiente(null);
+        tamanio--;
+
+        return dato;
+    }
+
+    public T peek() {
+        if (isEmpty()) {
+            throw new EstructuraVaciaException("La pila está vacía");
+        }
+
+        return tope.getDato();
+    }
+
+    public boolean isEmpty() {
+        return tamanio == 0;
+    }
+
+    public int size() {
+        return tamanio;
+    }
+
+    public void clear() {
+        NodoPila<T> actual = tope;
+
+        while (actual != null) {
+            NodoPila<T> siguiente = actual.getSiguiente();
+            actual.setSiguiente(null);
+            actual = siguiente;
+        }
+
+        tope = null;
+        tamanio = 0;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new IteradorPila<>(tope);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder cadena = new StringBuilder();
+
+        Iterator<T> iterador = iterator();
+
+        while (iterador.hasNext()) {
+            cadena.append(iterador.next());
+
+            if (iterador.hasNext()) {
+                cadena.append("->");
+            }
+        }
+
         return cadena.toString();
     }
 }

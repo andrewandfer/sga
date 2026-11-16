@@ -1,7 +1,7 @@
 package model.servicios;
 
 import model.enums.Temporada;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.FechasInvalidasException;
 import model.modelo.Apartamento;
 import model.modelo.PeriodoTemporada;

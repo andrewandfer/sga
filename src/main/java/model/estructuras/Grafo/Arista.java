@@ -1,101 +1,54 @@
 package model.estructuras.Grafo;
+
 /**
- * Representa una arista que conecta dos nodos dentro de un grafo.
- *
- * Cada arista almacena un valor entero y referencias a los dos nodos
- * que conecta, identificados como anterior y siguiente.
+ * Conexion ponderada entre dos nodos. La etiqueta permite asociar informacion
+ * propia de la conexion (por ejemplo, el Pasillo fisico del edificio).
  */
-public class Arista{
-    /**
-     * Valor asociado a la arista, utilizado para representar
-     * su peso o costo dentro del grafo.
-     */
-    Integer valor;
-    /**
-     * Referencia a uno de los nodos extremos de la arista.
-     */
-    NodoGrafo<?> siguiente;
-    /**
-     * Referencia al otro nodo extremo de la arista.
-     */
-    NodoGrafo<?> anterior;
-    /**
-     * Construye una arista con el valor especificado.
-     * Inicialmente, sus extremos no están asociados a ningún nodo.
-     *
-     * @param valor Peso o costo asignado a la arista.
-     */
-    public Arista(Integer valor){
-        this.valor=valor;
+public class Arista<T> {
+
+    private final int valor;
+    private final NodoGrafo<T> origen;
+    private final NodoGrafo<T> destino;
+    private final Object etiqueta;
+    private boolean activa = true;
+
+    public Arista(int valor, NodoGrafo<T> origen, NodoGrafo<T> destino) {
+        this(valor, origen, destino, null);
     }
-    /**
-     * Obtiene el valor asociado a la arista.
-     *
-     * @return Peso o costo de la arista.
-     */
-    public Integer getValor() {
-        return valor;
-    }
-    /**
-     * Modifica el valor asociado a la arista.
-     *
-     * @param valor Nuevo peso o costo de la arista.
-     */
-    public void setValor(Integer valor) {
+
+    public Arista(int valor, NodoGrafo<T> origen, NodoGrafo<T> destino, Object etiqueta) {
+        if (origen == null || destino == null) {
+            throw new IllegalArgumentException("Los extremos no pueden ser null");
+        }
+        if (origen == destino) {
+            throw new IllegalArgumentException("Una arista no puede conectar un nodo consigo mismo");
+        }
+        if (valor < 0) {
+            throw new IllegalArgumentException("El peso no puede ser negativo");
+        }
         this.valor = valor;
+        this.origen = origen;
+        this.destino = destino;
+        this.etiqueta = etiqueta;
     }
-    /**
-     * Obtiene uno de los nodos extremos de la arista.
-     *
-     * @return Nodo identificado como siguiente.
-     */
-    public NodoGrafo<?> getSiguiente() {
-        return siguiente;
+
+    public int getValor() { return valor; }
+    public NodoGrafo<T> getOrigen() { return origen; }
+    public NodoGrafo<T> getDestino() { return destino; }
+    public Object getEtiqueta() { return etiqueta; }
+    public boolean isActiva() { return activa; }
+    public void cerrar() { activa = false; }
+    public void abrir() { activa = true; }
+
+    public NodoGrafo<T> getExtremo(NodoGrafo<T> nodo) {
+        if (nodo == origen) return destino;
+        if (nodo == destino) return origen;
+        throw new IllegalArgumentException("El nodo no pertenece a esta arista");
     }
-    /**
-     * Establece uno de los nodos extremos de la arista.
-     *
-     * @param siguiente Nodo que se establecerá como siguiente.
-     */
-    public void setSiguiente(NodoGrafo<?> siguiente) {
-        this.siguiente = siguiente;
-    }
-    /**
-     * Obtiene el otro nodo extremo de la arista.
-     *
-     * @return Nodo identificado como anterior.
-     */
-    public NodoGrafo<?> getAnterior() {
-        return anterior;
-    }
-    /**
-     * Establece el otro nodo extremo de la arista.
-     *
-     * @param anterior Nodo que se establecerá como anterior.
-     */
-    public void setAnterior(NodoGrafo<?> anterior) {
-        this.anterior = anterior;
-    }
-    /**
-     * Obtiene la representación textual del valor de la arista.
-     *
-     * @return Valor de la arista convertido a String.
-     */
-    public String toString(){
-        return valor.toString();
-    }
-    /**
-     * Obtiene el extremo opuesto al nodo proporcionado.
-     *
-     * Si el nodo recibido coincide con el extremo siguiente,
-     * devuelve el extremo anterior. En caso contrario, devuelve
-     * el extremo siguiente.
-     *
-     * @param nodo Nodo desde el cual se desea obtener el extremo opuesto.
-     * @return Nodo ubicado en el extremo contrario de la arista.
-     */
-    public NodoGrafo<?> getExtremo(NodoGrafo<?> nodo){
-        if (nodo.equals(siguiente)) return anterior;
-        return siguiente;
+
+    @Override
+    public String toString() {
+        return valor + (activa ? "" : " (cerrada)")
+                + (etiqueta == null ? "" : " - " + etiqueta);
     }
 }
