@@ -6,11 +6,15 @@ import java.util.Objects;
 
 public class ColaPrioritaria<T> extends Cola<T> {
 
-    private final Comparator<T> comparador;
+    private final Comparator<? super T> comparador;
 
-    public ColaPrioritaria(Comparator<T> comparador) {
+    public ColaPrioritaria(Comparator<? super T> comparador) {
         super();
-        this.comparador = Objects.requireNonNull(comparador);
+
+        this.comparador = Objects.requireNonNull(
+                comparador,
+                "El comparador no puede ser null"
+        );
     }
 
     @Override

@@ -1,4 +1,3 @@
-
 package model.estructuras.Pila;
 
 import model.excepciones.EstructuraVaciaException;
@@ -29,9 +28,12 @@ public class Pila<T> implements Iterable<T> {
             throw new EstructuraVaciaException("La pila está vacía");
         }
 
-        T dato = tope.getDato();
-        tope = tope.getSiguiente();
+        NodoPila<T> eliminado = tope;
+        T dato = eliminado.getDato();
 
+        tope = eliminado.getSiguiente();
+
+        eliminado.setSiguiente(null);
         tamanio--;
 
         return dato;
@@ -46,7 +48,7 @@ public class Pila<T> implements Iterable<T> {
     }
 
     public boolean isEmpty() {
-        return tope == null;
+        return tamanio == 0;
     }
 
     public int size() {
@@ -54,6 +56,14 @@ public class Pila<T> implements Iterable<T> {
     }
 
     public void clear() {
+        NodoPila<T> actual = tope;
+
+        while (actual != null) {
+            NodoPila<T> siguiente = actual.getSiguiente();
+            actual.setSiguiente(null);
+            actual = siguiente;
+        }
+
         tope = null;
         tamanio = 0;
     }

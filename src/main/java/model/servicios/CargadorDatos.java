@@ -5,7 +5,7 @@ import model.enums.EstadoApartamento;
 import model.enums.EstadoReserva;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.ExcepcionSGA;
 import model.modelo.*;
 

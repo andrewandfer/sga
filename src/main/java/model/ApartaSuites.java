@@ -6,7 +6,7 @@ import model.enums.RolEmpleado;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
 import model.estructuras.Conjunto;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.CapacidadExcedidaException;
 import model.excepciones.ExcepcionSGA;
 import model.excepciones.FechasInvalidasException;

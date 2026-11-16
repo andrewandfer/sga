@@ -2,7 +2,7 @@ package model.modelo;
 import model.enums.EstadoApartamento;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 
 import java.util.Comparator;
 import java.util.Objects;

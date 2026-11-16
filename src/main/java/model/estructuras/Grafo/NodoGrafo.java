@@ -1,12 +1,11 @@
-
 package model.estructuras.Grafo;
 
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 
 public class NodoGrafo<T> {
 
     private T contenido;
-    private ListaDoblementeEnlazada<Arista> adyacentes;
+    private final ListaDoblementeEnlazada<Arista> adyacentes;
 
     public NodoGrafo(T contenido) {
         this.contenido = contenido;
@@ -26,6 +25,13 @@ public class NodoGrafo<T> {
     }
 
     public void agregarAdyacente(Arista arista) {
+
+        if (arista == null) {
+            throw new IllegalArgumentException(
+                    "La arista no puede ser null"
+            );
+        }
+
         adyacentes.agregar(arista);
     }
 
@@ -34,8 +40,14 @@ public class NodoGrafo<T> {
     }
 
     public boolean contieneAdyacente(NodoGrafo<?> nodo) {
+
+        if (nodo == null) {
+            return false;
+        }
+
         for (Arista arista : adyacentes) {
-            if (arista.getExtremo(this).equals(nodo)) {
+
+            if (arista.getExtremo(this) == nodo) {
                 return true;
             }
         }

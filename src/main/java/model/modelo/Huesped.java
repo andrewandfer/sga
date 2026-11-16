@@ -2,7 +2,7 @@ package model.modelo;
 
 
 import model.estructuras.Conjunto;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import java.time.LocalDate;
 import java.util.Objects;
 

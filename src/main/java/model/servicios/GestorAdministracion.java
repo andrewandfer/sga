@@ -3,7 +3,7 @@ package model.servicios;
 import model.enums.RolEmpleado;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.ExcepcionSGA;
 import model.modelo.Apartamento;
 import model.modelo.Empleado;

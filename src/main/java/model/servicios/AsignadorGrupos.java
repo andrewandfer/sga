@@ -1,6 +1,6 @@
 package model.servicios;
 
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.CapacidadExcedidaException;
 import model.modelo.Apartamento;
 

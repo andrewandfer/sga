@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IteradorPila<T> implements Iterator<T> {
+
     private NodoPila<T> actual;
 
     public IteradorPila(NodoPila<T> tope) {
@@ -18,7 +19,9 @@ public class IteradorPila<T> implements Iterator<T> {
     @Override
     public T next() {
         if (!hasNext()) {
-            throw new NoSuchElementException("No hay más elementos en la pila");
+            throw new NoSuchElementException(
+                    "No hay más elementos en la pila"
+            );
         }
 
         T dato = actual.getDato();
@@ -26,5 +29,4 @@ public class IteradorPila<T> implements Iterator<T> {
 
         return dato;
     }
-}
 }

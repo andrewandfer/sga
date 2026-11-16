@@ -4,7 +4,7 @@ import model.enums.CanalReserva;
 import model.enums.EstadoApartamento;
 import model.enums.EstadoReserva;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.CapacidadExcedidaException;
 import model.excepciones.ReservaSolapadaException;
 import model.excepciones.TransicionInvalidaException;

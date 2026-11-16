@@ -4,6 +4,7 @@ package model.estructuras.Cola;
 import model.excepciones.EstructuraVaciaException;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 public class Cola<T> implements Iterable<T> {
 
@@ -19,7 +20,6 @@ public class Cola<T> implements Iterable<T> {
 
     // Inserta un elemento al final de la cola.
     public void add(T dato) {
-
         NodoCola<T> nuevo = new NodoCola<>(dato);
 
         if (isEmpty()) {
@@ -35,13 +35,15 @@ public class Cola<T> implements Iterable<T> {
 
     // Retira y devuelve el primer elemento.
     public T poll() {
-
         if (isEmpty()) {
             throw new EstructuraVaciaException("La cola está vacía");
         }
 
         T dato = frente.getDato();
+        NodoCola<T> eliminado = frente;
+
         frente = frente.getSiguiente();
+        eliminado.setSiguiente(null);
 
         tamanio--;
 
@@ -54,7 +56,6 @@ public class Cola<T> implements Iterable<T> {
 
     // Consulta el primer elemento sin retirarlo.
     public T peek() {
-
         if (isEmpty()) {
             throw new EstructuraVaciaException("La cola está vacía");
         }
@@ -63,17 +64,17 @@ public class Cola<T> implements Iterable<T> {
     }
 
     public boolean isEmpty() {
-        return frente == null;
+        return tamanio == 0;
     }
 
     public int size() {
         return tamanio;
     }
 
+    // Comprueba si un elemento está en la cola.
     public boolean contains(T dato) {
-
         for (T elemento : this) {
-            if (dato == null ? elemento == null : dato.equals(elemento)) {
+            if (Objects.equals(elemento, dato)) {
                 return true;
             }
         }
@@ -81,7 +82,16 @@ public class Cola<T> implements Iterable<T> {
         return false;
     }
 
+    // Elimina todos los elementos.
     public void clear() {
+        NodoCola<T> actual = frente;
+
+        while (actual != null) {
+            NodoCola<T> siguiente = actual.getSiguiente();
+            actual.setSiguiente(null);
+            actual = siguiente;
+        }
+
         frente = null;
         finalCola = null;
         tamanio = 0;
@@ -89,6 +99,7 @@ public class Cola<T> implements Iterable<T> {
 
     // Agrega los elementos de otra cola sin vaciarla.
     public void merge(Cola<T> otra) {
+        Objects.requireNonNull(otra, "La cola no puede ser null");
 
         if (otra == this) {
             throw new IllegalArgumentException(
@@ -108,7 +119,6 @@ public class Cola<T> implements Iterable<T> {
 
     @Override
     public String toString() {
-
         StringBuilder resultado = new StringBuilder("[");
         Iterator<T> iterador = iterator();
 

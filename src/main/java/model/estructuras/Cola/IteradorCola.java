@@ -20,7 +20,9 @@ public class IteradorCola<T> implements Iterator<T> {
     @Override
     public T next() {
         if (!hasNext()) {
-            throw new NoSuchElementException("No hay más elementos en la cola");
+            throw new NoSuchElementException(
+                    "No hay más elementos en la cola"
+            );
         }
 
         T dato = actual.getDato();

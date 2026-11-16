@@ -1,48 +1,64 @@
-
 package model.estructuras.Grafo;
+
+import java.util.Objects;
 
 public class Arista {
 
-    private Integer valor;
-    private NodoGrafo<?> siguiente;
-    private NodoGrafo<?> anterior;
+    private final int valor;
+    private final NodoGrafo<?> origen;
+    private final NodoGrafo<?> destino;
 
-    public Arista(Integer valor) {
+    public Arista(int valor, NodoGrafo<?> origen, NodoGrafo<?> destino) {
+
+        if (origen == null || destino == null) {
+            throw new IllegalArgumentException(
+                    "Los extremos de una arista no pueden ser null"
+            );
+        }
+
+        if (origen == destino) {
+            throw new IllegalArgumentException(
+                    "Una arista no puede conectar un nodo consigo mismo"
+            );
+        }
+
+        if (valor < 0) {
+            throw new IllegalArgumentException(
+                    "El peso de una arista no puede ser negativo"
+            );
+        }
+
         this.valor = valor;
+        this.origen = origen;
+        this.destino = destino;
     }
 
-    public Integer getValor() {
+    public int getValor() {
         return valor;
     }
 
-    public void setValor(Integer valor) {
-        this.valor = valor;
+    public NodoGrafo<?> getOrigen() {
+        return origen;
     }
 
-    public NodoGrafo<?> getSiguiente() {
-        return siguiente;
-    }
-
-    public void setSiguiente(NodoGrafo<?> siguiente) {
-        this.siguiente = siguiente;
-    }
-
-    public NodoGrafo<?> getAnterior() {
-        return anterior;
-    }
-
-    public void setAnterior(NodoGrafo<?> anterior) {
-        this.anterior = anterior;
+    public NodoGrafo<?> getDestino() {
+        return destino;
     }
 
     public NodoGrafo<?> getExtremo(NodoGrafo<?> nodo) {
 
-        if (nodo.equals(siguiente)) {
-            return anterior;
+        if (nodo == null) {
+            throw new IllegalArgumentException(
+                    "El nodo no puede ser null"
+            );
         }
 
-        if (nodo.equals(anterior)) {
-            return siguiente;
+        if (nodo == origen) {
+            return destino;
+        }
+
+        if (nodo == destino) {
+            return origen;
         }
 
         throw new IllegalArgumentException(
