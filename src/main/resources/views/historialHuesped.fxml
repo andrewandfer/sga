@@ -5,518 +5,204 @@
 <BorderPane prefHeight="900.0" prefWidth="1280.0"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.HistorialController"
             stylesheets="@../styles/historialHuesped.css"
             styleClass="dashboard-root">
 
-    <!-- MENU LATERAL -->
     <left>
         <VBox prefWidth="255.0" styleClass="sidebar" spacing="25.0">
 
             <VBox spacing="4.0">
                 <Label text="APARTA-SUITES" styleClass="brand-small"/>
                 <Label text="UQ" styleClass="brand-title"/>
-                <Label text="EXPERIENCIA DE ALOJAMIENTO"
-                       styleClass="brand-caption"/>
+                <Label text="EXPERIENCIA DE ALOJAMIENTO" styleClass="brand-caption"/>
             </VBox>
 
             <VBox spacing="8.0">
                 <Label text="MENÚ PRINCIPAL" styleClass="menu-heading"/>
-
-                <Button text="⌂    Inicio"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="⌕    Buscar alojamiento"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="▤    Mis reservas"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="♡    Favoritos"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="◷    Historial"
-                        maxWidth="Infinity"
-                        styleClass="nav-button nav-active"/>
-
-                <Button text="♙    Mi perfil"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                <Button text="⌂    Inicio" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="⌕    Buscar alojamiento" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="▤    Mis reservas" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="♡    Favoritos" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="◷    Historial" maxWidth="Infinity" styleClass="nav-button nav-active"/>
+                <Button text="♙    Mi perfil" maxWidth="Infinity" styleClass="nav-button"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
             <VBox styleClass="help-card" spacing="8.0">
-                <Label text="¿Necesitas ayuda?"
-                       styleClass="help-title"/>
-
+                <Label text="¿Necesitas ayuda?" styleClass="help-title"/>
                 <Label text="Estamos aquí para acompañarte durante tu estancia."
-                       wrapText="true"
-                       styleClass="help-description"/>
-
-                <Button text="Contactar"
-                        styleClass="help-button"/>
+                       wrapText="true" styleClass="help-description"/>
+                <Button text="Contactar" styleClass="help-button"/>
             </VBox>
 
-            <Button text="↪    Cerrar sesión"
-                    maxWidth="Infinity"
-                    styleClass="logout-button"/>
-
-            <Label text="SALENTO · QUINDÍO · COLOMBIA"
-                   styleClass="sidebar-footer"/>
+            <Button text="↪    Cerrar sesión" maxWidth="Infinity" styleClass="logout-button"/>
+            <Label text="SALENTO · QUINDÍO · COLOMBIA" styleClass="sidebar-footer"/>
         </VBox>
     </left>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <center>
-        <ScrollPane fitToWidth="true"
-                    styleClass="content-scroll">
-
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <VBox spacing="24.0" styleClass="main-content">
 
                 <!-- ENCABEZADO -->
                 <HBox alignment="CENTER_LEFT" spacing="15.0">
-
                     <VBox spacing="5.0">
-                        <Label text="TUS EXPERIENCIAS"
-                               styleClass="eyebrow"/>
-
-                        <Label text="Historial de estancias"
-                               styleClass="welcome-title"/>
-
+                        <Label text="TUS EXPERIENCIAS" styleClass="eyebrow"/>
+                        <Label text="Historial de estancias" styleClass="welcome-title"/>
                         <Label text="Consulta los alojamientos en los que has disfrutado de tu estancia."
-                               wrapText="true"
-                               styleClass="welcome-subtitle"/>
+                               wrapText="true" styleClass="welcome-subtitle"/>
                     </VBox>
 
                     <Region HBox.hgrow="ALWAYS"/>
 
                     <VBox alignment="CENTER_RIGHT" spacing="4.0">
-                        <Label text="MI CUENTA"
-                               styleClass="profile-caption"/>
-
-                        <Label text="Huésped"
-                               styleClass="profile-name"/>
+                        <Label text="MI CUENTA" styleClass="profile-caption"/>
+                        <Label fx:id="nombreHuesped" text="Huésped" styleClass="profile-name"/>
                     </VBox>
                 </HBox>
 
                 <!-- RESUMEN -->
                 <HBox spacing="15.0">
-
-                    <VBox HBox.hgrow="ALWAYS"
-                          spacing="8.0"
-                          styleClass="summary-card">
-
-                        <Label text="ESTANCIAS FINALIZADAS"
-                               styleClass="stat-title"/>
-
-                        <Label text="Por consultar"
-                               styleClass="stat-number"/>
-
-                        <Label text="Alojamientos completados"
-                               styleClass="stat-description"/>
+                    <VBox HBox.hgrow="ALWAYS" spacing="8.0" styleClass="summary-card">
+                        <Label text="ESTANCIAS FINALIZADAS" styleClass="stat-title"/>
+                        <Label fx:id="totalFinalizadas" text="0" styleClass="stat-number"/>
+                        <Label text="Alojamientos completados" styleClass="stat-description"/>
                     </VBox>
 
-                    <VBox HBox.hgrow="ALWAYS"
-                          spacing="8.0"
-                          styleClass="summary-card">
-
-                        <Label text="ÚLTIMA ESTANCIA"
-                               styleClass="stat-title"/>
-
-                        <Label text="Por consultar"
-                               styleClass="stat-number"/>
-
-                        <Label text="Fecha de la última salida"
-                               styleClass="stat-description"/>
+                    <VBox HBox.hgrow="ALWAYS" spacing="8.0" styleClass="summary-card">
+                        <Label text="ÚLTIMA ESTANCIA" styleClass="stat-title"/>
+                        <Label fx:id="ultimaEstancia" text="Sin estancias" styleClass="stat-number"/>
+                        <Label text="Fecha de la última salida" styleClass="stat-description"/>
                     </VBox>
 
-                    <VBox HBox.hgrow="ALWAYS"
-                          spacing="8.0"
-                          styleClass="summary-card">
-
-                        <Label text="NOCHES ALOJADAS"
-                               styleClass="stat-title"/>
-
-                        <Label text="Por consultar"
-                               styleClass="stat-number"/>
-
-                        <Label text="Total de noches disfrutadas"
-                               styleClass="stat-description"/>
+                    <VBox HBox.hgrow="ALWAYS" spacing="8.0" styleClass="summary-card">
+                        <Label text="NOCHES ALOJADAS" styleClass="stat-title"/>
+                        <Label fx:id="totalNoches" text="0" styleClass="stat-number"/>
+                        <Label text="Total de noches disfrutadas" styleClass="stat-description"/>
                     </VBox>
-
                 </HBox>
 
                 <!-- FILTROS -->
                 <VBox spacing="16.0" styleClass="section-card">
-
                     <VBox spacing="5.0">
-                        <Label text="Consultar historial"
-                               styleClass="section-title"/>
-
+                        <Label text="Consultar historial" styleClass="section-title"/>
                         <Label text="Utiliza los filtros para localizar una estancia."
                                styleClass="section-description"/>
                     </VBox>
 
                     <HBox spacing="14.0">
-
                         <VBox spacing="7.0" HBox.hgrow="ALWAYS">
-                            <Label text="FECHA DESDE"
-                                   styleClass="field-label"/>
-
-                            <DatePicker promptText="Fecha inicial"
+                            <Label text="FECHA DESDE" styleClass="field-label"/>
+                            <DatePicker fx:id="fechaDesde" promptText="Fecha inicial"
                                         maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="7.0" HBox.hgrow="ALWAYS">
-                            <Label text="FECHA HASTA"
-                                   styleClass="field-label"/>
-
-                            <DatePicker promptText="Fecha final"
+                            <Label text="FECHA HASTA" styleClass="field-label"/>
+                            <DatePicker fx:id="fechaHasta" promptText="Fecha final"
                                         maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="7.0" HBox.hgrow="ALWAYS">
-                            <Label text="ESTADO"
-                                   styleClass="field-label"/>
-
-                            <ComboBox promptText="Todos los estados"
+                            <Label text="ESTADO" styleClass="field-label"/>
+                            <ComboBox fx:id="filtroEstado" promptText="Todos los estados"
                                       maxWidth="Infinity"/>
                         </VBox>
-
                     </HBox>
 
                     <HBox alignment="CENTER_RIGHT">
                         <Button text="Consultar historial  →"
+                                onAction="#consultarHistorial"
                                 styleClass="primary-button"/>
                     </HBox>
-
                 </VBox>
 
                 <!-- LISTADO DE ESTANCIAS -->
                 <VBox spacing="15.0">
-
                     <HBox alignment="CENTER_LEFT">
-
                         <VBox spacing="5.0">
-                            <Label text="Mis estancias anteriores"
-                                   styleClass="section-title"/>
-
+                            <Label text="Mis estancias anteriores" styleClass="section-title"/>
                             <Label text="Consulta los detalles de tus reservas anteriores."
                                    styleClass="section-description"/>
                         </VBox>
 
                         <Region HBox.hgrow="ALWAYS"/>
-
-                        <Label text="REGISTRO DE ESTANCIAS"
-                               styleClass="result-caption"/>
+                        <Label text="REGISTRO DE ESTANCIAS" styleClass="result-caption"/>
                     </HBox>
 
-                    <!-- ESTANCIA 1 -->
-                    <VBox spacing="14.0"
-                          styleClass="stay-card">
-
-                        <HBox alignment="CENTER_LEFT">
-
-                            <VBox spacing="5.0">
-                                <Label text="CÓDIGO DE RESERVA"
-                                       styleClass="field-label"/>
-
-                                <Label text="Pendiente de datos"
-                                       styleClass="reservation-code"/>
-                            </VBox>
-
-                            <Region HBox.hgrow="ALWAYS"/>
-
-                            <Label text="Finalizada"
-                                   styleClass="status-completed"/>
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="18.0">
-
-                            <VBox alignment="CENTER"
-                                  styleClass="apartment-placeholder"
-                                  prefWidth="125.0"
-                                  minWidth="125.0">
-
-                                <Label text="⌂"
-                                       styleClass="apartment-symbol"/>
-
-                                <Label text="ALOJAMIENTO"
-                                       styleClass="placeholder-caption"/>
-                            </VBox>
-
-                            <VBox spacing="9.0"
-                                  HBox.hgrow="ALWAYS">
-
-                                <Label text="Nombre del apartamento"
-                                       styleClass="apartment-title"/>
-
-                                <Label text="Código: pendiente de datos"
-                                       styleClass="apartment-detail"/>
-
-                                <HBox spacing="16.0">
-                                    <Label text="Bloque: por consultar"
-                                           styleClass="apartment-detail"/>
-
-                                    <Label text="Piso: por consultar"
-                                           styleClass="apartment-detail"/>
-                                </HBox>
-
-                                <HBox spacing="16.0">
-                                    <Label text="Dormitorios: por consultar"
-                                           styleClass="apartment-detail"/>
-
-                                    <Label text="Huéspedes: por consultar"
-                                           styleClass="apartment-detail"/>
-                                </HBox>
-
-                            </VBox>
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="15.0">
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE ENTRADA"
-                                       styleClass="field-label"/>
-
-                                <Label text="Por consultar"
-                                       styleClass="stay-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE SALIDA"
-                                       styleClass="field-label"/>
-
-                                <Label text="Por consultar"
-                                       styleClass="stay-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="NOCHES"
-                                       styleClass="field-label"/>
-
-                                <Label text="Por consultar"
-                                       styleClass="stay-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="VALOR TOTAL"
-                                       styleClass="field-label"/>
-
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT">
-                            <Button text="Consultar detalles"
-                                    styleClass="secondary-button"/>
-                        </HBox>
-
-                    </VBox>
-
-                    <!-- ESTANCIA 2 -->
-                    <VBox spacing="14.0"
-                          styleClass="stay-card">
-
-                        <HBox alignment="CENTER_LEFT">
-
-                            <VBox spacing="5.0">
-                                <Label text="CÓDIGO DE RESERVA"
-                                       styleClass="field-label"/>
-
-                                <Label text="Pendiente de datos"
-                                       styleClass="reservation-code"/>
-                            </VBox>
-
-                            <Region HBox.hgrow="ALWAYS"/>
-
-                            <Label text="Finalizada"
-                                   styleClass="status-completed"/>
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="18.0">
-
-                            <VBox alignment="CENTER"
-                                  styleClass="apartment-placeholder"
-                                  prefWidth="125.0"
-                                  minWidth="125.0">
-
-                                <Label text="⌂"
-                                       styleClass="apartment-symbol"/>
-
-                                <Label text="ALOJAMIENTO"
-                                       styleClass="placeholder-caption"/>
-                            </VBox>
-
-                            <VBox spacing="9.0"
-                                  HBox.hgrow="ALWAYS">
-
-                                <Label text="Nombre del apartamento"
-                                       styleClass="apartment-title"/>
-
-                                <Label text="Código: pendiente de datos"
-                                       styleClass="apartment-detail"/>
-
-                                <HBox spacing="16.0">
-                                    <Label text="Bloque: por consultar"
-                                           styleClass="apartment-detail"/>
-
-                                    <Label text="Piso: por consultar"
-                                           styleClass="apartment-detail"/>
-                                </HBox>
-
-                                <HBox spacing="16.0">
-                                    <Label text="Dormitorios: por consultar"
-                                           styleClass="apartment-detail"/>
-
-                                    <Label text="Huéspedes: por consultar"
-                                           styleClass="apartment-detail"/>
-                                </HBox>
-
-                            </VBox>
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="15.0">
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE ENTRADA"
-                                       styleClass="field-label"/>
-
-                                <Label text="Por consultar"
-                                       styleClass="stay-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE SALIDA"
-                                       styleClass="field-label"/>
-
-                                <Label text="Por consultar"
-                                       styleClass="stay-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="NOCHES"
-                                       styleClass="field-label"/>
-
-                                <Label text="Por consultar"
-                                       styleClass="stay-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="VALOR TOTAL"
-                                       styleClass="field-label"/>
-
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT">
-                            <Button text="Consultar detalles"
-                                    styleClass="secondary-button"/>
-                        </HBox>
-
-                    </VBox>
-
+                    <VBox fx:id="contenedorEstancias" spacing="15.0"/>
                 </VBox>
 
                 <!-- DETALLE DE LA ESTANCIA -->
-                <VBox spacing="15.0"
-                      styleClass="section-card">
-
+                <VBox spacing="15.0" styleClass="section-card">
                     <VBox spacing="5.0">
-                        <Label text="Detalle de la estancia"
-                               styleClass="section-title"/>
-
+                        <Label text="Detalle de la estancia" styleClass="section-title"/>
                         <Label text="Consulta el resumen de noches y movimientos asociados a una reserva."
                                styleClass="section-description"/>
                     </VBox>
 
-                    <HBox styleClass="detail-header"
-                          spacing="10.0">
+                    <VBox fx:id="movimientosDetalle" spacing="12.0"
+                          visible="false" managed="false">
 
-                        <Label text="CONCEPTO"
-                               HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="codigoDetalle" text="Código de reserva"
+                               styleClass="reservation-code"/>
 
-                        <Label text="FECHA"
-                               HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="apartamentoDetalle" text="Apartamento"
+                               styleClass="apartment-title"/>
 
-                        <Label text="DESCRIPCIÓN"
-                               HBox.hgrow="ALWAYS"/>
+                        <HBox spacing="15.0">
+                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <Label text="FECHA DE ENTRADA" styleClass="field-label"/>
+                                <Label fx:id="entradaDetalle" text="-" styleClass="stay-detail"/>
+                            </VBox>
 
-                        <Label text="VALOR"
-                               HBox.hgrow="ALWAYS"/>
-                    </HBox>
+                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <Label text="FECHA DE SALIDA" styleClass="field-label"/>
+                                <Label fx:id="salidaDetalle" text="-" styleClass="stay-detail"/>
+                            </VBox>
 
-                    <VBox spacing="8.0"
-                          alignment="CENTER"
-                          styleClass="empty-detail">
+                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <Label text="NOCHES" styleClass="field-label"/>
+                                <Label fx:id="nochesDetalle" text="0" styleClass="stay-detail"/>
+                            </VBox>
+                        </HBox>
 
-                        <Label text="▤"
-                               styleClass="empty-icon"/>
-
-                        <Label text="Selecciona una estancia"
-                               styleClass="empty-title"/>
-
-                        <Label text="Aquí podrás consultar el desglose de noches y los detalles de la estancia seleccionada."
-                               wrapText="true"
-                               styleClass="empty-description"/>
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                            <VBox alignment="CENTER_RIGHT" spacing="4.0">
+                                <Label text="TOTAL DE LA ESTANCIA" styleClass="field-label"/>
+                                <Label fx:id="totalDetalle" text="Pendiente"
+                                       styleClass="total-price"/>
+                            </VBox>
+                        </HBox>
                     </VBox>
 
-                    <HBox alignment="CENTER_RIGHT"
-                          spacing="15.0">
-
-                        <VBox alignment="CENTER_RIGHT"
-                              spacing="4.0">
-
-                            <Label text="TOTAL DE LA ESTANCIA"
-                                   styleClass="field-label"/>
-
-                            <Label text="Pendiente de consulta"
-                                   styleClass="total-price"/>
-                        </VBox>
-                    </HBox>
-
+                    <VBox fx:id="detalleVacio" spacing="8.0"
+                          alignment="CENTER" styleClass="empty-detail">
+                        <Label text="▤" styleClass="empty-icon"/>
+                        <Label text="Selecciona una estancia" styleClass="empty-title"/>
+                        <Label text="Aquí podrás consultar los detalles de la estancia seleccionada."
+                               wrapText="true" styleClass="empty-description"/>
+                    </VBox>
                 </VBox>
 
                 <!-- ESTADO VACIO -->
-                <VBox spacing="8.0"
-                      alignment="CENTER"
-                      styleClass="empty-history">
-
-                    <Label text="◷"
-                           styleClass="empty-icon"/>
-
-                    <Label text="Tu historial aparecerá aquí"
-                           styleClass="empty-title"/>
-
+                <VBox fx:id="estadoVacio" spacing="8.0"
+                      alignment="CENTER" styleClass="empty-history"
+                      visible="false" managed="false">
+                    <Label text="◷" styleClass="empty-icon"/>
+                    <Label text="Tu historial aparecerá aquí" styleClass="empty-title"/>
                     <Label text="Cuando finalices una estancia, podrás consultar sus detalles en esta sección."
-                           wrapText="true"
-                           styleClass="empty-description"/>
+                           wrapText="true" styleClass="empty-description"/>
                 </VBox>
 
-                <!-- PIE -->
                 <Label text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO"
                        styleClass="footer-text"/>
 
             </VBox>
         </ScrollPane>
     </center>
-
 </BorderPane>
+
 
