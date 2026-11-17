@@ -12,6 +12,7 @@ import model.modelo.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.LocalDateTime;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -391,8 +392,11 @@ public class Main {
         GestorTemporadas gt = new GestorTemporadas();
         PeriodoTemporada alta = new PeriodoTemporada(inicio, inicio.plusDays(5), Temporada.ALTA);
         gt.definirPeriodo(alta);
+        gt.definirPeriodo(new PeriodoTemporada(Month.JUNE, Month.JUNE, Temporada.ALTA));
         igual(Temporada.ALTA, gt.temporadaDe(inicio.plusDays(2)), "Temporada definida");
-        igual(Temporada.BAJA, gt.temporadaDe(inicio.plusDays(10)), "Temporada por defecto");
+        igual(Temporada.ALTA, gt.temporadaDe(LocalDate.of(2027, 12, 10)), "Temporada recurrente cada año");
+        igual(Temporada.ALTA, gt.temporadaDe(LocalDate.of(2027, 6, 10)), "Varios periodos de temporada alta");
+        igual(Temporada.BAJA, gt.temporadaDe(LocalDate.of(2027, 1, 10)), "Temporada por defecto");
         esperaExcepcion(FechasInvalidasException.class, () -> {
             try {
                 gt.definirPeriodo(new PeriodoTemporada(inicio.plusDays(2), inicio.plusDays(7), Temporada.MEDIA));
@@ -429,18 +433,18 @@ public class Main {
     }
 
     private static void probarCotizador() throws Exception {
-        LocalDate d = LocalDate.of(2026, 12, 20);
+        LocalDate d = LocalDate.of(2027, 2, 27);
         Apartamento a = apartamento("C-1", 4, 2);
         GestorTemporadas gt = new GestorTemporadas();
-        gt.definirPeriodo(new PeriodoTemporada(d.plusDays(1), d.plusDays(1), Temporada.ALTA));
-        gt.definirPeriodo(new PeriodoTemporada(d.plusDays(2), d.plusDays(2), Temporada.MEDIA));
+        gt.definirPeriodo(new PeriodoTemporada(Month.FEBRUARY, Month.FEBRUARY, Temporada.ALTA));
+        gt.definirPeriodo(new PeriodoTemporada(Month.MARCH, Month.MARCH, Temporada.MEDIA));
         CotizadorService cotizador = new CotizadorService(gt);
         ListaDoblementeEnlazada<Ocupante> personas = new ListaDoblementeEnlazada<>();
         personas.agregar(new Ocupante("Adulto", LocalDate.of(1990, 1, 1)));
-        personas.agregar(new Ocupante("Niño 5", LocalDate.of(2021, 1, 1)));
+        personas.agregar(new Ocupante("Niño 5", LocalDate.of(2022, 3, 1)));
         Cotizacion c = cotizador.cotizar(a, new Estancia(d, d.plusDays(3)), personas);
-        // Baja: 100.000; alta: 200.000; media: 150.000. Solo paga el adulto.
-        cerca(450_000, c.getTotal(), "Total con temporada variable y menor gratuito");
+        // Dos noches de febrero en alta y una de marzo en media. Solo paga el adulto.
+        cerca(550_000, c.getTotal(), "Total con temporada variable y menor gratuito");
         igual(3, c.getDesglose().tamano(), "Desglose por cada noche");
         igual(1, c.getDesglose().obtener(0).getPersonasCobradas(), "Menor no paga");
         esperaExcepcion(CapacidadExcedidaException.class, () -> {
@@ -721,8 +725,7 @@ public class Main {
         ArbolBinarioBusqueda<Apartamento> apartamentos = new ArbolBinarioBusqueda<>();
         ArbolBinarioBusqueda<Huesped> huespedes = new ArbolBinarioBusqueda<>();
         GestorTemporadas temporadas = new GestorTemporadas();
-        temporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2027, 1, 2), LocalDate.of(2027, 1, 3), Temporada.MEDIA));
+        temporadas.definirPeriodo(new PeriodoTemporada(Month.FEBRUARY, Month.FEBRUARY, Temporada.MEDIA));
 
         Apartamento a = apartamento("REP-1", 3, 2);
         Apartamento b = apartamento("REP-2", 2, 1);
@@ -740,14 +743,14 @@ public class Main {
                 new CotizadorService(temporadas), new AsignadorGrupos(), new GestorVencimientos());
         LocalDateTime creada = LocalDateTime.of(2027, 1, 1, 8, 0);
         Reserva directa = gestorReservas.crearReserva(directaHuesped, a,
-                estancia(LocalDate.of(2027, 1, 1), 3),
+                estancia(LocalDate.of(2027, 1, 31), 3),
                 ocupantes(1, LocalDate.of(1990, 1, 1)), CanalReserva.DIRECTA, creada);
         Reserva portal = gestorReservas.crearReserva(portalHuesped, b,
-                estancia(LocalDate.of(2027, 1, 1), 1),
+                estancia(LocalDate.of(2027, 1, 31), 1),
                 ocupantes(1, LocalDate.of(1990, 1, 1)), CanalReserva.PORTAL, creada);
-        gestorReservas.cancelar(portal, LocalDate.of(2027, 1, 1));
+        gestorReservas.cancelar(portal, LocalDate.of(2027, 1, 31));
         Reserva externa = gestorReservas.crearReservaExternaConfirmada(externaHuesped, b,
-                estancia(LocalDate.of(2027, 1, 2), 1),
+                estancia(LocalDate.of(2027, 2, 1), 1),
                 ocupantes(1, LocalDate.of(1990, 1, 1)), creada);
         gestorReservas.marcarNoShow(externa);
 
@@ -765,7 +768,7 @@ public class Main {
 
         GestorReportes reportes = new GestorReportes(apartamentos, huespedes, temporadas);
         ListaDoblementeEnlazada<ReporteOcupacion> ocupacion = reportes.generarOcupacion(
-                LocalDate.of(2027, 1, 1), LocalDate.of(2027, 1, 4));
+                LocalDate.of(2027, 1, 31), LocalDate.of(2027, 2, 3));
         igual(4, ocupacion.tamano(), "Una fila por apartamento y temporada presente en el periodo");
         ReporteOcupacion baja = null;
         ReporteOcupacion media = null;

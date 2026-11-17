@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 
 public class CargadorDatos {
 
@@ -55,13 +56,21 @@ public class CargadorDatos {
         }
     }
 
+    private Month parsearMes(String valor) {
+        try { return Month.of(Integer.parseInt(valor)); }
+        catch (NumberFormatException | java.time.DateTimeException ex) { return LocalDate.parse(valor).getMonth(); }
+    }
+
     private void procesarLinea(String linea) throws ExcepcionSGA {
         String[] c = linea.split(";", -1);
         switch (c[0].trim().toUpperCase()) {
             case "TEMPORADA":
-                gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                        LocalDate.parse(c[2].trim()), LocalDate.parse(c[3].trim()),
-                        Temporada.valueOf(c[1].trim().toUpperCase())));
+                Temporada temporada = Temporada.valueOf(c[1].trim().toUpperCase());
+                // Los periodos BAJA de archivos antiguos se ignoran: BAJA es el valor por defecto.
+                if (temporada != Temporada.BAJA) {
+                    gestorTemporadas.definirPeriodo(new PeriodoTemporada(
+                            parsearMes(c[2].trim()), parsearMes(c[3].trim()), temporada));
+                }
                 break;
             case "APARTAMENTO":
                 Apartamento a = new Apartamento(c[1].trim(), c[2].trim(), c[3].trim(),
@@ -186,9 +195,9 @@ public class CargadorDatos {
     public void guardarEnArchivo(String ruta) throws IOException {
         try (BufferedWriter w = new BufferedWriter(new FileWriter(ruta))) {
             escribir(w, "# SGA - datos exportados");
-            escribir(w, "# TEMPORADA;tipo;inicio;fin");
+            escribir(w, "# TEMPORADA;tipo;mesInicio;mesFin (1-12, se repiten cada ano)");
             for (PeriodoTemporada p : gestorTemporadas.getPeriodos()) {
-                escribir(w, "TEMPORADA;" + p.getTemporada() + ";" + p.getInicio() + ";" + p.getFin());
+                escribir(w, "TEMPORADA;" + p.getTemporada() + ";" + p.getMesInicio().getValue() + ";" + p.getMesFin().getValue());
             }
             escribir(w, "# APARTAMENTO;codigo;nombre;bloque;piso;dormitorios;capacidad;baja;media;alta;caracteristicas");
             for (Apartamento a : apartamentos) {
@@ -272,12 +281,9 @@ public class CargadorDatos {
 
     /** Carga temporadas, 8 apartamentos, 5 huespedes y 4 reservas de ejemplo. */
     public void cargarEscenarioPrueba() throws ExcepcionSGA {
-        gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2026, 11, 20), LocalDate.of(2026, 12, 14), Temporada.MEDIA));
-        gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2026, 12, 15), LocalDate.of(2027, 1, 15), Temporada.ALTA));
-        gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2027, 3, 20), LocalDate.of(2027, 4, 10), Temporada.MEDIA));
+        gestorTemporadas.definirPeriodo(new PeriodoTemporada(Month.NOVEMBER, Month.NOVEMBER, Temporada.MEDIA));
+        gestorTemporadas.definirPeriodo(new PeriodoTemporada(Month.DECEMBER, Month.FEBRUARY, Temporada.ALTA));
+        gestorTemporadas.definirPeriodo(new PeriodoTemporada(Month.MARCH, Month.APRIL, Temporada.MEDIA));
 
         apto("A-101", "Cafetal", "A", 1, 1, 2, 60000, 80000, 110000, "Balcon");
         apto("A-102", "Guadual", "A", 1, 2, 4, 85000, 110000, 150000, "Cocina equipada");
