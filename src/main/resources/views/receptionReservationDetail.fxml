@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefWidth="1440.0" prefHeight="900.0"
+            styleClass="detail-root"
+            stylesheets="@../styles/receptionReservationDetail.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.ReceptionReservationDetailController">
+
+    <top>
+        <VBox styleClass="detail-topbar" spacing="16">
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <Button text="‹  Volver al calendario"
+                        onAction="#volverCalendario"
+                        styleClass="back-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="APARTA-SUITES UQ  ·  RECEPCIÓN"
+                       styleClass="topbar-brand"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Gestión de reserva" styleClass="page-title"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label fx:id="reservationIdLabel"
+                               text="RES-000"
+                               styleClass="reservation-code"/>
+                        <Label fx:id="statusLabel"
+                               text="Pendiente"
+                               styleClass="status-pill"/>
+                    </HBox>
+                </VBox>
+
+                <VBox alignment="CENTER_RIGHT" spacing="4">
+                    <Label text="REGISTRADA EL" styleClass="eyebrow"/>
+                    <Label fx:id="createdAtLabel"
+                           text="—"
+                           styleClass="topbar-value"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    styleClass="detail-scroll">
+            <content>
+                <VBox spacing="18" styleClass="detail-content">
+
+                    <!-- RESUMEN SUPERIOR -->
+                    <GridPane hgap="14" vgap="14">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox styleClass="summary-tile"
+                              GridPane.columnIndex="0"
+                              GridPane.rowIndex="0"
+                              spacing="5">
+                            <Label text="ESTANCIA" styleClass="eyebrow"/>
+                            <Label fx:id="dateRangeLabel"
+                                   text="—"
+                                   styleClass="summary-value"
+                                   wrapText="true"/>
+                            <Label fx:id="nightsLabel"
+                                   text="—"
+                                   styleClass="muted-text"/>
+                        </VBox>
+
+                        <VBox styleClass="summary-tile"
+                              GridPane.columnIndex="1"
+                              GridPane.rowIndex="0"
+                              spacing="5">
+                            <Label text="HUÉSPEDES" styleClass="eyebrow"/>
+                            <Label fx:id="guestCountLabel"
+                                   text="—"
+                                   styleClass="summary-value"/>
+                            <Label text="Personas alojadas"
+                                   styleClass="muted-text"/>
+                        </VBox>
+
+                        <VBox styleClass="summary-tile"
+                              GridPane.columnIndex="2"
+                              GridPane.rowIndex="0"
+                              spacing="5">
+                            <Label text="CANAL DE RESERVA"
+                                   styleClass="eyebrow"/>
+                            <Label fx:id="channelLabel"
+                                   text="—"
+                                   styleClass="summary-value"/>
+                            <Label text="Origen de la solicitud"
+                                   styleClass="muted-text"/>
+                        </VBox>
+
+                        <!-- SALDO PENDIENTE CORREGIDO -->
+                        <VBox styleClass="summary-tile"
+                              GridPane.columnIndex="3"
+                              GridPane.rowIndex="0"
+                              spacing="7"
+                              minWidth="0">
+                            <Label text="SALDO PENDIENTE"
+                                   styleClass="eyebrow"/>
+
+                            <Label fx:id="balanceLabel"
+                                   text="0"
+                                   minWidth="150"
+                                   minHeight="28"
+                                   maxWidth="Infinity"
+                                   wrapText="false"
+                                   style="-fx-text-fill: #B16B2C;
+                                          -fx-font-size: 19px;
+                                          -fx-font-weight: bold;"/>
+
+                            <Label text="Según movimientos del folio"
+                                   styleClass="muted-text"
+                                   wrapText="true"/>
+                        </VBox>
+                    </GridPane>
+
+                    <HBox spacing="18" alignment="TOP_LEFT">
+
+                        <VBox spacing="16" HBox.hgrow="ALWAYS">
+
+                            <!-- APARTAMENTO -->
+                            <VBox spacing="12" styleClass="detail-card">
+                                <VBox spacing="3">
+                                    <Label text="APARTAMENTO Y TIPO DE ALOJAMIENTO"
+                                           styleClass="eyebrow"/>
+                                    <Label text="Información del apartamento"
+                                           styleClass="section-title"/>
+                                </VBox>
+
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <VBox styleClass="apartment-icon"
+                                          alignment="CENTER">
+                                        <Label text="⌂"/>
+                                    </VBox>
+
+                                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                        <Label fx:id="apartmentNameLabel"
+                                               text="Apartamento"
+                                               styleClass="card-main-title"/>
+                                        <Label fx:id="apartmentCodeLabel"
+                                               text="A-000"
+                                               styleClass="muted-text"/>
+                                    </VBox>
+
+                                    <Label fx:id="apartmentStateLabel"
+                                           text="Preparado"
+                                           styleClass="small-state"/>
+                                </HBox>
+
+                                <Separator/>
+
+                                <GridPane hgap="18" vgap="12">
+                                    <columnConstraints>
+                                        <ColumnConstraints percentWidth="50"/>
+                                        <ColumnConstraints percentWidth="50"/>
+                                    </columnConstraints>
+
+                                    <VBox spacing="4"
+                                          GridPane.columnIndex="0"
+                                          GridPane.rowIndex="0">
+                                        <Label text="UBICACIÓN"
+                                               styleClass="eyebrow"/>
+                                        <Label fx:id="apartmentLocationLabel"
+                                               text="—"
+                                               styleClass="field-value"/>
+                                    </VBox>
+
+                                    <VBox spacing="4"
+                                          GridPane.columnIndex="1"
+                                          GridPane.rowIndex="0">
+                                        <Label text="HABITACIONES"
+                                               styleClass="eyebrow"/>
+                                        <Label fx:id="apartmentRoomsLabel"
+                                               text="—"
+                                               styleClass="field-value"/>
+                                    </VBox>
+
+                                    <VBox spacing="4"
+                                          GridPane.columnIndex="0"
+                                          GridPane.rowIndex="1">
+                                        <Label text="CAPACIDAD"
+                                               styleClass="eyebrow"/>
+                                        <Label fx:id="apartmentCapacityLabel"
+                                               text="—"
+                                               styleClass="field-value"/>
+                                    </VBox>
+
+                                    <VBox spacing="4"
+                                          GridPane.columnIndex="1"
+                                          GridPane.rowIndex="1">
+                                        <Label text="CARACTERÍSTICAS"
+                                               styleClass="eyebrow"/>
+                                        <Label fx:id="apartmentFeaturesLabel"
+                                               text="—"
+                                               styleClass="field-value"
+                                               wrapText="true"/>
+                                    </VBox>
+                                </GridPane>
+                            </VBox>
+
+                            <!-- TITULAR -->
+                            <VBox spacing="12" styleClass="detail-card">
+                                <VBox spacing="3">
+                                    <Label text="RESPONSABLE DE LA RESERVA"
+                                           styleClass="eyebrow"/>
+                                    <Label text="Titular"
+                                           styleClass="section-title"/>
+                                </VBox>
+
+                                <Label fx:id="holderNameLabel"
+                                       text="Nombre del titular"
+                                       styleClass="card-main-title"/>
+                                <Label fx:id="holderDocumentLabel"
+                                       text="Documento: —"
+                                       styleClass="field-value"/>
+                                <Label fx:id="holderPhoneLabel"
+                                       text="Teléfono: —"
+                                       styleClass="field-value"/>
+                                <Label fx:id="holderEmailLabel"
+                                       text="Correo: —"
+                                       styleClass="field-value"/>
+                            </VBox>
+
+                            <!-- OCUPANTES -->
+                            <VBox spacing="12" styleClass="detail-card">
+                                <VBox spacing="3">
+                                    <Label text="REGISTRO DE OCUPANTES"
+                                           styleClass="eyebrow"/>
+                                    <Label text="Huéspedes incluidos"
+                                           styleClass="section-title"/>
+                                </VBox>
+                                <VBox fx:id="guestsList" spacing="8"/>
+                            </VBox>
+
+                            <!-- FOLIO -->
+                            <VBox spacing="12" styleClass="detail-card">
+                                <HBox alignment="CENTER_LEFT">
+                                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                        <Label text="ESTADO DE CUENTA"
+                                               styleClass="eyebrow"/>
+                                        <Label text="Folio de la reserva"
+                                               styleClass="section-title"/>
+                                    </VBox>
+
+                                    <Label fx:id="folioIdLabel"
+                                           text="F-000"
+                                           styleClass="folio-code"/>
+                                </HBox>
+
+                                <GridPane hgap="12">
+                                    <columnConstraints>
+                                        <ColumnConstraints percentWidth="50"/>
+                                        <ColumnConstraints percentWidth="50"/>
+                                    </columnConstraints>
+
+                                    <VBox spacing="4"
+                                          GridPane.columnIndex="0">
+                                        <Label text="CARGOS NETOS"
+                                               styleClass="eyebrow"/>
+                                        <Label fx:id="totalChargesLabel"
+                                               text="0"
+                                               styleClass="field-value"/>
+                                    </VBox>
+
+                                    <VBox spacing="4"
+                                          GridPane.columnIndex="1">
+                                        <Label text="PAGOS NETOS"
+                                               styleClass="eyebrow"/>
+                                        <Label fx:id="totalPaymentsLabel"
+                                               text="0"
+                                               styleClass="field-value"/>
+                                    </VBox>
+                                </GridPane>
+
+                                <Separator/>
+                                <Label text="Movimientos"
+                                       styleClass="subsection-title"/>
+                                <VBox fx:id="movementsList" spacing="7"/>
+                            </VBox>
+                        </VBox>
+
+                        <!-- ACCIONES -->
+                        <VBox spacing="14"
+                              prefWidth="300"
+                              minWidth="280"
+                              styleClass="actions-card">
+
+                            <VBox spacing="4">
+                                <Label text="GESTIÓN OPERATIVA"
+                                       styleClass="eyebrow"/>
+                                <Label text="Acciones"
+                                       styleClass="section-title"/>
+                                <Label text="Las opciones cambian según el estado de la reserva."
+                                       styleClass="muted-text"
+                                       wrapText="true"/>
+                            </VBox>
+
+                            <Separator/>
+
+                            <VBox fx:id="actionsBox" spacing="9">
+                                <Button fx:id="confirmButton"
+                                        text="✓  Confirmar reserva"
+                                        onAction="#confirmarReserva"
+                                        styleClass="action-primary"
+                                        maxWidth="Infinity"/>
+
+                                <Button fx:id="checkInButton"
+                                        text="↳  Registrar check-in"
+                                        onAction="#registrarCheckIn"
+                                        styleClass="action-primary"
+                                        maxWidth="Infinity"/>
+
+                                <Button fx:id="checkOutButton"
+                                        text="↗  Registrar check-out"
+                                        onAction="#registrarCheckOut"
+                                        styleClass="action-primary"
+                                        maxWidth="Infinity"/>
+
+                                <Button fx:id="noShowButton"
+                                        text="Marcar no-show"
+                                        onAction="#marcarNoShow"
+                                        styleClass="action-secondary"
+                                        maxWidth="Infinity"/>
+
+                                <Button fx:id="cancelButton"
+                                        text="Cancelar reserva"
+                                        onAction="#solicitarCancelacion"
+                                        styleClass="action-danger"
+                                        maxWidth="Infinity"/>
+
+                                <Button fx:id="paymentButton"
+                                        text="＋  Registrar pago"
+                                        onAction="#mostrarFormularioPago"
+                                        styleClass="action-secondary"
+                                        maxWidth="Infinity"/>
+
+                                <Button fx:id="chargeButton"
+                                        text="＋  Registrar cargo"
+                                        onAction="#mostrarFormularioCargo"
+                                        styleClass="action-secondary"
+                                        maxWidth="Infinity"/>
+
+                                <Label fx:id="emptyActionsLabel"
+                                       text="No hay acciones disponibles para el estado actual."
+                                       visible="false"
+                                       managed="false"
+                                       wrapText="true"
+                                       styleClass="muted-text"/>
+                            </VBox>
+
+                            <VBox fx:id="cancelConfirmationBox"
+                                  spacing="8"
+                                  styleClass="inline-confirm">
+                                <Label text="¿Cancelar esta reserva?"
+                                       styleClass="subsection-title"/>
+                                <Label text="La operación liberará las noches del apartamento y aplicará las reglas de devolución del sistema."
+                                       wrapText="true"
+                                       styleClass="muted-text"/>
+                                <HBox spacing="8">
+                                    <Button text="Sí, cancelar"
+                                            onAction="#confirmarCancelacion"
+                                            styleClass="action-danger"
+                                            HBox.hgrow="ALWAYS"/>
+                                    <Button text="Volver"
+                                            onAction="#descartarCancelacion"
+                                            styleClass="action-secondary"/>
+                                </HBox>
+                            </VBox>
+
+                            <VBox fx:id="movementForm"
+                                  spacing="9"
+                                  styleClass="inline-form">
+                                <Label fx:id="movementFormTitle"
+                                       text="Registrar movimiento"
+                                       styleClass="subsection-title"/>
+                                <TextField fx:id="movementConceptField"
+                                           promptText="Concepto del movimiento"/>
+                                <TextField fx:id="movementAmountField"
+                                           promptText="Valor en COP (ej. 25000)"/>
+                                <HBox spacing="8">
+                                    <Button text="Guardar"
+                                            onAction="#guardarMovimiento"
+                                            styleClass="action-primary"
+                                            HBox.hgrow="ALWAYS"/>
+                                    <Button text="Cerrar"
+                                            onAction="#cerrarFormularioMovimiento"
+                                            styleClass="action-secondary"/>
+                                </HBox>
+                            </VBox>
+
+                            <Label fx:id="feedbackLabel"
+                                   text=""
+                                   wrapText="true"
+                                   styleClass="feedback-label"/>
+
+                            <Region VBox.vgrow="ALWAYS"/>
+
+                            <Label text="Las operaciones se validan con las reglas del sistema."
+                                   styleClass="muted-text"
+                                   wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

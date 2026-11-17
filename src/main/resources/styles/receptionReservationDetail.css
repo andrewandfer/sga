@@ -1,0 +1,47 @@
+.detail-root { -fx-font-family: "Segoe UI", Arial, sans-serif; -fx-background-color: #F3F6F7; }
+.detail-topbar { -fx-background-color: white; -fx-padding: 20 34 22 34; -fx-border-color: transparent transparent #E4EAEC transparent; -fx-border-width: 0 0 1 0; }
+.back-button { -fx-background-color: #EDF3F4; -fx-text-fill: #24444B; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 9 14; -fx-cursor: hand; }
+.topbar-brand { -fx-text-fill: #547078; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
+.page-title { -fx-text-fill: #173A43; -fx-font-size: 25px; -fx-font-weight: bold; }
+.reservation-code { -fx-text-fill: #547078; -fx-font-size: 13px; -fx-font-weight: bold; }
+.eyebrow { -fx-text-fill: #84979C; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
+.topbar-value { -fx-text-fill: #344F56; -fx-font-size: 12px; -fx-font-weight: bold; }
+.detail-scroll { -fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; }
+.detail-scroll > .viewport { -fx-background-color: #F3F6F7; }
+.detail-content { -fx-padding: 24 34 34 34; -fx-max-width: 1400px; }
+.summary-tile { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16 18; -fx-border-color: #E7EDEF; -fx-border-radius: 12; }
+.summary-value { -fx-text-fill: #193E47; -fx-font-size: 15px; -fx-font-weight: bold; }
+.balance-highlight { -fx-text-fill: #B16B2C; -fx-font-size: 19px; }
+.muted-text { -fx-text-fill: #839499; -fx-font-size: 11px; }
+.detail-card { -fx-background-color: white; -fx-background-radius: 13; -fx-padding: 20; -fx-border-color: #E6ECEE; -fx-border-radius: 13; }
+.section-title { -fx-text-fill: #193E47; -fx-font-size: 16px; -fx-font-weight: bold; }
+.card-main-title { -fx-text-fill: #24464E; -fx-font-size: 15px; -fx-font-weight: bold; }
+.field-value { -fx-text-fill: #405A60; -fx-font-size: 12px; }
+.apartment-icon { -fx-background-color: #EAF2F3; -fx-background-radius: 10; -fx-min-width: 42; -fx-min-height: 42; -fx-max-width: 42; -fx-max-height: 42; }
+.apartment-icon .label { -fx-text-fill: #28545E; -fx-font-size: 24px; }
+.small-state { -fx-background-color: #EAF3EF; -fx-text-fill: #47765D; -fx-padding: 6 10; -fx-background-radius: 20; -fx-font-size: 10px; -fx-font-weight: bold; }
+.guest-row { -fx-background-color: #F7F9FA; -fx-background-radius: 8; -fx-padding: 10 12; }
+.guest-name { -fx-text-fill: #304F56; -fx-font-size: 12px; -fx-font-weight: bold; }
+.folio-code { -fx-text-fill: #6D8389; -fx-font-size: 11px; -fx-font-weight: bold; }
+.subsection-title { -fx-text-fill: #34545B; -fx-font-size: 12px; -fx-font-weight: bold; }
+.movement-row { -fx-padding: 9 0; -fx-border-color: transparent transparent #EDF1F2 transparent; -fx-border-width: 0 0 1 0; }
+.movement-concept { -fx-text-fill: #3D5960; -fx-font-size: 11px; -fx-font-weight: bold; }
+.movement-amount { -fx-text-fill: #294C54; -fx-font-size: 11px; -fx-font-weight: bold; }
+.actions-card { -fx-background-color: white; -fx-background-radius: 13; -fx-padding: 20; -fx-border-color: #E6ECEE; -fx-border-radius: 13; }
+.action-primary, .action-secondary, .action-danger { -fx-background-radius: 8; -fx-padding: 11 12; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand; }
+.action-primary { -fx-background-color: #174B55; -fx-text-fill: white; }
+.action-primary:hover { -fx-background-color: #23616C; }
+.action-secondary { -fx-background-color: #EDF3F4; -fx-text-fill: #31535B; }
+.action-secondary:hover { -fx-background-color: #DFE9EB; }
+.action-danger { -fx-background-color: #FBEDEC; -fx-text-fill: #A64A43; }
+.action-danger:hover { -fx-background-color: #F5DEDC; }
+.inline-confirm, .inline-form { -fx-background-color: #F6F8F9; -fx-background-radius: 9; -fx-padding: 12; -fx-border-color: #E5ECEE; -fx-border-radius: 9; }
+.inline-form .text-field { -fx-background-color: white; -fx-border-color: #DCE5E7; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 9; -fx-font-size: 11px; }
+.feedback-label { -fx-text-fill: #4F747B; -fx-font-size: 11px; -fx-padding: 4 0; }
+.separator .line { -fx-border-color: #E9EEF0; }
+.status-pill { -fx-padding: 5 10; -fx-background-radius: 20; -fx-font-size: 10px; -fx-font-weight: bold; }
+.status-pending { -fx-background-color: #FFF3DD; -fx-text-fill: #9A6A1E; }
+.status-confirmed { -fx-background-color: #E4F0FA; -fx-text-fill: #386B9A; }
+.status-current { -fx-background-color: #E1F2EB; -fx-text-fill: #34785C; }
+.status-finished { -fx-background-color: #EDF0F1; -fx-text-fill: #65767B; }
+.status-cancelled, .status-noshow { -fx-background-color: #FBE9E7; -fx-text-fill: #A64A43; }
