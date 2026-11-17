@@ -1,0 +1,194 @@
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="900.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.FavoritosController"
+            stylesheets="@../styles/favoritosHuesped.css"
+            styleClass="dashboard-root">
+
+    <!-- MENU LATERAL -->
+    <left>
+        <VBox prefWidth="255.0" styleClass="sidebar" spacing="25.0">
+
+            <VBox spacing="4.0">
+                <Label text="APARTA-SUITES" styleClass="brand-small"/>
+                <Label text="UQ" styleClass="brand-title"/>
+                <Label text="EXPERIENCIA DE ALOJAMIENTO"
+                       styleClass="brand-caption"/>
+            </VBox>
+
+            <VBox spacing="8.0">
+                <Label text="MENÚ PRINCIPAL" styleClass="menu-heading"/>
+
+                <Button text="⌂    Inicio"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="⌕    Buscar alojamiento"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="▤    Mis reservas"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="♡    Favoritos"
+                        maxWidth="Infinity"
+                        styleClass="nav-button nav-active"/>
+
+                <Button text="◷    Historial"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="♙    Mi perfil"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox styleClass="help-card" spacing="8.0">
+                <Label text="¿Necesitas ayuda?"
+                       styleClass="help-title"/>
+
+                <Label text="Estamos aquí para acompañarte durante tu estancia."
+                       wrapText="true"
+                       styleClass="help-description"/>
+
+                <Button text="Contactar"
+                        styleClass="help-button"/>
+            </VBox>
+
+            <Button text="↪    Cerrar sesión"
+                    maxWidth="Infinity"
+                    styleClass="logout-button"/>
+
+            <Label text="SALENTO · QUINDÍO · COLOMBIA"
+                   styleClass="sidebar-footer"/>
+        </VBox>
+    </left>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <ScrollPane fitToWidth="true"
+                    styleClass="content-scroll">
+
+            <VBox spacing="24.0" styleClass="main-content">
+
+                <!-- ENCABEZADO -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+
+                    <VBox spacing="5.0">
+                        <Label text="TUS ALOJAMIENTOS PREFERIDOS"
+                               styleClass="eyebrow"/>
+
+                        <Label text="Mis favoritos"
+                               styleClass="welcome-title"/>
+
+                        <Label text="Guarda los alojamientos que más te gustan y consúltalos cuando quieras."
+                               wrapText="true"
+                               styleClass="welcome-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <VBox alignment="CENTER_RIGHT" spacing="4.0">
+                        <Label text="MI CUENTA"
+                               styleClass="profile-caption"/>
+
+                        <Label fx:id="nombreHuesped"
+                               text="Huésped"
+                               styleClass="profile-name"/>
+                    </VBox>
+                </HBox>
+
+                <!-- RESUMEN -->
+                <HBox spacing="15.0">
+
+                    <VBox HBox.hgrow="ALWAYS"
+                          spacing="8.0"
+                          styleClass="summary-card">
+
+                        <Label text="ALOJAMIENTOS GUARDADOS"
+                               styleClass="stat-title"/>
+
+                        <Label fx:id="totalFavoritos"
+                               text="0"
+                               styleClass="stat-number"/>
+
+                        <Label text="Tus opciones favoritas"
+                               styleClass="stat-description"/>
+                    </VBox>
+
+                    <VBox HBox.hgrow="ALWAYS"
+                          spacing="8.0"
+                          styleClass="summary-card">
+
+                        <Label text="DISPONIBILIDAD"
+                               styleClass="stat-title"/>
+
+                        <Label text="Por consultar"
+                               styleClass="stat-number"/>
+
+                        <Label text="Consulta fechas para cada alojamiento"
+                               styleClass="stat-description"/>
+                    </VBox>
+
+                </HBox>
+
+                <!-- TITULO DE RESULTADOS -->
+                <HBox alignment="CENTER_LEFT">
+
+                    <VBox spacing="5.0">
+                        <Label text="Alojamientos que te gustan"
+                               styleClass="section-title"/>
+
+                        <Label text="Aquí aparecerán los apartamentos que hayas guardado."
+                               styleClass="section-description"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label text="MIS FAVORITOS"
+                           styleClass="result-caption"/>
+                </HBox>
+
+                <!-- TARJETAS DINAMICAS -->
+                <VBox fx:id="contenedorFavoritos"
+                      spacing="16.0"/>
+
+                <!-- ESTADO VACIO -->
+                <VBox fx:id="estadoVacio"
+                      spacing="8.0"
+                      alignment="CENTER"
+                      styleClass="empty-favorites"
+                      visible="false"
+                      managed="false">
+
+                    <Label text="♡"
+                           styleClass="empty-icon"/>
+
+                    <Label text="¿Buscas más opciones?"
+                           styleClass="empty-title"/>
+
+                    <Label text="Explora los alojamientos disponibles y guarda tus favoritos para encontrarlos fácilmente."
+                           wrapText="true"
+                           styleClass="empty-description"/>
+
+                    <Button text="Explorar alojamientos"
+                            styleClass="secondary-button"/>
+                </VBox>
+
+                <!-- PIE -->
+                <Label text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO"
+                       styleClass="footer-text"/>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
+

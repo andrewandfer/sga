@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="900.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.BuscarAlojamientoController"
+            stylesheets="@../styles/buscarAlojamiento.css"
+            styleClass="dashboard-root">
+
+    <left>
+        <VBox prefWidth="255.0" styleClass="sidebar" spacing="25.0">
+
+            <VBox spacing="4.0">
+                <Label text="APARTA-SUITES" styleClass="brand-small"/>
+                <Label text="UQ" styleClass="brand-title"/>
+                <Label text="EXPERIENCIA DE ALOJAMIENTO"
+                       styleClass="brand-caption"/>
+            </VBox>
+
+            <VBox spacing="8.0">
+                <Label text="MENÚ PRINCIPAL" styleClass="menu-heading"/>
+
+                <Button text="⌂    Inicio"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="⌕    Buscar alojamiento"
+                        maxWidth="Infinity"
+                        styleClass="nav-button nav-active"/>
+
+                <Button text="▤    Mis reservas"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="♡    Favoritos"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="◷    Historial"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+
+                <Button text="♙    Mi perfil"
+                        maxWidth="Infinity"
+                        styleClass="nav-button"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox styleClass="help-card" spacing="8.0">
+                <Label text="¿Necesitas ayuda?"
+                       styleClass="help-title"/>
+
+                <Label text="Estamos aquí para acompañarte durante tu estancia."
+                       wrapText="true"
+                       styleClass="help-description"/>
+
+                <Button text="Contactar"
+                        styleClass="help-button"/>
+            </VBox>
+
+            <Button text="↪    Cerrar sesión"
+                    maxWidth="Infinity"
+                    styleClass="logout-button"/>
+
+            <Label text="SALENTO · QUINDÍO · COLOMBIA"
+                   styleClass="sidebar-footer"/>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    styleClass="content-scroll">
+
+            <VBox spacing="24.0" styleClass="main-content">
+
+                <!-- ENCABEZADO -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <VBox spacing="5.0">
+                        <Label text="EXPLORA NUESTROS ESPACIOS"
+                               styleClass="eyebrow"/>
+
+                        <Label text="Encuentra tu alojamiento ideal"
+                               styleClass="welcome-title"/>
+
+                        <Label text="Selecciona tus fechas y descubre las opciones disponibles."
+                               styleClass="welcome-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <VBox alignment="CENTER_RIGHT" spacing="4.0">
+                        <Label text="MI CUENTA"
+                               styleClass="profile-caption"/>
+
+                        <Label text="Huésped"
+                               styleClass="profile-name"/>
+                    </VBox>
+                </HBox>
+
+                <!-- BUSCADOR -->
+                <VBox spacing="17.0" styleClass="section-card">
+
+                    <VBox spacing="5.0">
+                        <Label text="Busca tu próxima estancia"
+                               styleClass="section-title"/>
+
+                        <Label text="Indica las fechas y la cantidad de personas que se alojarán."
+                               styleClass="section-description"/>
+                    </VBox>
+
+                    <HBox spacing="14.0">
+
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label text="FECHA DE ENTRADA"
+                                   styleClass="field-label"/>
+
+                            <DatePicker fx:id="fechaEntrada"
+                                        promptText="Fecha de entrada"
+                                        maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label text="FECHA DE SALIDA"
+                                   styleClass="field-label"/>
+
+                            <DatePicker fx:id="fechaSalida"
+                                        promptText="Fecha de salida"
+                                        maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label text="NÚMERO DE PERSONAS"
+                                   styleClass="field-label"/>
+
+                            <TextField fx:id="campoPersonas"
+                                       promptText="Ej. 4 personas"/>
+                        </VBox>
+
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Label text="ORDENAR RESULTADOS:"
+                               styleClass="field-label"/>
+
+                        <ComboBox fx:id="comboCriterio"
+                                  promptText="Selecciona un criterio"
+                                  prefWidth="240.0"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Buscar disponibilidad  →"
+                                styleClass="primary-button"
+                                onAction="#buscarDisponibilidad"/>
+                    </HBox>
+
+                    <Label fx:id="mensajeBusqueda"
+                           wrapText="true"
+                           styleClass="section-description"/>
+                </VBox>
+
+                <!-- RESULTADOS -->
+                <VBox spacing="15.0">
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="4.0">
+                            <Label text="Apartamentos disponibles"
+                                   styleClass="section-title"/>
+
+                            <Label text="Consulta las opciones que coincidan con tu búsqueda."
+                                   styleClass="section-description"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Label fx:id="contadorResultados"
+                               text="RESULTADOS"
+                               styleClass="result-caption"/>
+                    </HBox>
+
+                    <VBox fx:id="contenedorResultados"
+                          spacing="14.0"/>
+
+                </VBox>
+
+                <!-- FORMULARIO DE OCUPANTES -->
+                <VBox fx:id="seccionOcupantes"
+                      spacing="16.0"
+                      styleClass="section-card"
+                      visible="false"
+                      managed="false">
+
+                    <VBox spacing="5.0">
+                        <Label text="Datos de las personas que se alojarán"
+                               styleClass="section-title"/>
+
+                        <Label text="Completa el nombre y la fecha de nacimiento de cada ocupante."
+                               styleClass="section-description"/>
+
+                        <Label text="Los menores de 6 años ocupan cupo, pero no pagan."
+                               styleClass="section-description"/>
+                    </VBox>
+
+                    <VBox fx:id="contenedorOcupantes"
+                          spacing="12.0"/>
+
+                    <Button text="Calcular cotización"
+                            styleClass="primary-button"
+                            onAction="#calcularCotizacion"/>
+                </VBox>
+
+                <!-- COTIZACIÓN -->
+                <VBox spacing="16.0"
+                      styleClass="section-card">
+
+                    <VBox spacing="5.0">
+                        <Label text="Cotización de tu estancia"
+                               styleClass="section-title"/>
+
+                        <Label text="Consulta el valor de cada noche y el total de tu alojamiento."
+                               styleClass="section-description"/>
+                    </VBox>
+
+                    <HBox styleClass="quote-header" spacing="8.0">
+                        <Label text="NOCHE" HBox.hgrow="ALWAYS"/>
+                        <Label text="TEMPORADA" HBox.hgrow="ALWAYS"/>
+                        <Label text="PERSONAS" HBox.hgrow="ALWAYS"/>
+                        <Label text="SUBTOTAL" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <VBox fx:id="contenedorDesglose"
+                          spacing="0.0"
+                          styleClass="quote-table"/>
+
+                    <Label fx:id="mensajeCotizacion"
+                           text="Selecciona un apartamento y registra los ocupantes para calcular la cotización."
+                           wrapText="true"
+                           styleClass="section-description"/>
+
+                    <HBox alignment="CENTER_RIGHT" spacing="20.0">
+                        <VBox spacing="4.0" alignment="CENTER_RIGHT">
+                            <Label text="TOTAL DE LA ESTANCIA"
+                                   styleClass="field-label"/>
+
+                            <Label fx:id="totalCotizacion"
+                                   text="Pendiente de cotización"
+                                   styleClass="total-price"/>
+                        </VBox>
+                    </HBox>
+
+                    <Label text="La cotización se calcula según las tarifas por persona y la temporada de cada noche. Los menores de 6 años ocupan cupo, pero no pagan."
+                           wrapText="true"
+                           styleClass="section-description"/>
+
+                </VBox>
+
+                <Label text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO"
+                       styleClass="footer-text"/>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
+
+
+
+

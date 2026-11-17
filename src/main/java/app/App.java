@@ -38,7 +38,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
-                App.class.getResource("/views/login.fxml")
+                App.class.getResource("/views/registroHuesped.fxml")
         );
 
         Parent root = loader.load();
