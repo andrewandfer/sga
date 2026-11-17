@@ -6,10 +6,10 @@
 <BorderPane prefHeight="900.0" prefWidth="1280.0"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.BuscarAlojamientoController"
             stylesheets="@../styles/buscarAlojamiento.css"
             styleClass="dashboard-root">
 
-    <!-- MENU LATERAL -->
     <left>
         <VBox prefWidth="255.0" styleClass="sidebar" spacing="25.0">
 
@@ -71,7 +71,6 @@
         </VBox>
     </left>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <center>
         <ScrollPane fitToWidth="true"
                     styleClass="content-scroll">
@@ -80,7 +79,6 @@
 
                 <!-- ENCABEZADO -->
                 <HBox alignment="CENTER_LEFT" spacing="15.0">
-
                     <VBox spacing="5.0">
                         <Label text="EXPLORA NUESTROS ESPACIOS"
                                styleClass="eyebrow"/>
@@ -120,7 +118,8 @@
                             <Label text="FECHA DE ENTRADA"
                                    styleClass="field-label"/>
 
-                            <DatePicker promptText="Fecha de entrada"
+                            <DatePicker fx:id="fechaEntrada"
+                                        promptText="Fecha de entrada"
                                         maxWidth="Infinity"/>
                         </VBox>
 
@@ -128,7 +127,8 @@
                             <Label text="FECHA DE SALIDA"
                                    styleClass="field-label"/>
 
-                            <DatePicker promptText="Fecha de salida"
+                            <DatePicker fx:id="fechaSalida"
+                                        promptText="Fecha de salida"
                                         maxWidth="Infinity"/>
                         </VBox>
 
@@ -136,31 +136,36 @@
                             <Label text="NÚMERO DE PERSONAS"
                                    styleClass="field-label"/>
 
-                            <TextField promptText="Ej. 4 personas"/>
+                            <TextField fx:id="campoPersonas"
+                                       promptText="Ej. 4 personas"/>
                         </VBox>
 
                     </HBox>
 
                     <HBox alignment="CENTER_LEFT" spacing="12.0">
-
                         <Label text="ORDENAR RESULTADOS:"
                                styleClass="field-label"/>
 
-                        <ComboBox promptText="Selecciona un criterio"
+                        <ComboBox fx:id="comboCriterio"
+                                  promptText="Selecciona un criterio"
                                   prefWidth="240.0"/>
 
                         <Region HBox.hgrow="ALWAYS"/>
 
                         <Button text="Buscar disponibilidad  →"
-                                styleClass="primary-button"/>
+                                styleClass="primary-button"
+                                onAction="#buscarDisponibilidad"/>
                     </HBox>
+
+                    <Label fx:id="mensajeBusqueda"
+                           wrapText="true"
+                           styleClass="section-description"/>
                 </VBox>
 
-                <!-- RESULTADOS DE BUSQUEDA -->
+                <!-- RESULTADOS -->
                 <VBox spacing="15.0">
 
                     <HBox alignment="CENTER_LEFT">
-
                         <VBox spacing="4.0">
                             <Label text="Apartamentos disponibles"
                                    styleClass="section-title"/>
@@ -171,135 +176,43 @@
 
                         <Region HBox.hgrow="ALWAYS"/>
 
-                        <Label text="RESULTADOS"
+                        <Label fx:id="contadorResultados"
+                               text="RESULTADOS"
                                styleClass="result-caption"/>
                     </HBox>
 
-                    <!-- APARTAMENTO 1 -->
-                    <HBox spacing="18.0"
-                          styleClass="apartment-card">
-
-                        <VBox alignment="CENTER"
-                              styleClass="apartment-placeholder"
-                              prefWidth="145.0"
-                              minWidth="145.0">
-
-                            <Label text="⌂"
-                                   styleClass="apartment-symbol"/>
-
-                            <Label text="APARTAMENTO"
-                                   styleClass="placeholder-caption"/>
-                        </VBox>
-
-                        <VBox spacing="10.0"
-                              HBox.hgrow="ALWAYS">
-
-                            <Label text="Nombre del apartamento"
-                                   styleClass="apartment-title"/>
-
-                            <Label text="Código: pendiente de datos"
-                                   styleClass="apartment-detail"/>
-
-                            <HBox spacing="18.0">
-                                <Label text="Bloque: por consultar"
-                                       styleClass="apartment-detail"/>
-
-                                <Label text="Piso: por consultar"
-                                       styleClass="apartment-detail"/>
-                            </HBox>
-
-                            <HBox spacing="18.0">
-                                <Label text="Dormitorios: por consultar"
-                                       styleClass="apartment-detail"/>
-
-                                <Label text="Capacidad máxima: por consultar"
-                                       styleClass="apartment-detail"/>
-                            </HBox>
-
-                            <Label text="Características del apartamento"
-                                   styleClass="section-description"
-                                   wrapText="true"/>
-                        </VBox>
-
-                        <VBox alignment="CENTER_RIGHT"
-                              spacing="10.0">
-
-                            <Label text="TARIFA POR PERSONA / NOCHE"
-                                   styleClass="field-label"/>
-
-                            <Label text="Pendiente"
-                                   styleClass="apartment-price"/>
-
-                            <Button text="Seleccionar"
-                                    styleClass="secondary-button"/>
-                        </VBox>
-
-                    </HBox>
-
-                    <!-- APARTAMENTO 2 -->
-                    <HBox spacing="18.0"
-                          styleClass="apartment-card">
-
-                        <VBox alignment="CENTER"
-                              styleClass="apartment-placeholder"
-                              prefWidth="145.0"
-                              minWidth="145.0">
-
-                            <Label text="⌂"
-                                   styleClass="apartment-symbol"/>
-
-                            <Label text="APARTAMENTO"
-                                   styleClass="placeholder-caption"/>
-                        </VBox>
-
-                        <VBox spacing="10.0"
-                              HBox.hgrow="ALWAYS">
-
-                            <Label text="Nombre del apartamento"
-                                   styleClass="apartment-title"/>
-
-                            <Label text="Código: pendiente de datos"
-                                   styleClass="apartment-detail"/>
-
-                            <HBox spacing="18.0">
-                                <Label text="Bloque: por consultar"
-                                       styleClass="apartment-detail"/>
-
-                                <Label text="Piso: por consultar"
-                                       styleClass="apartment-detail"/>
-                            </HBox>
-
-                            <HBox spacing="18.0">
-                                <Label text="Dormitorios: por consultar"
-                                       styleClass="apartment-detail"/>
-
-                                <Label text="Capacidad máxima: por consultar"
-                                       styleClass="apartment-detail"/>
-                            </HBox>
-
-                            <Label text="Características del apartamento"
-                                   styleClass="section-description"
-                                   wrapText="true"/>
-                        </VBox>
-
-                        <VBox alignment="CENTER_RIGHT"
-                              spacing="10.0">
-
-                            <Label text="TARIFA POR PERSONA / NOCHE"
-                                   styleClass="field-label"/>
-
-                            <Label text="Pendiente"
-                                   styleClass="apartment-price"/>
-
-                            <Button text="Seleccionar"
-                                    styleClass="secondary-button"/>
-                        </VBox>
-
-                    </HBox>
+                    <VBox fx:id="contenedorResultados"
+                          spacing="14.0"/>
 
                 </VBox>
 
-                <!-- COTIZACION -->
+                <!-- FORMULARIO DE OCUPANTES -->
+                <VBox fx:id="seccionOcupantes"
+                      spacing="16.0"
+                      styleClass="section-card"
+                      visible="false"
+                      managed="false">
+
+                    <VBox spacing="5.0">
+                        <Label text="Datos de las personas que se alojarán"
+                               styleClass="section-title"/>
+
+                        <Label text="Completa el nombre y la fecha de nacimiento de cada ocupante."
+                               styleClass="section-description"/>
+
+                        <Label text="Los menores de 6 años ocupan cupo, pero no pagan."
+                               styleClass="section-description"/>
+                    </VBox>
+
+                    <VBox fx:id="contenedorOcupantes"
+                          spacing="12.0"/>
+
+                    <Button text="Calcular cotización"
+                            styleClass="primary-button"
+                            onAction="#calcularCotizacion"/>
+                </VBox>
+
+                <!-- COTIZACIÓN -->
                 <VBox spacing="16.0"
                       styleClass="section-card">
 
@@ -311,129 +224,47 @@
                                styleClass="section-description"/>
                     </VBox>
 
-                    <!-- ENCABEZADO DE TABLA -->
-                    <HBox styleClass="quote-header"
-                          spacing="8.0">
-
-                        <Label text="NOCHE"
-                               HBox.hgrow="ALWAYS"/>
-
-                        <Label text="TEMPORADA"
-                               HBox.hgrow="ALWAYS"/>
-
-                        <Label text="PERSONAS"
-                               HBox.hgrow="ALWAYS"/>
-
-                        <Label text="SUBTOTAL"
-                               HBox.hgrow="ALWAYS"/>
+                    <HBox styleClass="quote-header" spacing="8.0">
+                        <Label text="NOCHE" HBox.hgrow="ALWAYS"/>
+                        <Label text="TEMPORADA" HBox.hgrow="ALWAYS"/>
+                        <Label text="PERSONAS" HBox.hgrow="ALWAYS"/>
+                        <Label text="SUBTOTAL" HBox.hgrow="ALWAYS"/>
                     </HBox>
 
-                    <!-- DESGLOSE DE NOCHES -->
-                    <VBox spacing="0.0"
-                          styleClass="quote-table">
+                    <VBox fx:id="contenedorDesglose"
+                          spacing="0.0"
+                          styleClass="quote-table"/>
 
-                        <!-- FILA 1 -->
-                        <HBox alignment="CENTER_LEFT"
-                              spacing="8.0"
-                              styleClass="quote-row">
-
-                            <Label text="Fecha por consultar"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Temporada"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Por consultar"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Por calcular"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell quote-value"/>
-                        </HBox>
-
-                        <!-- FILA 2 -->
-                        <HBox alignment="CENTER_LEFT"
-                              spacing="8.0"
-                              styleClass="quote-row">
-
-                            <Label text="Fecha por consultar"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Temporada"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Por consultar"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Por calcular"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell quote-value"/>
-                        </HBox>
-
-                        <!-- FILA 3 -->
-                        <HBox alignment="CENTER_LEFT"
-                              spacing="8.0"
-                              styleClass="quote-row">
-
-                            <Label text="Fecha por consultar"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Temporada"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Por consultar"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell"/>
-
-                            <Label text="Por calcular"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="quote-cell quote-value"/>
-                        </HBox>
-
-                    </VBox>
-
-                    <Label text="El desglose se adaptará a la cantidad real de noches de la estancia."
+                    <Label fx:id="mensajeCotizacion"
+                           text="Selecciona un apartamento y registra los ocupantes para calcular la cotización."
                            wrapText="true"
                            styleClass="section-description"/>
 
-                    <!-- RESUMEN DE COTIZACION -->
-                    <HBox alignment="CENTER_RIGHT"
-                          spacing="20.0">
-
-                        <VBox spacing="4.0"
-                              alignment="CENTER_RIGHT">
-
+                    <HBox alignment="CENTER_RIGHT" spacing="20.0">
+                        <VBox spacing="4.0" alignment="CENTER_RIGHT">
                             <Label text="TOTAL DE LA ESTANCIA"
                                    styleClass="field-label"/>
 
-                            <Label text="Pendiente de cotización"
+                            <Label fx:id="totalCotizacion"
+                                   text="Pendiente de cotización"
                                    styleClass="total-price"/>
                         </VBox>
                     </HBox>
 
-                    <Label text="La cotización se calculará según las tarifas por persona y la temporada de cada noche. Los menores de 6 años ocupan cupo, pero no pagan."
+                    <Label text="La cotización se calcula según las tarifas por persona y la temporada de cada noche. Los menores de 6 años ocupan cupo, pero no pagan."
                            wrapText="true"
                            styleClass="section-description"/>
 
                 </VBox>
 
-                <!-- PIE DE PAGINA -->
                 <Label text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO"
                        styleClass="footer-text"/>
 
             </VBox>
         </ScrollPane>
     </center>
-
 </BorderPane>
+
 
 
 

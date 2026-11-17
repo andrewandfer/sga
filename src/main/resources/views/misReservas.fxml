@@ -1,9 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane prefHeight="900.0" prefWidth="1280.0"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.MisReservasController"
             stylesheets="@../styles/misReservas.css"
             styleClass="dashboard-root">
 
@@ -103,7 +106,8 @@
                               styleClass="stat-card">
                             <Label text="PENDIENTES"
                                    styleClass="stat-title"/>
-                            <Label text="Por consultar"
+                            <Label fx:id="totalPendientes"
+                                   text="0"
                                    styleClass="stat-number"/>
                             <Label text="Esperando confirmación"
                                    styleClass="stat-description"/>
@@ -114,7 +118,8 @@
                               styleClass="stat-card">
                             <Label text="CONFIRMADAS"
                                    styleClass="stat-title"/>
-                            <Label text="Por consultar"
+                            <Label fx:id="totalConfirmadas"
+                                   text="0"
                                    styleClass="stat-number"/>
                             <Label text="Reservas confirmadas"
                                    styleClass="stat-description"/>
@@ -125,7 +130,8 @@
                               styleClass="stat-card">
                             <Label text="EN CURSO"
                                    styleClass="stat-title"/>
-                            <Label text="Por consultar"
+                            <Label fx:id="totalEnCurso"
+                                   text="0"
                                    styleClass="stat-number"/>
                             <Label text="Estancias actuales"
                                    styleClass="stat-description"/>
@@ -136,7 +142,8 @@
                               styleClass="stat-card">
                             <Label text="FINALIZADAS"
                                    styleClass="stat-title"/>
-                            <Label text="Por consultar"
+                            <Label fx:id="totalFinalizadas"
+                                   text="0"
                                    styleClass="stat-number"/>
                             <Label text="Estancias completadas"
                                    styleClass="stat-description"/>
@@ -155,171 +162,12 @@
                                styleClass="section-description"/>
                     </VBox>
 
-                    <!-- RESERVA 1 -->
-                    <VBox spacing="14.0" styleClass="reservation-card">
-
-                        <HBox alignment="CENTER_LEFT">
-                            <VBox spacing="4.0">
-                                <Label text="RESERVA"
-                                       styleClass="field-label"/>
-                                <Label text="Código: pendiente de datos"
-                                       styleClass="reservation-code"/>
-                            </VBox>
-
-                            <Region HBox.hgrow="ALWAYS"/>
-
-                            <Label text="Estado pendiente"
-                                   styleClass="status-pending"/>
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="20.0">
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="ALOJAMIENTO"
-                                       styleClass="field-label"/>
-                                <Label text="Apartamento por consultar"
-                                       styleClass="reservation-title"/>
-                                <Label text="Bloque y piso por consultar"
-                                       styleClass="section-description"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE ENTRADA"
-                                       styleClass="field-label"/>
-                                <Label text="Por consultar"
-                                       styleClass="reservation-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE SALIDA"
-                                       styleClass="field-label"/>
-                                <Label text="Por consultar"
-                                       styleClass="reservation-detail"/>
-                            </VBox>
-
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="15.0">
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="VALOR TOTAL"
-                                       styleClass="field-label"/>
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="ANTICIPO (30 %)"
-                                       styleClass="field-label"/>
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="SALDO DEL FOLIO"
-                                       styleClass="field-label"/>
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
-                            <Button text="Consultar folio"
-                                    styleClass="secondary-button"/>
-                            <Button text="Ver cancelación"
-                                    styleClass="outline-button"/>
-                        </HBox>
-
-                    </VBox>
-
-                    <!-- RESERVA 2 -->
-                    <VBox spacing="14.0" styleClass="reservation-card">
-
-                        <HBox alignment="CENTER_LEFT">
-                            <VBox spacing="4.0">
-                                <Label text="RESERVA"
-                                       styleClass="field-label"/>
-                                <Label text="Código: pendiente de datos"
-                                       styleClass="reservation-code"/>
-                            </VBox>
-
-                            <Region HBox.hgrow="ALWAYS"/>
-
-                            <Label text="Estado confirmado"
-                                   styleClass="status-confirmed"/>
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="20.0">
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="ALOJAMIENTO"
-                                       styleClass="field-label"/>
-                                <Label text="Apartamento por consultar"
-                                       styleClass="reservation-title"/>
-                                <Label text="Bloque y piso por consultar"
-                                       styleClass="section-description"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE ENTRADA"
-                                       styleClass="field-label"/>
-                                <Label text="Por consultar"
-                                       styleClass="reservation-detail"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="FECHA DE SALIDA"
-                                       styleClass="field-label"/>
-                                <Label text="Por consultar"
-                                       styleClass="reservation-detail"/>
-                            </VBox>
-
-                        </HBox>
-
-                        <Separator styleClass="soft-divider"/>
-
-                        <HBox spacing="15.0">
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="VALOR TOTAL"
-                                       styleClass="field-label"/>
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="ANTICIPO (30 %)"
-                                       styleClass="field-label"/>
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                <Label text="SALDO DEL FOLIO"
-                                       styleClass="field-label"/>
-                                <Label text="Pendiente"
-                                       styleClass="money-value"/>
-                            </VBox>
-
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
-                            <Button text="Consultar folio"
-                                    styleClass="secondary-button"/>
-                            <Button text="Ver cancelación"
-                                    styleClass="outline-button"/>
-                        </HBox>
-
-                    </VBox>
+                    <!-- LAS RESERVAS SE CARGAN DESDE EL CONTROLADOR -->
+                    <VBox fx:id="contenedorReservas"
+                          spacing="14.0"/>
 
                 </VBox>
+
 
                 <!-- DETALLE DEL FOLIO -->
                 <VBox spacing="15.0" styleClass="section-card">
@@ -327,9 +175,18 @@
                     <VBox spacing="5.0">
                         <Label text="Detalle de mi folio"
                                styleClass="section-title"/>
-                        <Label text="Consulta los cargos, pagos y el saldo de tu reserva."
+                        <Label text="Selecciona una reserva para consultar sus cargos, pagos y saldo."
                                styleClass="section-description"/>
                     </VBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Label text="Reserva:"
+                               styleClass="field-label"/>
+                        <ComboBox fx:id="reservaSeleccionada"
+                                  promptText="Selecciona una reserva"
+                                  onAction="#seleccionarReserva"
+                                  prefWidth="300.0"/>
+                    </HBox>
 
                     <HBox styleClass="folio-header" spacing="10.0">
                         <Label text="MOVIMIENTO" HBox.hgrow="ALWAYS"/>
@@ -338,29 +195,29 @@
                         <Label text="VALOR" HBox.hgrow="ALWAYS"/>
                     </HBox>
 
-                    <VBox styleClass="folio-empty"
-                          alignment="CENTER"
-                          spacing="7.0">
-                        <Label text="▤" styleClass="empty-icon"/>
-                        <Label text="No hay movimientos para mostrar."
-                               styleClass="empty-title"/>
-                        <Label text="Los cargos y pagos de tu reserva aparecerán en esta sección."
-                               wrapText="true"
-                               styleClass="empty-description"/>
+                    <VBox fx:id="movimientosFolio"
+                          spacing="8.0"
+                          styleClass="folio-empty"
+                          alignment="CENTER">
+                        <Label text="Selecciona una reserva para consultar sus movimientos."
+                               styleClass="empty-description"
+                               wrapText="true"/>
                     </VBox>
 
                     <HBox alignment="CENTER_RIGHT" spacing="20.0">
                         <VBox alignment="CENTER_RIGHT" spacing="4.0">
                             <Label text="SALDO ACTUAL"
                                    styleClass="field-label"/>
-                            <Label text="Pendiente de consultar"
+                            <Label fx:id="saldoActual"
+                                   text="Pendiente de consultar"
                                    styleClass="total-price"/>
                         </VBox>
                     </HBox>
 
                 </VBox>
 
-                <!-- CANCELACION Y DEVOLUCION -->
+
+                <!-- CANCELACIÓN Y DEVOLUCIÓN -->
                 <VBox spacing="15.0" styleClass="section-card">
 
                     <VBox spacing="5.0">
@@ -375,7 +232,8 @@
                         <Label text="INFORMACIÓN DE CANCELACIÓN"
                                styleClass="field-label"/>
 
-                        <Label text="Selecciona una reserva para consultar las condiciones y el valor de devolución."
+                        <Label fx:id="condicionesCancelacion"
+                               text="Selecciona una reserva para consultar las condiciones y el valor de devolución."
                                wrapText="true"
                                styleClass="section-description"/>
 
@@ -385,7 +243,8 @@
                             <Label text="Valor pagado"
                                    styleClass="reservation-detail"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Label text="Pendiente"
+                            <Label fx:id="valorPagado"
+                                   text="Pendiente"
                                    styleClass="money-value"/>
                         </HBox>
 
@@ -393,7 +252,8 @@
                             <Label text="Valor de devolución"
                                    styleClass="reservation-detail"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Label text="Pendiente de cálculo"
+                            <Label fx:id="valorDevolucion"
+                                   text="Pendiente de cálculo"
                                    styleClass="refund-value"/>
                         </HBox>
 
@@ -401,14 +261,22 @@
                                wrapText="true"
                                styleClass="section-description"/>
 
-                        <HBox alignment="CENTER_RIGHT">
-                            <Button text="Confirmar cancelación"
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                            <Button text="Consultar devolución"
+                                    onAction="#consultarDevolucion"
+                                    styleClass="help-button"/>
+
+                            <Button fx:id="botonConfirmarCancelacion"
+                                    text="Confirmar cancelación"
+                                    onAction="#confirmarCancelacion"
+                                    disable="true"
                                     styleClass="cancel-button"/>
                         </HBox>
 
                     </VBox>
 
                 </VBox>
+
 
                 <Label text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO"
                        styleClass="footer-text"/>
@@ -418,3 +286,4 @@
     </center>
 
 </BorderPane>
+

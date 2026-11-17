@@ -88,7 +88,8 @@
                         <Label text="MI ESPACIO"
                                styleClass="eyebrow"/>
 
-                        <Label text="¡Bienvenido!"
+                        <Label fx:id="lblBienvenida"
+                               text="¡Bienvenido!"
                                styleClass="welcome-title"/>
 
                         <Label text="Tu próxima experiencia comienza aquí."
@@ -100,7 +101,8 @@
                     <VBox alignment="CENTER_RIGHT" spacing="4.0">
                         <Label text="MI CUENTA"
                                styleClass="profile-caption"/>
-                        <Label text="Huésped"
+                        <Label fx:id="lblNombreUsuario"
+                               text="Huésped"
                                styleClass="profile-name"/>
                     </VBox>
 
@@ -143,7 +145,8 @@
                             <Label text="MIS RESERVAS"
                                    styleClass="stat-title"/>
 
-                            <Label text="02"
+                            <Label fx:id="lblCantidadReservas"
+                                   text="02"
                                    styleClass="stat-number"/>
 
                             <Label text="Reservas registradas"
@@ -161,7 +164,8 @@
                             <Label text="FAVORITOS"
                                    styleClass="stat-title"/>
 
-                            <Label text="04"
+                            <Label fx:id="lblCantidadFavoritos"
+                                   text="04"
                                    styleClass="stat-number"/>
 
                             <Label text="Apartamentos guardados"
@@ -179,7 +183,8 @@
                             <Label text="HISTORIAL"
                                    styleClass="stat-title"/>
 
-                            <Label text="05"
+                            <Label fx:id="lblCantidadHistorial"
+                                   text="05"
                                    styleClass="stat-number"/>
 
                             <Label text="Estancias realizadas"
