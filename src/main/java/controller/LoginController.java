@@ -70,6 +70,16 @@ public class LoginController {
             return;
         }
 
+        if (rol == RolUsuario.HUESPED) {
+            if (cambiarVista(event, "/views/dasboardHuesped.fxml")) {
+                stage.setResizable(true);
+                stage.setWidth(1280);
+                stage.setHeight(820);
+                stage.centerOnScreen();
+            }
+            return;
+        }
+
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setTitle("Inicio de sesión");
         alerta.setHeaderText("¡Bienvenido a Aparta-Suites UQ!");

@@ -298,4 +298,14 @@ public class FavoritosController {
 
         alerta.showAndWait();
     }
+
+    // Navegación común del portal del huésped
+    @FXML private void irInicio(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/dasboardHuesped.fxml"); }
+    @FXML private void irBuscar(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/buscarAlojamiento.fxml"); }
+    @FXML private void irReservas(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/misReservas.fxml"); }
+    @FXML private void irFavoritos(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/favoritosHuesped.fxml"); }
+    @FXML private void irHistorial(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/historialHuesped.fxml"); }
+    @FXML private void irPerfil(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/perfilHuesped.fxml"); }
+    @FXML private void contactar() { NavegacionHuesped.contactar(); }
+    @FXML private void cerrarSesion(javafx.event.ActionEvent e) { NavegacionHuesped.cerrarSesion(e); }
 }

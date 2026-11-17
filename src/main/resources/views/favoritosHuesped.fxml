@@ -25,27 +25,27 @@
 
                 <Button text="⌂    Inicio"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irInicio"/>
 
                 <Button text="⌕    Buscar alojamiento"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irBuscar"/>
 
                 <Button text="▤    Mis reservas"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irReservas"/>
 
                 <Button text="♡    Favoritos"
                         maxWidth="Infinity"
-                        styleClass="nav-button nav-active"/>
+                        styleClass="nav-button nav-active" onAction="#irFavoritos"/>
 
                 <Button text="◷    Historial"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irHistorial"/>
 
                 <Button text="♙    Mi perfil"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irPerfil"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
@@ -59,12 +59,12 @@
                        styleClass="help-description"/>
 
                 <Button text="Contactar"
-                        styleClass="help-button"/>
+                        styleClass="help-button" onAction="#contactar"/>
             </VBox>
 
             <Button text="↪    Cerrar sesión"
                     maxWidth="Infinity"
-                    styleClass="logout-button"/>
+                    styleClass="logout-button" onAction="#cerrarSesion"/>
 
             <Label text="SALENTO · QUINDÍO · COLOMBIA"
                    styleClass="sidebar-footer"/>
@@ -179,7 +179,7 @@
                            styleClass="empty-description"/>
 
                     <Button text="Explorar alojamientos"
-                            styleClass="secondary-button"/>
+                            styleClass="secondary-button" onAction="#irBuscar"/>
                 </VBox>
 
                 <!-- PIE -->

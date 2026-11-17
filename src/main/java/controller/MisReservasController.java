@@ -14,10 +14,12 @@ import javafx.scene.layout.VBox;
 
 import model.ApartaSuites;
 import model.enums.EstadoReserva;
+import model.enums.EstadoSolicitudExterna;
 import model.modelo.Folio;
 import model.modelo.Huesped;
 import model.modelo.MovimientoFolio;
 import model.modelo.Reserva;
+import model.modelo.SolicitudReservaExterna;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -116,6 +118,8 @@ public class MisReservasController {
                     .add(crearTarjetaReserva(reserva));
         }
 
+        int solicitudesExternas = agregarSolicitudesExternas(huesped);
+
         actualizarContadores(
                 pendientes,
                 confirmadas,
@@ -123,9 +127,80 @@ public class MisReservasController {
                 finalizadas
         );
 
-        if (huesped.getHistorial().estaVacia()) {
-            mostrarMensaje("Todavía no tienes reservas registradas.");
+        if (huesped.getHistorial().estaVacia() && solicitudesExternas == 0) {
+            mostrarMensaje("Todavía no tienes reservas ni solicitudes externas registradas.");
         }
+    }
+
+    /** Muestra solicitudes del portal aunque todavía no se hayan convertido en reservas. */
+    private int agregarSolicitudesExternas(Huesped huesped) {
+        int cantidad = 0;
+        boolean encabezadoAgregado = false;
+
+        for (SolicitudReservaExterna solicitud : sistema.listarSolicitudesExternasPendientes()) {
+            if (solicitud.getTitular().equals(huesped)) {
+                if (!encabezadoAgregado) {
+                    agregarEncabezadoSolicitudes();
+                    encabezadoAgregado = true;
+                }
+                contenedorReservas.getChildren().add(crearTarjetaSolicitud(solicitud));
+                cantidad++;
+            }
+        }
+
+        for (SolicitudReservaExterna solicitud : sistema.getHistorialCanalExterno()) {
+            if (solicitud.getTitular().equals(huesped)) {
+                if (!encabezadoAgregado) {
+                    agregarEncabezadoSolicitudes();
+                    encabezadoAgregado = true;
+                }
+                contenedorReservas.getChildren().add(crearTarjetaSolicitud(solicitud));
+                cantidad++;
+            }
+        }
+        return cantidad;
+    }
+
+    private void agregarEncabezadoSolicitudes() {
+        Label encabezado = new Label("SOLICITUDES DE RESERVA EXTERNA");
+        encabezado.getStyleClass().add("section-title");
+        contenedorReservas.getChildren().add(encabezado);
+    }
+
+    private VBox crearTarjetaSolicitud(SolicitudReservaExterna solicitud) {
+        VBox tarjeta = new VBox(8);
+        tarjeta.getStyleClass().add("reservation-card");
+
+        Label codigo = new Label("SOLICITUD " + solicitud.getId());
+        codigo.getStyleClass().add("reservation-code");
+
+        String estadoTexto = switch (solicitud.getEstado()) {
+            case PENDIENTE -> "Pendiente de revisión por recepción";
+            case ACEPTADA -> "Aceptada · Reserva " + solicitud.getReservaGenerada().getId();
+            case RECHAZADA -> "No aceptada";
+        };
+        Label estado = new Label(estadoTexto);
+        estado.getStyleClass().add(solicitud.getEstado() == EstadoSolicitudExterna.PENDIENTE
+                ? "status-pending" : solicitud.getEstado() == EstadoSolicitudExterna.ACEPTADA
+                ? "status-confirmed" : "section-description");
+        estado.setWrapText(true);
+
+        Label alojamiento = new Label("Apartamento " + solicitud.getApartamento().getCodigo());
+        alojamiento.getStyleClass().add("reservation-title");
+        Label fechas = new Label("Entrada: " + solicitud.getEstancia().getEntrada().format(formatoFecha)
+                + " · Salida: " + solicitud.getEstancia().getSalida().format(formatoFecha)
+                + " · " + solicitud.getEstancia().noches() + " noche(s)");
+        fechas.getStyleClass().add("section-description");
+        tarjeta.getChildren().addAll(codigo, estado, alojamiento, fechas);
+
+        if (solicitud.getEstado() == EstadoSolicitudExterna.RECHAZADA
+                && solicitud.getMotivoRechazo() != null) {
+            Label motivo = new Label("Motivo: " + solicitud.getMotivoRechazo());
+            motivo.getStyleClass().add("section-description");
+            motivo.setWrapText(true);
+            tarjeta.getChildren().add(motivo);
+        }
+        return tarjeta;
     }
 
     private void actualizarContadores(
@@ -601,5 +676,14 @@ public class MisReservasController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-}
 
+    // Navegación común del portal del huésped
+    @FXML private void irInicio(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/dasboardHuesped.fxml"); }
+    @FXML private void irBuscar(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/buscarAlojamiento.fxml"); }
+    @FXML private void irReservas(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/misReservas.fxml"); }
+    @FXML private void irFavoritos(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/favoritosHuesped.fxml"); }
+    @FXML private void irHistorial(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/historialHuesped.fxml"); }
+    @FXML private void irPerfil(javafx.event.ActionEvent e) { NavegacionHuesped.abrir(e, "/views/perfilHuesped.fxml"); }
+    @FXML private void contactar() { NavegacionHuesped.contactar(); }
+    @FXML private void cerrarSesion(javafx.event.ActionEvent e) { NavegacionHuesped.cerrarSesion(e); }
+}

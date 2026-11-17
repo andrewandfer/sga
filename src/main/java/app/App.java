@@ -38,7 +38,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
-                App.class.getResource("/views/registroHuesped.fxml")
+                App.class.getResource("/views/login.fxml")
         );
 
         Parent root = loader.load();
@@ -236,7 +236,7 @@ public class App extends Application {
     ) throws ExcepcionSGA {
 
         String[][] datos = {
-                {"1094000001", "Laura Gómez", "1990-05-14", "3101112233", "laura.gomez@correo.com"},
+                {"10", "Laura Gómez", "1990-05-14", "3101112233", "laura.gomez@correo.com"},
                 {"1094000002", "Carlos Ruiz", "1985-11-02", "3104445566", "carlos.ruiz@correo.com"},
                 {"1094000003", "Marta López", "1978-03-21", "3207778899", "marta.lopez@correo.com"},
                 {"1094000004", "Andrés Pérez", "1995-08-30", "3153334455", "andres.perez@correo.com"},
@@ -275,7 +275,7 @@ public class App extends Application {
                             LocalDate.parse(d[2]),
                             d[3],
                             d[4],
-                            "prueba123"
+                            "1"
                     )
             );
         }

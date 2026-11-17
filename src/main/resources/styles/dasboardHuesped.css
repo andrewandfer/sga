@@ -328,3 +328,64 @@
     -fx-font-size: 10px;
     -fx-alignment: CENTER;
 }
+
+
+/* ACCIONES Y RESERVAS DINÁMICAS DEL DASHBOARD */
+.view-more-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A5844F;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 10;
+    -fx-cursor: hand;
+}
+.view-more-button:hover {
+    -fx-background-color: #F5F0E6;
+    -fx-background-radius: 6px;
+}
+.upcoming-card {
+    -fx-background-color: #FBFAF7;
+    -fx-border-color: #E9E3D8;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 17px;
+}
+.upcoming-code {
+    -fx-text-fill: #A5844F;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+.upcoming-apartment {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.upcoming-status {
+    -fx-background-color: #E8F0ED;
+    -fx-background-radius: 20px;
+    -fx-padding: 6 10;
+    -fx-text-fill: #426B5B;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+.upcoming-field {
+    -fx-text-fill: #899497;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+.upcoming-value {
+    -fx-text-fill: #243B4B;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.upcoming-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A5844F;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.upcoming-link:hover {
+    -fx-text-fill: #243B4B;
+}

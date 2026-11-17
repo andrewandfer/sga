@@ -3,81 +3,52 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="800.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.HuespedController"
-            stylesheets="@../styles/dasboardHuesped.css"
-            styleClass="dashboard-root">
+<BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="dashboard-root" stylesheets="@../styles/dasboardHuesped.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HuespedController">
 
     <!-- MENU LATERAL -->
     <left>
-        <VBox prefWidth="255.0" styleClass="sidebar" spacing="25.0">
+        <VBox prefWidth="255.0" spacing="25.0" styleClass="sidebar">
 
             <VBox spacing="4.0">
-                <Label text="APARTA-SUITES"
-                       styleClass="brand-small"/>
-                <Label text="UQ"
-                       styleClass="brand-title"/>
-                <Label text="EXPERIENCIA DE ALOJAMIENTO"
-                       styleClass="brand-caption"/>
+                <Label styleClass="brand-small" text="APARTA-SUITES" />
+                <Label styleClass="brand-title" text="UQ" />
+                <Label styleClass="brand-caption" text="EXPERIENCIA DE ALOJAMIENTO" />
             </VBox>
 
             <VBox spacing="8.0">
-                <Label text="MENÚ PRINCIPAL"
-                       styleClass="menu-heading"/>
+                <Label styleClass="menu-heading" text="MENÚ PRINCIPAL" />
 
-                <Button text="⌂    Inicio"
-                        maxWidth="Infinity"
-                        styleClass="nav-button, nav-active"/>
+                <Button maxWidth="Infinity" onAction="#irInicio" styleClass="nav-button nav-active" text="⌂    Inicio" />
 
-                <Button text="⌕    Buscar alojamiento"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                <Button maxWidth="Infinity" onAction="#irBuscar" styleClass="nav-button" text="⌕    Buscar alojamiento" />
 
-                <Button text="▤    Mis reservas"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                <Button maxWidth="Infinity" onAction="#irReservas" styleClass="nav-button" text="▤    Mis reservas" />
 
-                <Button text="♡    Favoritos"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                <Button maxWidth="Infinity" onAction="#irFavoritos" styleClass="nav-button" text="♡    Favoritos" />
 
-                <Button text="◷    Historial"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                <Button maxWidth="Infinity" onAction="#irHistorial" styleClass="nav-button" text="◷    Historial" />
 
-                <Button text="♙    Mi perfil"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                <Button maxWidth="Infinity" onAction="#irPerfil" styleClass="nav-button" text="♙    Mi perfil" />
             </VBox>
 
-            <Region VBox.vgrow="ALWAYS"/>
+            <Region VBox.vgrow="ALWAYS" />
 
-            <VBox styleClass="help-card" spacing="8.0">
-                <Label text="¿Necesitas ayuda?"
-                       styleClass="help-title"/>
-                <Label text="Estamos aquí para acompañarte durante tu estancia."
-                       wrapText="true"
-                       styleClass="help-description"/>
-                <Button text="Contactar"
-                        styleClass="help-button"/>
+            <VBox spacing="8.0" styleClass="help-card">
+                <Label styleClass="help-title" text="¿Necesitas ayuda?" />
+                <Label styleClass="help-description" text="Estamos aquí para acompañarte durante tu estancia." wrapText="true" />
+                <Button onAction="#contactar" styleClass="help-button" text="Contactar" />
             </VBox>
 
-            <Button text="↪    Cerrar sesión"
-                    maxWidth="Infinity"
-                    styleClass="logout-button"/>
+            <Button maxWidth="Infinity" onAction="#cerrarSesion" styleClass="logout-button" text="↪    Cerrar sesión" />
 
-            <Label text="SALENTO · QUINDÍO · COLOMBIA"
-                   styleClass="sidebar-footer"/>
+            <Label styleClass="sidebar-footer" text="SALENTO · QUINDÍO · COLOMBIA" />
 
         </VBox>
     </left>
 
     <!-- CONTENIDO PRINCIPAL -->
     <center>
-        <ScrollPane fitToWidth="true"
-                    styleClass="content-scroll">
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
 
             <VBox spacing="25.0" styleClass="main-content">
 
@@ -85,110 +56,87 @@
                 <HBox alignment="CENTER_LEFT" spacing="15.0">
 
                     <VBox spacing="5.0">
-                        <Label text="MI ESPACIO"
-                               styleClass="eyebrow"/>
+                        <Label styleClass="eyebrow" text="MI ESPACIO" />
 
-                        <Label fx:id="lblBienvenida"
-                               text="¡Bienvenido!"
-                               styleClass="welcome-title"/>
+                        <Label fx:id="lblBienvenida" styleClass="welcome-title" text="¡Bienvenido!" />
 
-                        <Label text="Tu próxima experiencia comienza aquí."
-                               styleClass="welcome-subtitle"/>
+                        <Label styleClass="welcome-subtitle" text="Tu próxima experiencia comienza aquí." />
                     </VBox>
 
-                    <Region HBox.hgrow="ALWAYS"/>
+                    <Region HBox.hgrow="ALWAYS" />
 
                     <VBox alignment="CENTER_RIGHT" spacing="4.0">
-                        <Label text="MI CUENTA"
-                               styleClass="profile-caption"/>
-                        <Label fx:id="lblNombreUsuario"
-                               text="Huésped"
-                               styleClass="profile-name"/>
+                        <Label styleClass="profile-caption" text="MI CUENTA" />
+                        <Label fx:id="lblNombreUsuario" styleClass="profile-name" text="Huésped" />
                     </VBox>
 
                 </HBox>
 
                 <!-- BANNER PRINCIPAL -->
-                <VBox styleClass="hero-banner" spacing="14.0">
+                <VBox spacing="14.0" styleClass="hero-banner">
 
-                    <Label text="APARTA-SUITES UQ"
-                           styleClass="hero-eyebrow"/>
+                    <Label styleClass="hero-eyebrow" text="APARTA-SUITES UQ" />
 
-                    <Label text="Un lugar para descansar,\ndisfrutar y volver."
-                           styleClass="hero-title"
-                           wrapText="true"/>
+                    <Label styleClass="hero-title" text="Un lugar para descansar, disfrutar y volver." wrapText="true" />
 
-                    <Label text="Vive una experiencia única en el corazón del Quindío."
-                           styleClass="hero-description"
-                           wrapText="true"/>
+                    <Label styleClass="hero-description" text="Vive una experiencia única en el corazón del Quindío." wrapText="true" />
 
-                    <Button text="Explorar apartamentos  →"
-                            styleClass="hero-button"/>
+                    <Button onAction="#irBuscar" styleClass="hero-button" text="Explorar apartamentos  →" />
 
                 </VBox>
 
                 <!-- ESTADISTICAS -->
                 <VBox spacing="15.0">
 
-                    <Label text="RESUMEN DE MI CUENTA"
-                           styleClass="section-heading"/>
+                    <Label styleClass="section-heading" text="RESUMEN DE MI CUENTA" />
 
                     <HBox spacing="16.0">
 
-                        <VBox HBox.hgrow="ALWAYS"
-                              spacing="10.0"
-                              styleClass="stat-card">
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
 
-                            <Label text="▤"
-                                   styleClass="stat-icon"/>
+                            <Label styleClass="stat-icon" text="▤" />
 
-                            <Label text="MIS RESERVAS"
-                                   styleClass="stat-title"/>
+                            <Label styleClass="stat-title" text="MIS RESERVAS" />
 
-                            <Label fx:id="lblCantidadReservas"
-                                   text="02"
-                                   styleClass="stat-number"/>
+                            <Label fx:id="lblCantidadReservas" styleClass="stat-number" text="02" />
 
-                            <Label text="Reservas registradas"
-                                   styleClass="stat-description"/>
+                            <Label styleClass="stat-description" text="Reservas registradas" />
 
                         </VBox>
 
-                        <VBox HBox.hgrow="ALWAYS"
-                              spacing="10.0"
-                              styleClass="stat-card">
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
 
-                            <Label text="♡"
-                                   styleClass="stat-icon"/>
+                            <Label styleClass="stat-icon" text="♡" />
 
-                            <Label text="FAVORITOS"
-                                   styleClass="stat-title"/>
+                            <Label styleClass="stat-title" text="FAVORITOS" />
 
-                            <Label fx:id="lblCantidadFavoritos"
-                                   text="04"
-                                   styleClass="stat-number"/>
+                            <Label fx:id="lblCantidadFavoritos" styleClass="stat-number" text="04" />
 
-                            <Label text="Apartamentos guardados"
-                                   styleClass="stat-description"/>
+                            <Label styleClass="stat-description" text="Apartamentos guardados" />
 
                         </VBox>
 
-                        <VBox HBox.hgrow="ALWAYS"
-                              spacing="10.0"
-                              styleClass="stat-card">
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
 
-                            <Label text="◷"
-                                   styleClass="stat-icon"/>
+                            <Label styleClass="stat-icon" text="◷" />
 
-                            <Label text="HISTORIAL"
-                                   styleClass="stat-title"/>
+                            <Label styleClass="stat-title" text="HISTORIAL" />
 
-                            <Label fx:id="lblCantidadHistorial"
-                                   text="05"
-                                   styleClass="stat-number"/>
+                            <Label fx:id="lblCantidadHistorial" styleClass="stat-number" text="05" />
 
-                            <Label text="Estancias realizadas"
-                                   styleClass="stat-description"/>
+                            <Label styleClass="stat-description" text="Estancias realizadas" />
+
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+                            <Label styleClass="stat-icon" text="\$" />
+
+                            <Label styleClass="stat-title" text="SALDO PENDIENTE" />
+
+                            <Label fx:id="lblSaldoPendiente" styleClass="stat-number" text="\$0" />
+
+                            <Label styleClass="stat-description" text="Según movimientos registrados" />
 
                         </VBox>
 
@@ -196,92 +144,67 @@
                 </VBox>
 
                 <!-- BUSCADOR -->
-                <VBox spacing="16.0"
-                      styleClass="section-card">
+                <VBox spacing="16.0" styleClass="section-card">
 
                     <VBox spacing="5.0">
-                        <Label text="Encuentra tu próximo destino"
-                               styleClass="section-title"/>
+                        <Label styleClass="section-title" text="Encuentra tu próximo destino" />
 
-                        <Label text="Selecciona tus fechas y descubre nuestros apartamentos."
-                               styleClass="section-description"/>
+                        <Label styleClass="section-description" text="Selecciona tus fechas y descubre nuestros apartamentos." />
                     </VBox>
 
                     <HBox spacing="14.0">
 
-                        <VBox spacing="7.0"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="FECHA DE ENTRADA"
-                                   styleClass="field-label"/>
-                            <DatePicker promptText="Selecciona fecha"
-                                        maxWidth="Infinity"/>
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-label" text="FECHA DE ENTRADA" />
+                            <DatePicker fx:id="fechaEntrada" maxWidth="Infinity" promptText="Selecciona fecha" />
                         </VBox>
 
-                        <VBox spacing="7.0"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="FECHA DE SALIDA"
-                                   styleClass="field-label"/>
-                            <DatePicker promptText="Selecciona fecha"
-                                        maxWidth="Infinity"/>
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-label" text="FECHA DE SALIDA" />
+                            <DatePicker fx:id="fechaSalida" maxWidth="Infinity" promptText="Selecciona fecha" />
                         </VBox>
 
-                        <VBox spacing="7.0"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="NÚMERO DE PERSONAS"
-                                   styleClass="field-label"/>
-                            <TextField promptText="Ej. 4 personas"/>
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-label" text="NÚMERO DE PERSONAS" />
+                            <TextField fx:id="campoPersonas" promptText="Ej. 4 personas" />
                         </VBox>
 
                     </HBox>
 
-                    <Button text="Buscar disponibilidad  →"
-                            styleClass="primary-button"/>
+                    <Button onAction="#buscarConFechas" styleClass="primary-button" text="Buscar disponibilidad  →" />
 
                 </VBox>
 
                 <!-- RESERVAS -->
-                <VBox spacing="14.0"
-                      styleClass="section-card">
+                <VBox spacing="14.0" styleClass="section-card">
 
                     <HBox alignment="CENTER_LEFT">
                         <VBox spacing="4.0">
-                            <Label text="Mis próximas reservas"
-                                   styleClass="section-title"/>
-                            <Label text="Consulta tus próximas experiencias."
-                                   styleClass="section-description"/>
+                            <Label styleClass="section-title" text="Mis próximas reservas" />
+                            <Label styleClass="section-description" text="Consulta tus próximas experiencias." />
                         </VBox>
 
-                        <Region HBox.hgrow="ALWAYS"/>
+                        <Region HBox.hgrow="ALWAYS" />
 
-                        <Label text="VER TODAS"
-                               styleClass="view-more"/>
+                        <Button onAction="#irReservas" styleClass="view-more-button" text="VER TODAS" />
                     </HBox>
 
-                    <HBox styleClass="empty-reservations"
-                          alignment="CENTER"
-                          spacing="15.0">
-
-                        <Label text="▤"
-                               styleClass="empty-icon"/>
-
-                        <VBox spacing="5.0">
-                            <Label text="Tus próximas estancias aparecerán aquí."
-                                   styleClass="empty-title"/>
-                            <Label text="Cuando tengas una reserva, podrás consultar todos sus detalles."
-                                   styleClass="empty-description"
-                                   wrapText="true"/>
-                        </VBox>
-
-                    </HBox>
+                    <VBox fx:id="contenedorProximas" spacing="12.0">
+                        <HBox alignment="CENTER" spacing="15.0" styleClass="empty-reservations">
+                            <Label styleClass="empty-icon" text="▤" />
+                            <VBox spacing="5.0">
+                                <Label styleClass="empty-title" text="Tus próximas estancias aparecerán aquí." />
+                                <Label styleClass="empty-description" text="Cuando tengas una reserva, podrás consultar todos sus detalles." wrapText="true" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
 
                 </VBox>
 
-                <Label text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO"
-                       styleClass="footer-text"/>
+                <Label styleClass="footer-text" text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO" />
 
             </VBox>
         </ScrollPane>
     </center>
 
 </BorderPane>
-

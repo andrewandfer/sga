@@ -25,27 +25,27 @@
 
                 <Button text="⌂    Inicio"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irInicio"/>
 
                 <Button text="⌕    Buscar alojamiento"
                         maxWidth="Infinity"
-                        styleClass="nav-button nav-active"/>
+                        styleClass="nav-button nav-active" onAction="#irBuscar"/>
 
                 <Button text="▤    Mis reservas"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irReservas"/>
 
                 <Button text="♡    Favoritos"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irFavoritos"/>
 
                 <Button text="◷    Historial"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irHistorial"/>
 
                 <Button text="♙    Mi perfil"
                         maxWidth="Infinity"
-                        styleClass="nav-button"/>
+                        styleClass="nav-button" onAction="#irPerfil"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
@@ -59,12 +59,12 @@
                        styleClass="help-description"/>
 
                 <Button text="Contactar"
-                        styleClass="help-button"/>
+                        styleClass="help-button" onAction="#contactar"/>
             </VBox>
 
             <Button text="↪    Cerrar sesión"
                     maxWidth="Infinity"
-                    styleClass="logout-button"/>
+                    styleClass="logout-button" onAction="#cerrarSesion"/>
 
             <Label text="SALENTO · QUINDÍO · COLOMBIA"
                    styleClass="sidebar-footer"/>
@@ -249,6 +249,18 @@
                                    text="Pendiente de cotización"
                                    styleClass="total-price"/>
                         </VBox>
+                    </HBox>
+
+                    <Label text="Enviar la solicitud no confirma la reserva ni bloquea las fechas. Recepción revisará la disponibilidad y la gestionará por orden de llegada."
+                           wrapText="true"
+                           styleClass="section-description"/>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button fx:id="btnEnviarSolicitud"
+                                text="Enviar solicitud a recepción  →"
+                                styleClass="primary-button"
+                                onAction="#enviarSolicitudReserva"
+                                disable="true"/>
                     </HBox>
 
                     <Label text="La cotización se calcula según las tarifas por persona y la temporada de cada noche. Los menores de 6 años ocupan cupo, pero no pagan."

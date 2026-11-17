@@ -20,12 +20,12 @@
 
             <VBox spacing="8.0">
                 <Label text="MENÚ PRINCIPAL" styleClass="menu-heading"/>
-                <Button text="⌂    Inicio" maxWidth="Infinity" styleClass="nav-button"/>
-                <Button text="⌕    Buscar alojamiento" maxWidth="Infinity" styleClass="nav-button"/>
-                <Button text="▤    Mis reservas" maxWidth="Infinity" styleClass="nav-button"/>
-                <Button text="♡    Favoritos" maxWidth="Infinity" styleClass="nav-button"/>
-                <Button text="◷    Historial" maxWidth="Infinity" styleClass="nav-button nav-active"/>
-                <Button text="♙    Mi perfil" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="⌂    Inicio" maxWidth="Infinity" styleClass="nav-button" onAction="#irInicio"/>
+                <Button text="⌕    Buscar alojamiento" maxWidth="Infinity" styleClass="nav-button" onAction="#irBuscar"/>
+                <Button text="▤    Mis reservas" maxWidth="Infinity" styleClass="nav-button" onAction="#irReservas"/>
+                <Button text="♡    Favoritos" maxWidth="Infinity" styleClass="nav-button" onAction="#irFavoritos"/>
+                <Button text="◷    Historial" maxWidth="Infinity" styleClass="nav-button nav-active" onAction="#irHistorial"/>
+                <Button text="♙    Mi perfil" maxWidth="Infinity" styleClass="nav-button" onAction="#irPerfil"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
@@ -34,10 +34,10 @@
                 <Label text="¿Necesitas ayuda?" styleClass="help-title"/>
                 <Label text="Estamos aquí para acompañarte durante tu estancia."
                        wrapText="true" styleClass="help-description"/>
-                <Button text="Contactar" styleClass="help-button"/>
+                <Button text="Contactar" styleClass="help-button" onAction="#contactar"/>
             </VBox>
 
-            <Button text="↪    Cerrar sesión" maxWidth="Infinity" styleClass="logout-button"/>
+            <Button text="↪    Cerrar sesión" maxWidth="Infinity" styleClass="logout-button" onAction="#cerrarSesion"/>
             <Label text="SALENTO · QUINDÍO · COLOMBIA" styleClass="sidebar-footer"/>
         </VBox>
     </left>
