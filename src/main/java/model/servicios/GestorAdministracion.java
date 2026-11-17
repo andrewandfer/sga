@@ -115,6 +115,15 @@ public class GestorAdministracion {
         h.setCorreo(correo);
     }
 
+    /** Cambia la contrasena de acceso de un huesped desde la administracion. */
+    public void cambiarContrasenaHuesped(String documento, String nuevaContrasena) throws ExcepcionSGA {
+        Huesped huesped = exigirHuesped(documento);
+        if (nuevaContrasena == null || nuevaContrasena.isBlank()) {
+            throw new ExcepcionSGA("La nueva contrasena no puede estar vacia.");
+        }
+        huesped.cambiarContrasena(nuevaContrasena);
+    }
+
     /** No permite eliminar un huesped con reservas pendientes, confirmadas o en curso. */
     public void eliminarHuesped(String documento) throws ExcepcionSGA {
         Huesped h = exigirHuesped(documento);

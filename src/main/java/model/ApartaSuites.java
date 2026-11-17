@@ -122,8 +122,9 @@ public class ApartaSuites {
 
     // ==================== Apartamentos ====================
 
-    public void registrarApartamento(Apartamento apartamento) throws ExcepcionSGA {
+    public synchronized void registrarApartamento(Apartamento apartamento) throws ExcepcionSGA {
         administracion.registrarApartamento(apartamento);
+        edificio.sincronizarApartamentos(listarApartamentos());
     }
 
     public Apartamento buscarApartamento(String codigo) {
@@ -139,8 +140,9 @@ public class ApartaSuites {
         administracion.ponerApartamentoFueraDeServicio(codigo, motivo);
     }
 
-    public void eliminarApartamento(String codigo) throws ExcepcionSGA {
+    public synchronized void eliminarApartamento(String codigo) throws ExcepcionSGA {
         administracion.eliminarApartamento(codigo);
+        edificio.eliminarApartamento(codigo);
     }
 
     public ListaDoblementeEnlazada<Apartamento> listarApartamentos() {
@@ -164,6 +166,11 @@ public class ApartaSuites {
     public void actualizarHuesped(String documento, String nombre, LocalDate nacimiento, String telefono,
                                   String correo) throws ExcepcionSGA {
         administracion.actualizarHuesped(documento, nombre, nacimiento, telefono, correo);
+    }
+
+    public synchronized void cambiarContrasenaHuesped(String documento, String nuevaContrasena)
+            throws ExcepcionSGA {
+        administracion.cambiarContrasenaHuesped(documento, nuevaContrasena);
     }
 
     public void eliminarHuesped(String documento) throws ExcepcionSGA {
@@ -493,18 +500,33 @@ public class ApartaSuites {
      * Checkout y registro en la cola de preparación. Si la llegada estimada es hoy,
      * el apartamento obtiene prioridad 1 y se ordena por esa hora.
      */
+
     public synchronized void finalizarEstancia(Reserva reserva, LocalDateTime llegadaEstimada) {
         if (reserva == null) {
             throw new IllegalArgumentException("La reserva es obligatoria");
         }
+
         Apartamento apartamento = reserva.getApartamento();
+
         if (apartamento.getEstadoOperativo() != model.enums.EstadoApartamento.OCUPADO) {
             throw new IllegalStateException("El apartamento no está ocupado");
         }
+
+        BigDecimal saldoPendiente = reserva.getFolio().calcularSaldo();
+
+        if (saldoPendiente.compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalStateException(
+                    "No se puede realizar el check-out. "
+                            + "La reserva tiene un saldo pendiente de $"
+                            + saldoPendiente.setScale(0, java.math.RoundingMode.HALF_UP)
+            );
+        }
+
         reserva.finalizar();
         apartamento.cambiarEstado(model.enums.EstadoApartamento.PENDIENTE_PREPARACION);
         preparacion.registrarPendiente(apartamento, llegadaEstimada, LocalDateTime.now());
     }
+
 
     public SolicitudPreparacion iniciarSiguientePreparacion(LocalDateTime ahora) {
         return preparacion.iniciarSiguiente(ahora);
@@ -529,6 +551,11 @@ public class ApartaSuites {
 
     public double promedioMinutosPreparacion() {
         return preparacion.promedioMinutosPreparacion();
+    }
+
+    /** Cantidad real de preparaciones que ya finalizaron. */
+    public int getCantidadPreparacionesFinalizadas() {
+        return preparacion.getPreparacionesFinalizadas();
     }
 
     /** Calcula la devolución a partir de los pagos netos reales del folio. */

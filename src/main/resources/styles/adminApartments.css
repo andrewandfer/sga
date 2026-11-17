@@ -1,0 +1,75 @@
+/* ==========================================================
+   GESTIÓN DE APARTAMENTOS - Aparta-Suites UQ
+   Azul petróleo · marfil · acento dorado
+   ========================================================== */
+.dashboard-root { -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; -fx-background-color: #F3F6F7; }
+.sidebar { -fx-background-color: linear-gradient(to bottom, #103944 0%, #123B46 55%, #0D303A 100%); -fx-padding: 28 17 20 17; }
+.brand-area { -fx-padding: 2 8 31 8; }
+.brand-icon { -fx-background-color: #E3B866; -fx-background-radius: 14; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 12, 0, 0, 4); }
+.brand-icon-text { -fx-text-fill: #123B46; -fx-font-size: 25px; -fx-font-weight: bold; }
+.brand-name { -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-letter-spacing: 1.2px; }
+.brand-subtitle { -fx-text-fill: #A9C9CC; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 2px; }
+.sidebar-navigation { -fx-padding: 0; }
+.nav-caption { -fx-text-fill: #E3B866; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.4px; -fx-padding: 0 10 7 10; }
+.nav-item { -fx-padding: 12 12 12 13; -fx-background-radius: 10; -fx-min-height: 43; }
+.nav-item-active { -fx-background-color: rgba(227,184,102,0.16); -fx-border-color: transparent transparent transparent #E3B866; -fx-border-width: 0 0 0 3; }
+.nav-icon { -fx-text-fill: #D6E5E7; -fx-font-size: 19px; -fx-min-width: 22; -fx-alignment: CENTER; }
+.nav-item-active .nav-icon { -fx-text-fill: #E3B866; }
+.nav-item:hover { -fx-background-color: rgba(255,255,255,0.10); -fx-cursor: hand; }
+.nav-item-active:hover { -fx-background-color: rgba(227,184,102,0.22); }
+.nav-text { -fx-text-fill: #F0F5F5; -fx-font-size: 12.5px; }
+.nav-text-active { -fx-text-fill: white; -fx-font-weight: bold; }
+.sidebar-bottom { -fx-padding: 15 3 0 3; }
+.help-card { -fx-padding: 15 14; -fx-background-color: rgba(255,255,255,0.07); -fx-background-radius: 12; -fx-border-color: rgba(255,255,255,0.08); -fx-border-radius: 12; }
+.help-title { -fx-text-fill: #F0D49B; -fx-font-size: 11px; -fx-font-weight: bold; }
+.help-description { -fx-text-fill: #D1E0E2; -fx-font-size: 10px; -fx-line-spacing: 2px; }
+.sidebar-user { -fx-padding: 13 4 0 4; -fx-border-color: rgba(255,255,255,0.13) transparent transparent transparent; }
+.avatar-small { -fx-background-color: #E3B866; -fx-background-radius: 50; }
+.avatar-letter { -fx-text-fill: #123B46; -fx-font-size: 15px; -fx-font-weight: bold; }
+.sidebar-user-name { -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; }
+.sidebar-user-role { -fx-text-fill: #C7DADD; -fx-font-size: 9px; }
+.dashboard-scroll { -fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.dashboard-scroll > .viewport { -fx-background-color: #F3F6F7; }
+.dashboard-content { -fx-background-color: #F3F6F7; }
+.page-eyebrow { -fx-text-fill: #9A7A3E; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.8px; }
+.page-title { -fx-text-fill: #173F49; -fx-font-size: 27px; -fx-font-weight: bold; }
+.page-date { -fx-text-fill: #829398; -fx-font-size: 11px; }
+.logout-button { -fx-background-color: #123B46; -fx-text-fill: white; -fx-background-radius: 9; -fx-padding: 10 16; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand; }
+.logout-button:hover { -fx-background-color: #205966; }
+.welcome-banner { -fx-padding: 15 20; -fx-background-color: linear-gradient(to right, #174B57, #205966); -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(18,59,70,0.10), 15, 0, 0, 5); }
+.welcome-symbol { -fx-background-color: rgba(227,184,102,0.18); -fx-background-radius: 13; }
+.welcome-symbol-text { -fx-text-fill: #E3B866; -fx-font-size: 24px; }
+.banner-title { -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; }
+.banner-subtitle { -fx-text-fill: #C2D9DC; -fx-font-size: 10.5px; }
+.banner-tag { -fx-text-fill: #F1D59F; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.3px; -fx-padding: 8 11; -fx-border-color: rgba(241,213,159,0.45); -fx-border-radius: 20; }
+.panel-card { -fx-padding: 18; -fx-background-color: white; -fx-background-radius: 14; -fx-border-color: #E5ECEE; -fx-border-radius: 14; -fx-effect: dropshadow(gaussian, rgba(21,57,65,0.035), 12, 0, 0, 3); }
+.section-title { -fx-text-fill: #173F49; -fx-font-size: 15px; -fx-font-weight: bold; }
+.section-title-small { -fx-text-fill: #205966; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 0.7px; }
+.section-subtitle { -fx-text-fill: #849398; -fx-font-size: 10px; }
+.table-count { -fx-text-fill: #9A7A3E; -fx-font-size: 8.5px; -fx-font-weight: bold; -fx-letter-spacing: 1px; -fx-padding: 7 9; -fx-background-color: #F8F2E7; -fx-background-radius: 6; }
+.input-field { -fx-background-color: #F5F8F9; -fx-background-insets: 0; -fx-background-radius: 9; -fx-border-color: #DCE4E6; -fx-border-radius: 9; -fx-padding: 0 12; -fx-pref-height: 39; -fx-min-height: 39; -fx-font-size: 11px; -fx-text-fill: #123B46; -fx-prompt-text-fill: #9AA6AA; -fx-focus-color: transparent; -fx-faint-focus-color: transparent; }
+.input-field:focused { -fx-background-color: white; -fx-border-color: #205966; -fx-effect: dropshadow(gaussian, rgba(32,89,102,0.16), 8, 0, 0, 0); }
+.input-area { -fx-background-color: #F5F8F9; -fx-background-radius: 9; -fx-border-color: #DCE4E6; -fx-border-radius: 9; -fx-font-size: 11px; -fx-text-fill: #123B46; -fx-prompt-text-fill: #9AA6AA; }
+.input-area .content { -fx-background-color: #F5F8F9; -fx-background-radius: 9; }
+.field-label { -fx-text-fill: #29444B; -fx-font-size: 10px; -fx-font-weight: bold; }
+.apartments-table { -fx-background-color: transparent; -fx-border-color: transparent; -fx-table-cell-border-color: #EEF2F3; -fx-padding: 3 0 0 0; }
+.apartments-table .column-header-background { -fx-background-color: #F5F8F8; -fx-background-radius: 7 7 0 0; }
+.apartments-table .column-header { -fx-background-color: transparent; -fx-size: 38px; -fx-border-color: transparent transparent #E7EDEF transparent; }
+.apartments-table .column-header .label { -fx-text-fill: #6F858A; -fx-font-size: 9px; -fx-font-weight: bold; -fx-alignment: CENTER_LEFT; }
+.apartments-table .table-cell { -fx-text-fill: #38545B; -fx-font-size: 10px; -fx-padding: 10 8; }
+.apartments-table .table-row-cell { -fx-background-color: white; }
+.apartments-table .table-row-cell:odd { -fx-background-color: #FBFCFC; }
+.apartments-table .table-row-cell:selected { -fx-background-color: #EAF1F2; }
+.apartments-table .table-row-cell:selected .table-cell { -fx-text-fill: #123B46; }
+.empty-table { -fx-text-fill: #9AA6AA; -fx-font-size: 11px; }
+.table-hint { -fx-text-fill: #8B999D; -fx-font-size: 9px; }
+.login-button { -fx-background-color: linear-gradient(to right, #123B46, #205966); -fx-text-fill: white; -fx-background-radius: 9; -fx-padding: 11 13; -fx-font-size: 10.5px; -fx-font-weight: bold; -fx-cursor: hand; }
+.login-button:hover { -fx-background-color: linear-gradient(to right, #1B5262, #2A7585); }
+.secondary-button { -fx-background-color: #EEF3F4; -fx-text-fill: #315B64; -fx-background-radius: 9; -fx-padding: 11 13; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.secondary-button:hover { -fx-background-color: #E0EAEC; }
+.danger-button { -fx-background-color: #F9EAEA; -fx-text-fill: #B95E5E; -fx-background-radius: 8; -fx-padding: 9 12; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.danger-button:hover { -fx-background-color: #F2DADA; }
+.message-label { -fx-text-fill: #31845A; -fx-font-size: 10px; -fx-font-weight: bold; }
+.form-note { -fx-text-fill: #8B999D; -fx-font-size: 9px; }
+.form-separator .line { -fx-border-color: #E4EAEC transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-background-color: transparent; }
+.footer-text { -fx-text-fill: #A0ADB0; -fx-font-size: 8px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
