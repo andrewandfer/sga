@@ -1,0 +1,256 @@
+/* ==========================================================
+   REGISTRO - Aparta-Suites UQ
+   Paleta: #123B46 (principal) · #205966 (secundario) · #E3B866 (acento)
+   ========================================================== */
+
+.register-root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0B2B35 0%, #123B46 45%, #23707E 100%);
+}
+
+/* Círculos decorativos del fondo */
+.deco-circle {
+    -fx-fill: rgba(255, 255, 255, 0.04);
+    -fx-stroke: rgba(255, 255, 255, 0.10);
+    -fx-stroke-width: 1;
+}
+
+.deco-circle-soft {
+    -fx-fill: rgba(169, 201, 204, 0.10);
+}
+
+/* ================================
+   TARJETA
+================================ */
+
+.form-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 34 48 32 48;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 32, 0, 0, 12);
+}
+
+.brand-kicker {
+    -fx-text-fill: #205966;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.accent-line {
+    -fx-background-color: #E3B866;
+    -fx-background-radius: 2;
+}
+
+.welcome-title {
+    -fx-text-fill: #123B46;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.welcome-subtitle {
+    -fx-text-fill: #6B7C82;
+    -fx-font-size: 13.5px;
+}
+
+.section-title {
+    -fx-text-fill: #205966;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.separator .line {
+    -fx-border-color: #E4EAEC transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-background-color: transparent;
+}
+
+/* ================================
+   CAMPOS
+================================ */
+
+.field-label {
+    -fx-text-fill: #29444B;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+}
+
+/* Aplica a TextField, PasswordField y DatePicker */
+.input-field {
+    -fx-background-color: #F5F8F9;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-border-color: #DCE4E6;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 10;
+    -fx-padding: 0 16 0 16;
+    -fx-pref-height: 46;
+    -fx-min-height: 46;
+    -fx-font-size: 13.5px;
+    -fx-text-fill: #123B46;
+    -fx-prompt-text-fill: #9AA6AA;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.input-field:hover {
+    -fx-border-color: #B9CBCF;
+}
+
+.input-field:focused {
+    -fx-background-color: white;
+    -fx-border-color: #205966;
+    -fx-effect: dropshadow(gaussian, rgba(32, 89, 102, 0.22), 10, 0, 0, 0);
+}
+
+.error-label {
+    -fx-text-fill: #C65D5D;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ================================
+   DATEPICKER
+================================ */
+
+.date-picker.input-field {
+    -fx-padding: 0;
+}
+
+.date-picker.input-field > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+    -fx-padding: 0 8 0 16;
+    -fx-font-size: 13.5px;
+    -fx-text-fill: #123B46;
+    -fx-prompt-text-fill: #9AA6AA;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.date-picker.input-field > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 10 10 0;
+    -fx-cursor: hand;
+}
+
+.date-picker.input-field > .arrow-button:hover {
+    -fx-background-color: #EAF1F2;
+}
+
+.date-picker.input-field:showing {
+    -fx-background-color: white;
+    -fx-border-color: #205966;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #EAF1F2;
+}
+
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #205966;
+    -fx-text-fill: white;
+}
+
+/* ================================
+   BOTONES
+================================ */
+
+.login-button {
+    -fx-background-color: linear-gradient(to right, #123B46, #205966);
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 14.5px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 48;
+    -fx-min-height: 48;
+    -fx-max-height: 48;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(18, 59, 70, 0.25), 10, 0, 0, 4);
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #1B5262, #2A7585);
+    -fx-translate-y: -1;
+    -fx-effect: dropshadow(gaussian, rgba(18, 59, 70, 0.40), 14, 0, 0, 6);
+}
+
+.login-button:pressed {
+    -fx-background-color: #0E2F38;
+    -fx-translate-y: 0;
+    -fx-effect: dropshadow(gaussian, rgba(18, 59, 70, 0.20), 6, 0, 0, 2);
+}
+
+.login-button:disabled {
+    -fx-opacity: 0.6;
+}
+
+.register-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #205966;
+    -fx-border-color: #205966;
+    -fx-border-width: 1.4;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 48;
+    -fx-min-height: 48;
+    -fx-max-height: 48;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.register-button:hover {
+    -fx-background-color: #205966;
+    -fx-text-fill: white;
+}
+
+.register-button:pressed {
+    -fx-background-color: #123B46;
+    -fx-border-color: #123B46;
+}
+
+/* ================================
+   PIE (sobre el fondo)
+================================ */
+
+.page-footer-brand {
+    -fx-text-fill: white;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+}
+
+.page-footer-text {
+    -fx-text-fill: #A9C9CC;
+    -fx-font-size: 11px;
+}
+
+
+/* ================================
+   SCROLL Y AJUSTE DE CONTENIDO
+================================ */
+
+.register-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.register-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.register-scroll > .corner {
+    -fx-background-color: transparent;
+}
+
+.form-card {
+    -fx-max-width: 740px;
+}
+
