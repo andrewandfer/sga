@@ -4,6 +4,7 @@
 <BorderPane prefHeight="900.0" prefWidth="1280.0"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.PerfilController"
             stylesheets="@../styles/perfilHuesped.css"
             styleClass="dashboard-root">
 
@@ -14,55 +15,30 @@
             <VBox spacing="4.0">
                 <Label text="APARTA-SUITES" styleClass="brand-small"/>
                 <Label text="UQ" styleClass="brand-title"/>
-                <Label text="EXPERIENCIA DE ALOJAMIENTO"
-                       styleClass="brand-caption"/>
+                <Label text="EXPERIENCIA DE ALOJAMIENTO" styleClass="brand-caption"/>
             </VBox>
 
             <VBox spacing="8.0">
                 <Label text="MENÚ PRINCIPAL" styleClass="menu-heading"/>
-
-                <Button text="⌂    Inicio"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="⌕    Buscar alojamiento"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="▤    Mis reservas"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="♡    Favoritos"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="◷    Historial"
-                        maxWidth="Infinity"
-                        styleClass="nav-button"/>
-
-                <Button text="♙    Mi perfil"
-                        maxWidth="Infinity"
-                        styleClass="nav-button nav-active"/>
+                <Button text="⌂    Inicio" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="⌕    Buscar alojamiento" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="▤    Mis reservas" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="♡    Favoritos" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="◷    Historial" maxWidth="Infinity" styleClass="nav-button"/>
+                <Button text="♙    Mi perfil" maxWidth="Infinity" styleClass="nav-button nav-active"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
             <VBox styleClass="help-card" spacing="8.0">
-                <Label text="¿Necesitas ayuda?"
-                       styleClass="help-title"/>
-
+                <Label text="¿Necesitas ayuda?" styleClass="help-title"/>
                 <Label text="Estamos aquí para acompañarte durante tu estancia."
-                       wrapText="true"
-                       styleClass="help-description"/>
-
-                <Button text="Contactar"
-                        styleClass="help-button"/>
+                       wrapText="true" styleClass="help-description"/>
+                <Button text="Contactar" styleClass="help-button"/>
             </VBox>
 
             <Button text="↪    Cerrar sesión"
-                    maxWidth="Infinity"
-                    styleClass="logout-button"/>
+                    maxWidth="Infinity" styleClass="logout-button"/>
 
             <Label text="SALENTO · QUINDÍO · COLOMBIA"
                    styleClass="sidebar-footer"/>
@@ -71,270 +47,186 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <center>
-        <ScrollPane fitToWidth="true"
-                    styleClass="content-scroll">
-
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <VBox spacing="24.0" styleClass="main-content">
 
                 <!-- ENCABEZADO -->
                 <HBox alignment="CENTER_LEFT" spacing="15.0">
-
                     <VBox spacing="5.0">
-                        <Label text="INFORMACIÓN PERSONAL"
-                               styleClass="eyebrow"/>
-
-                        <Label text="Mi perfil"
-                               styleClass="welcome-title"/>
-
+                        <Label text="INFORMACIÓN PERSONAL" styleClass="eyebrow"/>
+                        <Label text="Mi perfil" styleClass="welcome-title"/>
                         <Label text="Consulta tus datos personales y la información de tu cuenta."
-                               wrapText="true"
-                               styleClass="welcome-subtitle"/>
+                               wrapText="true" styleClass="welcome-subtitle"/>
                     </VBox>
 
                     <Region HBox.hgrow="ALWAYS"/>
 
                     <VBox alignment="CENTER_RIGHT" spacing="4.0">
-                        <Label text="MI CUENTA"
-                               styleClass="profile-caption"/>
-                        <Label text="Huésped"
+                        <Label text="MI CUENTA" styleClass="profile-caption"/>
+                        <Label fx:id="nombreHuesped" text="Huésped"
                                styleClass="profile-name"/>
                     </VBox>
                 </HBox>
 
                 <!-- RESUMEN DEL PERFIL -->
-                <HBox spacing="18.0"
-                      styleClass="profile-banner"
+                <HBox spacing="18.0" styleClass="profile-banner"
                       alignment="CENTER_LEFT">
 
-                    <VBox alignment="CENTER"
-                          styleClass="avatar-placeholder"
-                          prefWidth="90.0"
-                          prefHeight="90.0">
-
-                        <Label text="♙"
-                               styleClass="avatar-symbol"/>
+                    <VBox alignment="CENTER" styleClass="avatar-placeholder"
+                          prefWidth="90.0" prefHeight="90.0">
+                        <Label text="♙" styleClass="avatar-symbol"/>
                     </VBox>
 
                     <VBox spacing="7.0">
-                        <Label text="PERFIL DEL HUÉSPED"
-                               styleClass="banner-eyebrow"/>
-
-                        <Label text="Nombre del huésped"
+                        <Label text="PERFIL DEL HUÉSPED" styleClass="banner-eyebrow"/>
+                        <Label fx:id="nombreBanner" text="Nombre del huésped"
                                styleClass="banner-name"/>
-
                         <Label text="Miembro de Aparta-Suites UQ"
                                styleClass="banner-description"/>
                     </VBox>
 
                     <Region HBox.hgrow="ALWAYS"/>
 
-                    <Label text="CUENTA DE HUÉSPED"
-                           styleClass="account-tag"/>
+                    <Label text="CUENTA DE HUÉSPED" styleClass="account-tag"/>
                 </HBox>
 
-                <!-- INFORMACION PERSONAL -->
-                <VBox spacing="18.0"
-                      styleClass="section-card">
+                <!-- INFORMACIÓN PERSONAL -->
+                <VBox spacing="18.0" styleClass="section-card">
 
                     <VBox spacing="5.0">
-                        <Label text="Datos personales"
-                               styleClass="section-title"/>
-
+                        <Label text="Datos personales" styleClass="section-title"/>
                         <Label text="Información básica registrada en tu cuenta."
                                styleClass="section-description"/>
                     </VBox>
 
                     <GridPane hgap="18.0" vgap="16.0">
-
                         <columnConstraints>
                             <ColumnConstraints percentWidth="50"/>
                             <ColumnConstraints percentWidth="50"/>
                         </columnConstraints>
 
                         <VBox spacing="7.0"
-                              GridPane.columnIndex="0"
-                              GridPane.rowIndex="0">
-
-                            <Label text="NOMBRES"
-                                   styleClass="field-label"/>
-
-                            <TextField promptText="Nombres del huésped"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="NOMBRE REGISTRADO" styleClass="field-label"/>
+                            <TextField fx:id="campoNombres"
                                        editable="false"
                                        styleClass="profile-field"/>
                         </VBox>
 
                         <VBox spacing="7.0"
-                              GridPane.columnIndex="1"
-                              GridPane.rowIndex="0">
-
-                            <Label text="APELLIDOS"
-                                   styleClass="field-label"/>
-
-                            <TextField promptText="Apellidos del huésped"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="APELLIDOS" styleClass="field-label"/>
+                            <TextField fx:id="campoApellidos"
                                        editable="false"
                                        styleClass="profile-field"/>
                         </VBox>
 
                         <VBox spacing="7.0"
-                              GridPane.columnIndex="0"
-                              GridPane.rowIndex="1">
-
-                            <Label text="DOCUMENTO DE IDENTIDAD"
-                                   styleClass="field-label"/>
-
-                            <TextField promptText="Documento registrado"
+                              GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="DOCUMENTO DE IDENTIDAD" styleClass="field-label"/>
+                            <TextField fx:id="campoDocumento"
                                        editable="false"
                                        styleClass="profile-field"/>
                         </VBox>
 
                         <VBox spacing="7.0"
-                              GridPane.columnIndex="1"
-                              GridPane.rowIndex="1">
-
-                            <Label text="CORREO ELECTRÓNICO"
-                                   styleClass="field-label"/>
-
-                            <TextField promptText="Correo registrado"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="CORREO ELECTRÓNICO" styleClass="field-label"/>
+                            <TextField fx:id="campoCorreo"
                                        editable="false"
                                        styleClass="profile-field"/>
                         </VBox>
 
                         <VBox spacing="7.0"
-                              GridPane.columnIndex="0"
-                              GridPane.rowIndex="2">
-
-                            <Label text="TELÉFONO"
-                                   styleClass="field-label"/>
-
-                            <TextField promptText="Teléfono registrado"
+                              GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <Label text="TELÉFONO" styleClass="field-label"/>
+                            <TextField fx:id="campoTelefono"
                                        editable="false"
                                        styleClass="profile-field"/>
                         </VBox>
 
                         <VBox spacing="7.0"
-                              GridPane.columnIndex="1"
-                              GridPane.rowIndex="2">
-
-                            <Label text="DIRECCIÓN"
-                                   styleClass="field-label"/>
-
-                            <TextField promptText="Dirección registrada"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <Label text="FECHA DE NACIMIENTO" styleClass="field-label"/>
+                            <TextField fx:id="campoFechaNacimiento"
                                        editable="false"
                                        styleClass="profile-field"/>
                         </VBox>
-
                     </GridPane>
 
-                    <Label text="Los datos se mostrarán según la información registrada durante el proceso de creación de la cuenta."
-                           wrapText="true"
-                           styleClass="section-description"/>
-
+                    <Label text="Los datos se muestran según la información registrada en tu cuenta."
+                           wrapText="true" styleClass="section-description"/>
                 </VBox>
 
-                <!-- INFORMACION DE LA CUENTA -->
-                <VBox spacing="17.0"
-                      styleClass="section-card">
+                <!-- INFORMACIÓN DE LA CUENTA -->
+                <VBox spacing="17.0" styleClass="section-card">
 
                     <VBox spacing="5.0">
-                        <Label text="Información de mi cuenta"
-                               styleClass="section-title"/>
-
+                        <Label text="Información de mi cuenta" styleClass="section-title"/>
                         <Label text="Resumen de tu relación con Aparta-Suites UQ."
                                styleClass="section-description"/>
                     </VBox>
 
                     <HBox spacing="14.0">
 
-                        <VBox spacing="7.0"
-                              HBox.hgrow="ALWAYS"
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS"
                               styleClass="account-info-card">
-
-                            <Label text="TIPO DE USUARIO"
-                                   styleClass="field-label"/>
-
-                            <Label text="Huésped"
+                            <Label text="TIPO DE USUARIO" styleClass="field-label"/>
+                            <Label fx:id="tipoUsuario" text="Huésped"
                                    styleClass="account-info-value"/>
                         </VBox>
 
-                        <VBox spacing="7.0"
-                              HBox.hgrow="ALWAYS"
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS"
                               styleClass="account-info-card">
-
-                            <Label text="ESTADO DE CUENTA"
-                                   styleClass="field-label"/>
-
-                            <Label text="Por consultar"
+                            <Label text="ESTADO DE CUENTA" styleClass="field-label"/>
+                            <Label fx:id="estadoCuenta" text="No disponible"
                                    styleClass="account-info-value"/>
                         </VBox>
 
-                        <VBox spacing="7.0"
-                              HBox.hgrow="ALWAYS"
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS"
                               styleClass="account-info-card">
-
-                            <Label text="RESERVAS REGISTRADAS"
-                                   styleClass="field-label"/>
-
-                            <Label text="Por consultar"
+                            <Label text="RESERVAS REGISTRADAS" styleClass="field-label"/>
+                            <Label fx:id="totalReservas" text="0"
                                    styleClass="account-info-value"/>
                         </VBox>
 
                     </HBox>
-
                 </VBox>
 
                 <!-- PRIVACIDAD Y SEGURIDAD -->
-                <VBox spacing="15.0"
-                      styleClass="section-card">
+                <VBox spacing="15.0" styleClass="section-card">
 
                     <VBox spacing="5.0">
-                        <Label text="Privacidad y seguridad"
-                               styleClass="section-title"/>
-
+                        <Label text="Privacidad y seguridad" styleClass="section-title"/>
                         <Label text="Información relacionada con el acceso y la protección de tu cuenta."
-                               wrapText="true"
-                               styleClass="section-description"/>
+                               wrapText="true" styleClass="section-description"/>
                     </VBox>
 
-                    <HBox alignment="CENTER_LEFT"
-                          spacing="12.0"
+                    <HBox alignment="CENTER_LEFT" spacing="12.0"
                           styleClass="security-row">
-
-                        <VBox spacing="5.0"
-                              HBox.hgrow="ALWAYS">
-
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <Label text="Credenciales de acceso"
                                    styleClass="security-title"/>
-
                             <Label text="La administración de tus credenciales corresponde al sistema de autenticación."
-                                   wrapText="true"
-                                   styleClass="section-description"/>
+                                   wrapText="true" styleClass="section-description"/>
                         </VBox>
-
                         <Label text="Gestionado por el acceso"
                                styleClass="security-tag"/>
                     </HBox>
 
                     <Separator styleClass="soft-divider"/>
 
-                    <HBox alignment="CENTER_LEFT"
-                          spacing="12.0"
+                    <HBox alignment="CENTER_LEFT" spacing="12.0"
                           styleClass="security-row">
-
-                        <VBox spacing="5.0"
-                              HBox.hgrow="ALWAYS">
-
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <Label text="Datos personales"
                                    styleClass="security-title"/>
-
                             <Label text="Tu información se utiliza para gestionar tus reservas y estancias."
-                                   wrapText="true"
-                                   styleClass="section-description"/>
+                                   wrapText="true" styleClass="section-description"/>
                         </VBox>
-
                         <Label text="Información de cuenta"
                                styleClass="security-tag"/>
                     </HBox>
-
                 </VBox>
 
                 <!-- PIE -->
@@ -344,6 +236,6 @@
             </VBox>
         </ScrollPane>
     </center>
-
 </BorderPane>
+
 
