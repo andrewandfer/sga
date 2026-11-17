@@ -482,6 +482,17 @@ public class ApartaSuites {
         if (reserva == null) {
             throw new IllegalArgumentException("La reserva es obligatoria");
         }
+
+        // Una reserva confirmada no puede iniciar después de su fecha de entrada.
+        // Se registra como No-show para liberar inmediatamente las noches del apartamento.
+        if (reserva.getEstado() == model.enums.EstadoReserva.CONFIRMADA
+                && LocalDate.now().isAfter(reserva.getEstancia().getEntrada())) {
+            reservas.marcarNoShow(reserva);
+            throw new IllegalStateException("No se puede realizar el check-in porque ya pasó el día inicial "
+                    + "de la reserva (" + reserva.getEstancia().getEntrada() + "). "
+                    + "La reserva se marcó como No-show y el apartamento quedó libre.");
+        }
+
         Apartamento apartamento = reserva.getApartamento();
         if (apartamento.getEstadoOperativo() != model.enums.EstadoApartamento.PREPARADO) {
             throw new IllegalStateException("El apartamento " + apartamento.getCodigo()
@@ -528,6 +539,11 @@ public class ApartaSuites {
     }
 
 
+    /** Solicitud que se encuentra actualmente en preparación, si existe. */
+    public SolicitudPreparacion obtenerPreparacionActual() {
+        return preparacion.getActual();
+    }
+
     public SolicitudPreparacion iniciarSiguientePreparacion(LocalDateTime ahora) {
         return preparacion.iniciarSiguiente(ahora);
     }
@@ -541,7 +557,10 @@ public class ApartaSuites {
     }
 
     /** Recorrido desde recepción siguiendo la prioridad de las preparaciones pendientes. */
-    public ListaDoblementeEnlazada<model.estructuras.Grafo.NodoGrafo<Object>> rutaPreparacionesPendientes() {
+    public synchronized ListaDoblementeEnlazada<model.estructuras.Grafo.NodoGrafo<Object>> rutaPreparacionesPendientes() {
+        // Inicializa la recepción y sincroniza los apartamentos con el grafo antes
+        // de pedir el recorrido. Sin esto, el mapa podía quedar vacío al abrir el panel.
+        edificio.configurarDistribucionInicial(listarApartamentos());
         return edificio.rutaPreparacion(preparacion.listarPendientes());
     }
 

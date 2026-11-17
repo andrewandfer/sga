@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import model.ApartaSuites;
 import model.enums.CanalReserva;
+import model.enums.EstadoApartamento;
 import model.enums.EstadoReserva;
 import model.enums.RolUsuario;
 import model.enums.Temporada;
@@ -347,7 +348,12 @@ public class App extends Application {
                 // Saldar la reserva antes de finalizar la estancia.
                 pagarSaldoPendiente(sistema, reserva);
 
-                sistema.iniciarEstancia(reserva);
+                // Esta reserva pertenece al historial de demostración: su estancia
+                // ocurrió en el pasado. Se simula el ciclo ya finalizado sin invocar
+                // iniciarEstancia(), porque ese método aplica la regla real de check-in
+                // y rechaza correctamente las reservas cuya fecha de entrada venció.
+                apartamento.cambiarEstado(EstadoApartamento.OCUPADO);
+                reserva.iniciar();
                 sistema.finalizarEstancia(reserva);
 
                 LocalDateTime inicioPreparacion = LocalDateTime.now()
@@ -391,12 +397,20 @@ public class App extends Application {
                     ? CanalReserva.PORTAL
                     : CanalReserva.DIRECTA);
 
+            // Las primeras cuatro reservas representan huéspedes que hacen
+            // check-in hoy. No deben tener una entrada de ayer: la regla de
+            // negocio rechaza correctamente cualquier check-in después del
+            // día inicial y las marcaría como NO_SHOW al cargar la aplicación.
+            // Las siguientes cuatro quedan confirmadas para mañana y las
+            // últimas cuatro siguen pendientes de anticipo para mañana.
+            LocalDate entrada = i < 4 ? hoy : hoy.plusDays(1);
+
             Reserva reserva = crearReserva(
                     sistema,
                     huespedes[(i + 8) % huespedes.length],
                     apartamento,
-                    hoy.minusDays(1),
-                    hoy.plusDays(2 + (i % 2)),
+                    entrada,
+                    entrada.plusDays(2 + (i % 2)),
                     canal,
                     LocalDateTime.now().minusHours(3).plusMinutes(i * 7L),
                     i % 4 == 0

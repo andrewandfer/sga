@@ -206,7 +206,11 @@ public class GestorEdificio {
             if (solicitud == null) throw new IllegalArgumentException("La solicitud no puede ser null");
             NodoGrafo<Object> destino = exigirNodo(solicitud.getApartamento());
             ListaDoblementeEnlazada<NodoGrafo<Object>> tramo = grafo.armarCamino(actual, destino);
-            if (tramo.estaVacia()) throw new IllegalStateException("No existe una ruta abierta hasta " + solicitud.getApartamento().getCodigo());
+            if (tramo.estaVacia()) {
+                throw new IllegalStateException("No existe una ruta abierta hasta "
+                        + solicitud.getApartamento().getCodigo()
+                        + ". Revisa los pasillos o conexiones del edificio.");
+            }
             for (NodoGrafo<Object> nodo : tramo) if (recorrido.ultimo() != nodo) recorrido.agregar(nodo);
             actual = destino;
         }

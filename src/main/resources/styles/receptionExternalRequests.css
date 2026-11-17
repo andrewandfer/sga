@@ -1,0 +1,119 @@
+.external-root { -fx-background-color: #F4F7F7; -fx-font-family: "Segoe UI"; }
+.sidebar { -fx-background-color: #123B44; -fx-padding: 22 16 18 16; }
+.brand-area { -fx-padding: 0 8 28 8; }
+.brand-mark { -fx-background-color: #E3B76C; -fx-background-radius: 10; -fx-min-width: 38; -fx-min-height: 38; -fx-alignment: center; -fx-text-fill: #143B43; -fx-font-size: 19px; -fx-font-weight: bold; }
+.brand-name { -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
+.brand-caption { -fx-text-fill: #A9C1C5; -fx-font-size: 9px; -fx-letter-spacing: 1.5px; }
+.nav-section { -fx-text-fill: #86A5AA; -fx-font-size: 9px; -fx-font-weight: bold; -fx-padding: 0 12 10 12; -fx-letter-spacing: 1.4px; }
+.nav-list { -fx-spacing: 6; }
+.nav-item { -fx-padding: 12; -fx-background-radius: 9; }
+.nav-item-active { -fx-background-color: #1C505A; }
+.nav-icon { -fx-text-fill: #B8CDD0; -fx-font-size: 17px; -fx-min-width: 20; -fx-alignment: center; }
+.nav-item-active .nav-icon { -fx-text-fill: #E8C17D; }
+.nav-text { -fx-text-fill: #D8E4E5; -fx-font-size: 12px; }
+.sidebar .button.nav-button { -fx-background-color: transparent; -fx-background: transparent; -fx-background-insets: 0; -fx-background-radius: 9; -fx-alignment: CENTER_LEFT; -fx-cursor: hand; -fx-border-color: transparent; -fx-padding: 12; -fx-effect: none; }
+.sidebar .button.nav-button:hover { -fx-background-color: #194650; -fx-background: #194650; }
+.sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }
+.sidebar-bottom { -fx-border-color: #315760 transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 17 5 0 5; }
+.avatar { -fx-background-color: #E3B76C; -fx-background-radius: 50; -fx-min-width: 34; -fx-min-height: 34; -fx-alignment: center; -fx-text-fill: #143B43; -fx-font-weight: bold; }
+.employee-name { -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; }
+.employee-role { -fx-text-fill: #A9C1C5; -fx-font-size: 10px; }
+.logout-button { -fx-background-color: #19434C; -fx-text-fill: #D6E2E4; -fx-background-radius: 8; -fx-padding: 10; -fx-cursor: hand; }
+.page-scroll, .page-scroll > .viewport { -fx-background-color: transparent; }
+.main-content { -fx-padding: 28 30 26 30; }
+.eyebrow { -fx-text-fill: #8A9A9E; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.2px; }
+.page-title { -fx-text-fill: #183B43; -fx-font-size: 24px; -fx-font-weight: bold; }
+.page-subtitle, .section-subtitle { -fx-text-fill: #7A8B90; -fx-font-size: 11px; }
+.metrics-row { -fx-spacing: 12; }
+.metric-card, .panel-card { -fx-background-color: white; -fx-background-radius: 13; -fx-border-color: #E6ECEE; -fx-border-radius: 13; -fx-padding: 17; }
+.metric-caption { -fx-text-fill: #819196; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: .8px; }
+.metric-value { -fx-text-fill: #173D45; -fx-font-size: 26px; -fx-font-weight: bold; }
+.metric-footnote, .footnote { -fx-text-fill: #98A5A9; -fx-font-size: 9px; }
+.section-title { -fx-text-fill: #193C44; -fx-font-size: 15px; -fx-font-weight: bold; }
+.secondary-button { -fx-background-color: #EEF3F4; -fx-text-fill: #31535A; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.primary-button { -fx-background-color: #17616A; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.primary-button:hover { -fx-background-color: #247782; }
+.side-column { -fx-min-width: 390; -fx-pref-width: 440; }
+.request-card { -fx-background-color: #F8FAFA; -fx-background-radius: 9; -fx-border-color: #E6ECEE; -fx-border-radius: 9; -fx-padding: 12; }
+.request-id { -fx-text-fill: #23464D; -fx-font-size: 11px; -fx-font-weight: bold; }
+.request-main { -fx-text-fill: #38565D; -fx-font-size: 11px; -fx-font-weight: bold; }
+.request-detail { -fx-text-fill: #788A8F; -fx-font-size: 9px; }
+.request-reason { -fx-text-fill: #985B4F; -fx-font-size: 9px; }
+.request-status { -fx-background-radius: 5; -fx-padding: 4 7; -fx-font-size: 8px; -fx-font-weight: bold; }
+.request-status.pendiente { -fx-background-color: #FFF2D7; -fx-text-fill: #89621C; }
+.request-status.aceptada { -fx-background-color: #E4F1E9; -fx-text-fill: #316C4A; }
+.request-status.rechazada, .request-status.conflicto { -fx-background-color: #F8E7E7; -fx-text-fill: #955454; }
+.empty-message { -fx-text-fill: #89999D; -fx-padding: 12 3; -fx-font-size: 10px; }
+
+/* Botones de navegación: mismo tratamiento visual en todas las vistas. */
+.sidebar .button.nav-button {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 12;
+    -fx-text-fill: #D8E4E5;
+    -fx-effect: none;
+}
+.sidebar .button.nav-button:hover { -fx-background-color: #194650; -fx-background: #194650; }
+.sidebar .button.nav-button:pressed { -fx-background-color: #1C505A; -fx-background: #1C505A; }
+.sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }
+
+/* Fuerza los colores de las dos acciones principales del canal externo. */
+.external-root .button.primary-button {
+    -fx-background-color: #17616A;
+    -fx-background: #17616A;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+.external-root .button.primary-button:hover { -fx-background-color: #247782; -fx-background: #247782; }
+.external-root .button.secondary-button {
+    -fx-background-color: #EEF3F4;
+    -fx-background: #EEF3F4;
+    -fx-text-fill: #31535A;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+.external-root .button.secondary-button:hover { -fx-background-color: #E1EAEC; -fx-background: #E1EAEC; }
+.external-root .button.primary-button:disabled,
+.external-root .button.secondary-button:disabled { -fx-opacity: 0.55; }
+
+
+/* Refuerzo visual para navegación lateral: evita el estilo blanco predeterminado de JavaFX. */
+.external-root .sidebar .button.nav-button,
+.external-root .sidebar .button.nav-button:focused,
+.external-root .sidebar .button.nav-button:visited {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-border-color: transparent;
+    -fx-text-fill: #D8E4E5;
+    -fx-padding: 12;
+    -fx-effect: none;
+}
+.external-root .sidebar .button.nav-button:hover { -fx-background-color: #194650; }
+.external-root .sidebar .button.nav-button:pressed { -fx-background-color: #1C505A; }
+.external-root .sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }
+
+/* Acciones de la cola externa: colores fijados en los estados normales y hover. */
+.external-root .button.primary-button,
+.external-root .button.primary-button:focused {
+    -fx-background-color: #17616A; -fx-background-radius: 8;
+    -fx-border-color: transparent; -fx-text-fill: white;
+    -fx-font-weight: bold; -fx-effect: none;
+}
+.external-root .button.primary-button:hover { -fx-background-color: #247782; }
+.external-root .button.secondary-button,
+.external-root .button.secondary-button:focused {
+    -fx-background-color: #EEF3F4; -fx-background-radius: 8;
+    -fx-border-color: transparent; -fx-text-fill: #31535A;
+    -fx-font-weight: bold; -fx-effect: none;
+}
+.external-root .button.secondary-button:hover { -fx-background-color: #E1EAEC; }

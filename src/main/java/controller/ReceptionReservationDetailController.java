@@ -98,6 +98,12 @@ public class ReceptionReservationDetailController {
     public void setReserva(Reserva reserva) {
         if (reserva == null) throw new IllegalArgumentException("La reserva no puede ser null.");
         this.reserva = reserva;
+        // Si la fecha inicial ya quedó atrás y nunca se hizo check-in,
+        // cerrar la reserva como No-show y liberar el apartamento al consultar su ficha.
+        if (reserva.getEstado() == EstadoReserva.CONFIRMADA
+                && LocalDate.now().isAfter(reserva.getEstancia().getEntrada())) {
+            sistema.marcarNoShow(reserva);
+        }
         cargarInformacion();
         configurarAcciones();
     }
@@ -211,7 +217,19 @@ public class ReceptionReservationDetailController {
     }
 
     @FXML private void confirmarReserva() { ejecutar("Confirmar reserva", () -> sistema.confirmarReserva(reserva)); }
-    @FXML private void registrarCheckIn() { ejecutar("Check-in", () -> sistema.iniciarEstancia(reserva)); }
+    @FXML
+    private void registrarCheckIn() {
+        try {
+            sistema.iniciarEstancia(reserva);
+            feedbackLabel.setText("Check-in registrado correctamente.");
+            refrescarFicha();
+        } catch (RuntimeException ex) {
+            // iniciarEstancia puede convertir una llegada tardía en No-show y liberar el apartamento.
+            // Refrescamos también en ese caso para que la ficha muestre el nuevo estado.
+            mostrarError(ex.getMessage());
+            refrescarFicha();
+        }
+    }
     @FXML private void registrarCheckOut() { ejecutar("Check-out", () -> sistema.finalizarEstancia(reserva)); }
     @FXML private void marcarNoShow() { ejecutar("No-show", () -> sistema.marcarNoShow(reserva)); }
 

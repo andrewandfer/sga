@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,6 +18,7 @@ import model.modelo.Huesped;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
@@ -43,6 +45,15 @@ public class RegistroController {
     public void initialize() {
         sistema = ApartaSuites.getInstance();
         errorLabel.setText("");
+        // Deshabilita en el calendario las fechas que no cumplen la edad mínima.
+        LocalDate fechaMaximaNacimiento = LocalDate.now().minusYears(15);
+        birthDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate fecha, boolean vacia) {
+                super.updateItem(fecha, vacia);
+                setDisable(vacia || fecha.isAfter(fechaMaximaNacimiento));
+            }
+        });
         birthDatePicker.setConverter(new StringConverter<>() {
             @Override
             public String toString(LocalDate fecha) {
@@ -118,12 +129,14 @@ public class RegistroController {
 
 
     /**
-     * Lee el texto visible del DatePicker y lo valida estrictamente.
-     * La fecha es opcional, pero si se diligencia debe existir y no ser futura.
+     * Lee el texto visible del DatePicker y valida que la fecha exista
+     * y que el titular tenga al menos 15 años al momento del registro.
      */
     private LocalDate obtenerFechaNacimiento() {
         String textoFecha = birthDatePicker.getEditor().getText();
-        if (textoFecha == null || textoFecha.isBlank()) return null;
+        if (textoFecha == null || textoFecha.isBlank()) {
+            throw new IllegalArgumentException("La fecha de nacimiento es obligatoria.");
+        }
 
         final LocalDate fecha;
         try {
@@ -132,8 +145,12 @@ public class RegistroController {
             throw new IllegalArgumentException("Ingresa una fecha válida con formato dd/MM/aaaa.");
         }
 
-        if (fecha.isAfter(LocalDate.now())) {
+        LocalDate hoy = LocalDate.now();
+        if (fecha.isAfter(hoy)) {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser futura.");
+        }
+        if (Period.between(fecha, hoy).getYears() < 15) {
+            throw new IllegalArgumentException("Debes tener al menos 15 años para crear una cuenta.");
         }
         return fecha;
     }

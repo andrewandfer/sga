@@ -1,0 +1,23 @@
+.reservation-root { -fx-background-color: #F3F6F7; -fx-font-family: "Segoe UI", Arial, sans-serif; }
+.topbar { -fx-background-color: white; -fx-padding: 20 30; -fx-border-color: transparent transparent #E5ECEE transparent; }
+.page-title { -fx-text-fill: #183B43; -fx-font-size: 23px; -fx-font-weight: bold; }
+.page-subtitle { -fx-text-fill: #7A8B90; -fx-font-size: 11px; }
+.top-tag { -fx-text-fill: #477078; -fx-background-color: #EAF2F2; -fx-background-radius: 20; -fx-padding: 8 13; -fx-font-size: 9px; -fx-font-weight: bold; }
+.back-button, .secondary-button { -fx-background-color: #EEF3F4; -fx-text-fill: #31535A; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand; }
+.form-scroll, .form-scroll > .viewport { -fx-background-color: #F3F6F7; }
+.form-content { -fx-padding: 22 30 30 30; -fx-max-width: 1050; }
+.form-card { -fx-background-color: white; -fx-background-radius: 13; -fx-border-color: #E5ECEE; -fx-border-radius: 13; -fx-padding: 19; }
+.section-title { -fx-text-fill: #1B4850; -fx-font-size: 11px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
+.subsection-title { -fx-text-fill: #34565D; -fx-font-size: 12px; -fx-font-weight: bold; }
+.field-label { -fx-text-fill: #526B70; -fx-font-size: 10px; -fx-font-weight: bold; }
+.helper-label { -fx-text-fill: #849499; -fx-font-size: 10px; }
+.text-field, .date-picker, .combo-box { -fx-background-color: #FAFCFC; -fx-border-color: #DCE6E8; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 9; -fx-font-size: 11px; }
+.quote-label { -fx-text-fill: #1C5B51; -fx-font-size: 17px; -fx-font-weight: bold; -fx-background-color: #EAF4EF; -fx-background-radius: 8; -fx-padding: 13; }
+.primary-button, .create-button { -fx-background-color: #17616A; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 11 17; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand; }
+.create-button { -fx-background-color: #17614F; -fx-padding: 12 24; }
+.small-action { -fx-background-color: #EAF2F2; -fx-text-fill: #27616A; -fx-background-radius: 7; -fx-padding: 8 11; -fx-font-size: 10px; -fx-font-weight: bold; }
+.companion-row { -fx-alignment: center-left; }
+.companion-row .text-field { -fx-pref-width: 320; }
+.companion-row .date-picker { -fx-pref-width: 190; }
+.companion-row .button { -fx-background-color: #F8EDED; -fx-text-fill: #985B5B; -fx-background-radius: 7; -fx-padding: 8 10; }
+.feedback-label { -fx-text-fill: #A34D4D; -fx-font-size: 10px; }

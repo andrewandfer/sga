@@ -1,0 +1,78 @@
+.preparation-root { -fx-background-color: #F4F7F7; -fx-font-family: "Segoe UI"; }
+.sidebar { -fx-background-color: #123B44; -fx-padding: 22 16 18 16; }
+.brand-area { -fx-padding: 0 8 28 8; }
+.brand-mark { -fx-background-color: #E3B76C; -fx-background-radius: 10; -fx-min-width: 38; -fx-min-height: 38; -fx-alignment: center; -fx-text-fill: #143B43; -fx-font-size: 19px; -fx-font-weight: bold; }
+.brand-name { -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
+.brand-caption { -fx-text-fill: #A9C1C5; -fx-font-size: 9px; -fx-letter-spacing: 1.5px; }
+.nav-section { -fx-text-fill: #86A5AA; -fx-font-size: 9px; -fx-font-weight: bold; -fx-padding: 0 12 10 12; -fx-letter-spacing: 1.4px; }
+.nav-list { -fx-spacing: 6; }
+.nav-item { -fx-padding: 12; -fx-background-radius: 9; }
+.nav-item-active { -fx-background-color: #1C505A; }
+.nav-icon { -fx-text-fill: #B8CDD0; -fx-font-size: 17px; -fx-min-width: 20; -fx-alignment: center; }
+.nav-item-active .nav-icon { -fx-text-fill: #E8C17D; }
+.nav-text { -fx-text-fill: #D8E4E5; -fx-font-size: 12px; }
+.sidebar-bottom { -fx-border-color: #315760 transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 17 5 0 5; }
+.avatar { -fx-background-color: #E3B76C; -fx-background-radius: 50; -fx-min-width: 34; -fx-min-height: 34; -fx-alignment: center; -fx-text-fill: #143B43; -fx-font-weight: bold; }
+.employee-name { -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; }
+.employee-role { -fx-text-fill: #A9C1C5; -fx-font-size: 10px; }
+.logout-button { -fx-background-color: #19434C; -fx-text-fill: #D6E2E4; -fx-background-radius: 8; -fx-padding: 10; -fx-cursor: hand; }
+.page-scroll, .page-scroll > .viewport { -fx-background-color: transparent; }
+.main-content { -fx-padding: 28 30 26 30; }
+.eyebrow { -fx-text-fill: #8A9A9E; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.2px; }
+.page-title { -fx-text-fill: #183B43; -fx-font-size: 24px; -fx-font-weight: bold; }
+.page-subtitle, .section-subtitle { -fx-text-fill: #7A8B90; -fx-font-size: 11px; }
+.metrics-row { -fx-spacing: 12; }
+.metric-card, .panel-card { -fx-background-color: white; -fx-background-radius: 13; -fx-border-color: #E6ECEE; -fx-border-radius: 13; -fx-padding: 17; }
+.metric-caption { -fx-text-fill: #819196; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: .8px; }
+.metric-value { -fx-text-fill: #173D45; -fx-font-size: 26px; -fx-font-weight: bold; }
+.metric-footnote, .footnote { -fx-text-fill: #98A5A9; -fx-font-size: 9px; }
+.section-title { -fx-text-fill: #193C44; -fx-font-size: 15px; -fx-font-weight: bold; }
+.secondary-button { -fx-background-color: #EEF3F4; -fx-text-fill: #31535A; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.primary-button { -fx-background-color: #17616A; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 11 15; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.finish-button { -fx-background-color: #E4F1E9; -fx-text-fill: #316C4A; -fx-background-radius: 8; -fx-padding: 11 15; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.queue-card { -fx-background-color: #F8FAFA; -fx-background-radius: 9; -fx-border-color: #E6ECEE; -fx-border-radius: 9; -fx-padding: 12; }
+.queue-title { -fx-text-fill: #294950; -fx-font-size: 12px; -fx-font-weight: bold; }
+.queue-detail { -fx-text-fill: #788A8F; -fx-font-size: 10px; }
+.priority-high { -fx-text-fill: #95691E; -fx-background-color: #FFF2D7; -fx-background-radius: 5; -fx-padding: 5 7; -fx-font-size: 8px; -fx-font-weight: bold; }
+.priority-normal { -fx-text-fill: #547078; -fx-background-color: #EEF3F4; -fx-background-radius: 5; -fx-padding: 5 7; -fx-font-size: 8px; -fx-font-weight: bold; }
+.right-column { -fx-min-width: 330; -fx-pref-width: 390; }
+.active-apartment { -fx-text-fill: #17616A; -fx-font-size: 17px; -fx-font-weight: bold; }
+.route-stop { -fx-text-fill: #38565D; -fx-background-color: #F5F8F8; -fx-background-radius: 7; -fx-padding: 9 10; -fx-font-size: 10px; }
+.empty-message { -fx-text-fill: #89999D; -fx-padding: 12 3; -fx-font-size: 10px; }
+
+/* Navegación lateral: botones con el mismo aspecto que las opciones del menú. */
+.sidebar .button.nav-button {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-text-fill: #D8E4E5;
+    -fx-font-size: 12px;
+    -fx-effect: none;
+    -fx-cursor: hand;
+}
+.sidebar .button.nav-button:hover { -fx-background-color: #194650; -fx-background: #194650; }
+.sidebar .button.nav-button:pressed { -fx-background-color: #1C505A; -fx-background: #1C505A; }
+.sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }
+.sidebar .button.nav-button:focused { -fx-background-insets: 0; }
+
+
+/* Refuerzo visual para navegación lateral: evita el estilo blanco predeterminado de JavaFX. */
+.preparation-root .sidebar .button.nav-button,
+.preparation-root .sidebar .button.nav-button:focused,
+.preparation-root .sidebar .button.nav-button:visited {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-border-color: transparent;
+    -fx-text-fill: #D8E4E5;
+    -fx-padding: 12;
+    -fx-effect: none;
+}
+.preparation-root .sidebar .button.nav-button:hover { -fx-background-color: #194650; }
+.preparation-root .sidebar .button.nav-button:pressed { -fx-background-color: #1C505A; }
+.preparation-root .sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }

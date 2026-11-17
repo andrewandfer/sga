@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefWidth="1440.0" prefHeight="900.0" styleClass="reservation-root"
+            stylesheets="@../styles/receptionNewReservation.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.ReceptionNewReservationController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+            <Button text="← Volver al dashboard" onAction="#volver" styleClass="back-button" />
+            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                <Label text="Nueva reserva" styleClass="page-title" />
+                <Label text="Registra una estancia para Aparta-Suites UQ" styleClass="page-subtitle" />
+            </VBox>
+            <Label text="RECEPCIÓN" styleClass="top-tag" />
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll">
+            <content>
+                <StackPane alignment="TOP_CENTER">
+                    <VBox spacing="16" alignment="TOP_LEFT" styleClass="form-content">
+                        <VBox spacing="12" styleClass="form-card">
+                            <Label text="01 · HUÉSPED TITULAR" styleClass="section-title" />
+                            <GridPane hgap="14" vgap="10">
+                                <columnConstraints><ColumnConstraints percentWidth="50"/><ColumnConstraints percentWidth="50"/></columnConstraints>
+                                <Label text="Documento" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="field-label" />
+                                <TextField fx:id="documentField" promptText="Número de documento" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <Label text="Nombre completo" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="field-label" />
+                                <TextField fx:id="holderNameField" promptText="Nombre y apellidos" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                                <Label text="Fecha de nacimiento * (mínimo 15 años)" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="field-label" />
+                                <DatePicker fx:id="holderBirthDatePicker" promptText="Fecha de nacimiento" maxWidth="Infinity" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                                <Label text="Teléfono" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="field-label" />
+                                <TextField fx:id="phoneField" promptText="Número de contacto" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                                <Label text="Correo electrónico" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="field-label" />
+                                <TextField fx:id="emailField" promptText="correo@ejemplo.com" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                            </GridPane>
+                            <Label fx:id="guestLookupLabel" text="Ingresa el documento para buscar o registrar al titular." styleClass="helper-label" wrapText="true" />
+                        </VBox>
+                        <VBox spacing="12" styleClass="form-card">
+                            <Label text="02 · FECHAS Y OCUPANTES" styleClass="section-title" />
+                            <GridPane hgap="14" vgap="9">
+                                <columnConstraints><ColumnConstraints percentWidth="50"/><ColumnConstraints percentWidth="50"/></columnConstraints>
+                                <Label text="Fecha de entrada" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <DatePicker fx:id="checkInPicker" promptText="Entrada" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <Label text="Fecha de salida" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                <DatePicker fx:id="checkOutPicker" promptText="Salida" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                            </GridPane>
+                            <Label text="El titular se incluye automáticamente como primer ocupante. Los menores de 6 años ocupan cupo, pero no pagan." styleClass="helper-label" wrapText="true" />
+                            <HBox alignment="CENTER_LEFT" spacing="10"><Label text="Acompañantes" styleClass="subsection-title"/><Region HBox.hgrow="ALWAYS"/><Button text="+ Añadir acompañante" onAction="#agregarAcompanante" styleClass="small-action"/></HBox>
+                            <VBox fx:id="companionsBox" spacing="8" />
+                        </VBox>
+                        <VBox spacing="12" styleClass="form-card">
+                            <Label text="03 · DISPONIBILIDAD Y COTIZACIÓN" styleClass="section-title" />
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <VBox spacing="4" HBox.hgrow="ALWAYS"><Label text="Ordenar resultados" styleClass="field-label"/><ComboBox fx:id="sortCombo" maxWidth="Infinity" /></VBox>
+                                <Button text="Consultar disponibilidad" onAction="#consultarDisponibilidad" styleClass="primary-button" />
+                            </HBox>
+                            <Label fx:id="availabilityLabel" text="Selecciona las fechas y consulta los apartamentos disponibles." styleClass="helper-label" wrapText="true" />
+                            <Label text="Apartamento" styleClass="field-label" />
+                            <ComboBox fx:id="apartmentCombo" promptText="Selecciona un apartamento" maxWidth="Infinity" />
+                            <Label fx:id="quoteLabel" text="Cotización: —" styleClass="quote-label" wrapText="true" />
+                        </VBox>
+                        <VBox spacing="12" styleClass="form-card">
+                            <Label text="04 · CANAL Y ANTICIPO" styleClass="section-title" />
+                            <Label text="Canal de reserva" styleClass="field-label" />
+                            <ComboBox fx:id="channelCombo" maxWidth="Infinity" />
+                            <Label fx:id="advanceLabel" text="Las reservas directas se confirman automáticamente." styleClass="helper-label" wrapText="true" />
+                            <Label text="Pago inicial recibido (opcional)" styleClass="field-label" />
+                            <TextField fx:id="portalPaymentField" promptText="0.00" />
+                            <Label text="Ingresa un valor únicamente si el pago ya fue recibido. Si lo dejas vacío, la reserva se crea pendiente y podrás registrar el abono después." styleClass="helper-label" wrapText="true" />
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <Label fx:id="feedbackLabel" text="" styleClass="feedback-label" />
+                            <Button text="Crear reserva" onAction="#crearReserva" styleClass="create-button" />
+                        </HBox>
+                    </VBox>
+                </StackPane>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

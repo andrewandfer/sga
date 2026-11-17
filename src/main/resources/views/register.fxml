@@ -104,7 +104,7 @@
                         <VBox spacing="6.0"
                               GridPane.columnIndex="0"
                               GridPane.rowIndex="1">
-                            <Label styleClass="field-label" text="Fecha de nacimiento"/>
+                            <Label styleClass="field-label" text="Fecha de nacimiento * (mínimo 15 años)"/>
                             <DatePicker fx:id="birthDatePicker"
                                         maxWidth="Infinity"
                                         promptText="dd/mm/aaaa"

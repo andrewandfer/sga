@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane prefWidth="1440.0" prefHeight="900.0" styleClass="preparation-root"
+            stylesheets="@../styles/receptionPreparation.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.ReceptionPreparationController">
+    <left>
+        <VBox prefWidth="238.0" spacing="0.0" styleClass="sidebar">
+            <VBox spacing="5.0" styleClass="brand-area">
+                <HBox alignment="CENTER_LEFT" spacing="11.0">
+                    <Label text="A" styleClass="brand-mark" />
+                    <VBox spacing="1.0"><Label text="APARTA-SUITES" styleClass="brand-name"/><Label text="UQ · SALENTO" styleClass="brand-caption"/></VBox>
+                </HBox>
+            </VBox>
+            <Label text="OPERACIÓN" styleClass="nav-section" />
+            <VBox spacing="6.0" styleClass="nav-list">
+                <Button onAction="#volverCalendario" styleClass="nav-item nav-button" maxWidth="Infinity" focusTraversable="false" style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-background-radius: 9; -fx-border-color: transparent; -fx-text-fill: #D8E4E5; -fx-padding: 12;">
+                    <graphic><HBox alignment="CENTER_LEFT" spacing="12.0"><Label text="▦" styleClass="nav-icon"/><Label text="Calendario semanal" styleClass="nav-text"/></HBox></graphic>
+                </Button>
+                <HBox styleClass="nav-item nav-item-active" alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="✓" styleClass="nav-icon"/><Label text="Preparación" styleClass="nav-text"/>
+                </HBox>
+                <Button onAction="#abrirCanalExterno" styleClass="nav-item nav-button" maxWidth="Infinity" focusTraversable="false" style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-background-radius: 9; -fx-border-color: transparent; -fx-text-fill: #D8E4E5; -fx-padding: 12;">
+                    <graphic><HBox alignment="CENTER_LEFT" spacing="12.0"><Label text="⇄" styleClass="nav-icon"/><Label text="Canal externo" styleClass="nav-text"/></HBox></graphic>
+                </Button>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS" />
+            <VBox spacing="12.0" styleClass="sidebar-bottom">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label fx:id="employeeInitialLabel" text="R" styleClass="avatar" />
+                    <VBox spacing="2.0" HBox.hgrow="ALWAYS"><Label fx:id="employeeNameLabel" text="Recepción" styleClass="employee-name"/><Label text="Recepcionista" styleClass="employee-role"/></VBox>
+                </HBox>
+                <Button text="Cerrar sesión" onAction="#logout" styleClass="logout-button" maxWidth="Infinity" />
+            </VBox>
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="page-scroll">
+            <content>
+                <VBox spacing="20.0" styleClass="main-content">
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label text="OPERACIÓN · RECEPCIÓN" styleClass="eyebrow"/>
+                            <Label text="Panel de preparación" styleClass="page-title"/>
+                            <Label text="Organiza el alistamiento de apartamentos según las próximas llegadas." styleClass="page-subtitle"/>
+                        </VBox>
+                        <Button text="← Volver al calendario" onAction="#volver" styleClass="secondary-button"/>
+                        <Button text="Actualizar" onAction="#actualizar" styleClass="secondary-button"/>
+                    </HBox>
+                    <HBox spacing="12.0" styleClass="metrics-row">
+                        <VBox styleClass="metric-card" HBox.hgrow="ALWAYS"><Label text="EN COLA" styleClass="metric-caption"/><Label fx:id="pendingCountLabel" text="0" styleClass="metric-value"/><Label text="Apartamentos pendientes" styleClass="metric-footnote"/></VBox>
+                        <VBox styleClass="metric-card" HBox.hgrow="ALWAYS"><Label text="FINALIZADAS" styleClass="metric-caption"/><Label fx:id="finishedCountLabel" text="0" styleClass="metric-value"/><Label text="Preparaciones completadas" styleClass="metric-footnote"/></VBox>
+                        <VBox styleClass="metric-card" HBox.hgrow="ALWAYS"><Label text="TIEMPO PROMEDIO" styleClass="metric-caption"/><Label fx:id="averageTimeLabel" text="0 min" styleClass="metric-value"/><Label text="Duración registrada" styleClass="metric-footnote"/></VBox>
+                    </HBox>
+                    <HBox spacing="16.0" alignment="TOP_LEFT">
+                        <VBox spacing="14.0" styleClass="panel-card" HBox.hgrow="ALWAYS">
+                            <VBox spacing="3.0"><Label text="Cola priorizada" styleClass="section-title"/><Label text="Primero las unidades con entrada programada para hoy; después, las demás." styleClass="section-subtitle" wrapText="true"/></VBox>
+                            <VBox fx:id="pendingList" spacing="9.0"/>
+                            <Label fx:id="emptyPendingLabel" text="No hay apartamentos pendientes de preparación." styleClass="empty-message" wrapText="true"/>
+                            <HBox spacing="9.0">
+                                <Button text="▶ Iniciar siguiente" onAction="#iniciarSiguiente" styleClass="primary-button"/>
+                            </HBox>
+                        </VBox>
+                        <VBox spacing="14.0" styleClass="right-column" HBox.hgrow="ALWAYS">
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <Label text="Preparación en curso" styleClass="section-title"/>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <Label fx:id="activeApartmentLabel" text="Sin preparación en curso" styleClass="active-apartment" wrapText="true" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="finishCurrentButton" text="✓ Finalizar" onAction="#finalizarActual" styleClass="finish-button" visible="false" managed="false" />
+                                </HBox>
+                                <Label fx:id="activeSinceLabel" text="Inicia el siguiente apartamento de la cola para comenzar." styleClass="section-subtitle" wrapText="true"/>
+                            </VBox>
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <Label text="Ruta sugerida de recorrido" styleClass="section-title"/>
+                                <Label fx:id="routeInfoLabel" text="Recorrido desde recepción." styleClass="section-subtitle" wrapText="true"/>
+                                <VBox fx:id="routeList" spacing="8.0"/>
+                                <Label fx:id="emptyRouteLabel" text="No hay una ruta pendiente por recorrer." styleClass="empty-message" wrapText="true"/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                    <Label text="La ruta muestra el recorrido interno desde recepción por pasillos y escaleras hasta los apartamentos pendientes. Se actualiza al iniciar o finalizar una preparación; no es una ruta GPS." styleClass="footnote" wrapText="true"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

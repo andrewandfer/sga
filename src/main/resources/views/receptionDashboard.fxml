@@ -29,6 +29,22 @@
                 <HBox styleClass="nav-item nav-item-active" alignment="CENTER_LEFT" spacing="12.0">
                     <Label text="▦" styleClass="nav-icon"/><Label text="Calendario semanal" styleClass="nav-text"/>
                 </HBox>
+                <Button onAction="#abrirPreparacion" styleClass="nav-item nav-button" maxWidth="Infinity" focusTraversable="false" style="-fx-background-color: transparent; -fx-background: transparent; -fx-background-insets: 0; -fx-border-color: transparent; -fx-border-width: 0; -fx-background-radius: 9; -fx-text-fill: #D8E4E5;">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <Label text="✓" styleClass="nav-icon"/>
+                            <Label text="Preparación" styleClass="nav-text"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+                <Button onAction="#abrirCanalExterno" styleClass="nav-item nav-button" maxWidth="Infinity" focusTraversable="false" style="-fx-background-color: transparent; -fx-background: transparent; -fx-background-insets: 0; -fx-border-color: transparent; -fx-border-width: 0; -fx-text-fill: #D8E4E5;">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <Label text="⇄" styleClass="nav-icon"/>
+                            <Label text="Canal externo" styleClass="nav-text"/>
+                        </HBox>
+                    </graphic>
+                </Button>
             </VBox>
             <Region VBox.vgrow="ALWAYS" />
             <VBox spacing="12.0" styleClass="sidebar-bottom">
@@ -50,6 +66,7 @@
                     <Label text="Calendario de reservas" styleClass="page-title" />
                     <Label text="Controla la ocupación y los movimientos de la semana" styleClass="page-subtitle" />
                 </VBox>
+                <Button text="+ Nueva reserva" onAction="#nuevaReserva" styleClass="new-reservation-button" />
                 <Button text="Actualizar" onAction="#refresh" styleClass="secondary-button" />
             </HBox>
             <HBox spacing="12.0" styleClass="metrics-row">

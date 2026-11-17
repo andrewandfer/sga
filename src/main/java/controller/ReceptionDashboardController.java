@@ -92,6 +92,21 @@ public class ReceptionDashboardController {
     }
 
     @FXML
+    private void abrirPreparacion(ActionEvent event) {
+        cambiarVista(event, "/views/receptionPreparation.fxml", true);
+    }
+
+    @FXML
+    private void abrirCanalExterno(ActionEvent event) {
+        cambiarVista(event, "/views/receptionExternalRequests.fxml", true);
+    }
+
+    @FXML
+    private void nuevaReserva(ActionEvent event) {
+        cambiarVista(event, "/views/receptionNewReservation.fxml", true);
+    }
+
+    @FXML
     private void logout(ActionEvent event) {
         sistema.cerrarSesion();
         cambiarVista(event, "/views/login.fxml", false);

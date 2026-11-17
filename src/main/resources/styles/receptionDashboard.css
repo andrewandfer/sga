@@ -8,6 +8,11 @@
 .nav-list { -fx-padding: 0 0 0 0; }
 .nav-item { -fx-padding: 12 12; -fx-background-radius: 9; }
 .nav-item-active { -fx-background-color: #1C505A; }
+.sidebar .button.nav-button { -fx-background-color: transparent; -fx-background: transparent; -fx-background-insets: 0; -fx-background-radius: 9; -fx-alignment: CENTER_LEFT; -fx-cursor: hand; -fx-border-color: transparent; -fx-border-width: 0; -fx-padding: 12 12; -fx-text-fill: #D8E4E5; -fx-effect: none; -fx-font-size: 12px; }
+.sidebar .button.nav-button:hover { -fx-background-color: #194650; -fx-background: #194650; }
+.sidebar .button.nav-button:pressed { -fx-background-color: #1C505A; -fx-background: #1C505A; }
+.sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }
+.sidebar .button.nav-button:focused { -fx-background-insets: 0; }
 .nav-icon { -fx-text-fill: #B8CDD0; -fx-font-size: 17px; -fx-min-width: 20; -fx-alignment: center; }
 .nav-item-active .nav-icon { -fx-text-fill: #E8C17D; }
 .nav-text { -fx-text-fill: #D8E4E5; -fx-font-size: 12px; }
@@ -58,3 +63,24 @@
 /* Panel de detalle y gestión de reservas */
 .detail-row { -fx-text-fill: #405B61; -fx-font-size: 11px; -fx-padding: 2 0; }
 .detail-section-title { -fx-text-fill: #173D45; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 10 0 2 0; -fx-letter-spacing: 0.7px; }
+
+.new-reservation-button { -fx-background-color: #17616A; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 15; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand; }
+.new-reservation-button:hover { -fx-background-color: #247782; }
+
+
+.sidebar .button.nav-button {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 12 12;
+    -fx-text-fill: #D8E4E5;
+    -fx-effect: none;
+}
+.sidebar .button.nav-button:hover { -fx-background-color: #194650; -fx-background: #194650; }
+.sidebar .button.nav-button:pressed { -fx-background-color: #1C505A; -fx-background: #1C505A; }
+.sidebar .button.nav-button .label { -fx-text-fill: #D8E4E5; }
