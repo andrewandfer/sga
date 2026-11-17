@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="dashboard-root" stylesheets="@../styles/dasboardHuesped.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HuespedController">
+
+    <!-- MENU LATERAL -->
+    <left>
+        <VBox prefWidth="255.0" spacing="25.0" styleClass="sidebar">
+
+            <VBox spacing="4.0">
+                <Label styleClass="brand-small" text="APARTA-SUITES" />
+                <Label styleClass="brand-title" text="UQ" />
+                <Label styleClass="brand-caption" text="EXPERIENCIA DE ALOJAMIENTO" />
+            </VBox>
+
+            <VBox spacing="8.0">
+                <Label styleClass="menu-heading" text="MENÚ PRINCIPAL" />
+
+                <Button maxWidth="Infinity" onAction="#irInicio" styleClass="nav-button nav-active" text="⌂    Inicio" />
+
+                <Button maxWidth="Infinity" onAction="#irBuscar" styleClass="nav-button" text="⌕    Buscar alojamiento" />
+
+                <Button maxWidth="Infinity" onAction="#irReservas" styleClass="nav-button" text="▤    Mis reservas" />
+
+                <Button maxWidth="Infinity" onAction="#irFavoritos" styleClass="nav-button" text="♡    Favoritos" />
+
+                <Button maxWidth="Infinity" onAction="#irHistorial" styleClass="nav-button" text="◷    Historial" />
+
+                <Button maxWidth="Infinity" onAction="#irPerfil" styleClass="nav-button" text="♙    Mi perfil" />
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <VBox spacing="8.0" styleClass="help-card">
+                <Label styleClass="help-title" text="¿Necesitas ayuda?" />
+                <Label styleClass="help-description" text="Estamos aquí para acompañarte durante tu estancia." wrapText="true" />
+                <Button onAction="#contactar" styleClass="help-button" text="Contactar" />
+            </VBox>
+
+            <Button maxWidth="Infinity" onAction="#cerrarSesion" styleClass="logout-button" text="↪    Cerrar sesión" />
+
+            <Label styleClass="sidebar-footer" text="SALENTO · QUINDÍO · COLOMBIA" />
+
+        </VBox>
+    </left>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
+
+            <VBox spacing="25.0" styleClass="main-content">
+
+                <!-- ENCABEZADO -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+
+                    <VBox spacing="5.0">
+                        <Label styleClass="eyebrow" text="MI ESPACIO" />
+
+                        <Label fx:id="lblBienvenida" styleClass="welcome-title" text="¡Bienvenido!" />
+
+                        <Label styleClass="welcome-subtitle" text="Tu próxima experiencia comienza aquí." />
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS" />
+
+                    <VBox alignment="CENTER_RIGHT" spacing="4.0">
+                        <Label styleClass="profile-caption" text="MI CUENTA" />
+                        <Label fx:id="lblNombreUsuario" styleClass="profile-name" text="Huésped" />
+                    </VBox>
+
+                </HBox>
+
+                <!-- BANNER PRINCIPAL -->
+                <VBox spacing="14.0" styleClass="hero-banner">
+
+                    <Label styleClass="hero-eyebrow" text="APARTA-SUITES UQ" />
+
+                    <Label styleClass="hero-title" text="Un lugar para descansar, disfrutar y volver." wrapText="true" />
+
+                    <Label styleClass="hero-description" text="Vive una experiencia única en el corazón del Quindío." wrapText="true" />
+
+                    <Button onAction="#irBuscar" styleClass="hero-button" text="Explorar apartamentos  →" />
+
+                </VBox>
+
+                <!-- ESTADISTICAS -->
+                <VBox spacing="15.0">
+
+                    <Label styleClass="section-heading" text="RESUMEN DE MI CUENTA" />
+
+                    <HBox spacing="16.0">
+
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+                            <Label styleClass="stat-icon" text="▤" />
+
+                            <Label styleClass="stat-title" text="MIS RESERVAS" />
+
+                            <Label fx:id="lblCantidadReservas" styleClass="stat-number" text="02" />
+
+                            <Label styleClass="stat-description" text="Reservas registradas" />
+
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+                            <Label styleClass="stat-icon" text="♡" />
+
+                            <Label styleClass="stat-title" text="FAVORITOS" />
+
+                            <Label fx:id="lblCantidadFavoritos" styleClass="stat-number" text="04" />
+
+                            <Label styleClass="stat-description" text="Apartamentos guardados" />
+
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+                            <Label styleClass="stat-icon" text="◷" />
+
+                            <Label styleClass="stat-title" text="HISTORIAL" />
+
+                            <Label fx:id="lblCantidadHistorial" styleClass="stat-number" text="05" />
+
+                            <Label styleClass="stat-description" text="Estancias realizadas" />
+
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+                            <Label styleClass="stat-icon" text="\$" />
+
+                            <Label styleClass="stat-title" text="SALDO PENDIENTE" />
+
+                            <Label fx:id="lblSaldoPendiente" styleClass="stat-number" text="\$0" />
+
+                            <Label styleClass="stat-description" text="Según movimientos registrados" />
+
+                        </VBox>
+
+                    </HBox>
+                </VBox>
+
+                <!-- BUSCADOR -->
+                <VBox spacing="16.0" styleClass="section-card">
+
+                    <VBox spacing="5.0">
+                        <Label styleClass="section-title" text="Encuentra tu próximo destino" />
+
+                        <Label styleClass="section-description" text="Selecciona tus fechas y descubre nuestros apartamentos." />
+                    </VBox>
+
+                    <HBox spacing="14.0">
+
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-label" text="FECHA DE ENTRADA" />
+                            <DatePicker fx:id="fechaEntrada" maxWidth="Infinity" promptText="Selecciona fecha" />
+                        </VBox>
+
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-label" text="FECHA DE SALIDA" />
+                            <DatePicker fx:id="fechaSalida" maxWidth="Infinity" promptText="Selecciona fecha" />
+                        </VBox>
+
+                        <VBox spacing="7.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-label" text="NÚMERO DE PERSONAS" />
+                            <TextField fx:id="campoPersonas" promptText="Ej. 4 personas" />
+                        </VBox>
+
+                    </HBox>
+
+                    <Button onAction="#buscarConFechas" styleClass="primary-button" text="Buscar disponibilidad  →" />
+
+                </VBox>
+
+                <!-- RESERVAS -->
+                <VBox spacing="14.0" styleClass="section-card">
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="4.0">
+                            <Label styleClass="section-title" text="Mis próximas reservas" />
+                            <Label styleClass="section-description" text="Consulta tus próximas experiencias." />
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button onAction="#irReservas" styleClass="view-more-button" text="VER TODAS" />
+                    </HBox>
+
+                    <VBox fx:id="contenedorProximas" spacing="12.0">
+                        <HBox alignment="CENTER" spacing="15.0" styleClass="empty-reservations">
+                            <Label styleClass="empty-icon" text="▤" />
+                            <VBox spacing="5.0">
+                                <Label styleClass="empty-title" text="Tus próximas estancias aparecerán aquí." />
+                                <Label styleClass="empty-description" text="Cuando tengas una reserva, podrás consultar todos sus detalles." wrapText="true" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+
+                <Label styleClass="footer-text" text="APARTA-SUITES UQ  ·  SALENTO, QUINDÍO" />
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="820.0" prefWidth="1360.0" styleClass="dashboard-root"
+            stylesheets="@../styles/adminSeasons.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.AdminSeasonsController">
+    <left>
+        <VBox prefWidth="252.0" spacing="0.0" styleClass="sidebar">
+            <VBox spacing="5.0" styleClass="brand-area">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <StackPane prefHeight="46.0" prefWidth="46.0" styleClass="brand-icon"><Label styleClass="brand-icon-text" text="A"/></StackPane>
+                    <VBox spacing="0.0"><Label styleClass="brand-name" text="APARTA-SUITES"/><Label styleClass="brand-subtitle" text="UQ · SALENTO"/></VBox>
+                </HBox>
+            </VBox>
+            <VBox spacing="8.0" styleClass="sidebar-navigation">
+                <Label styleClass="nav-caption" text="MENÚ PRINCIPAL"/>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleDashboard"><Label styleClass="nav-icon" text="⌂"/><Label styleClass="nav-text" text="Dashboard"/></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleApartments"><Label styleClass="nav-icon" text="▦"/><Label styleClass="nav-text" text="Apartamentos"/></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleGuests"><Label styleClass="nav-icon" text="♙"/><Label styleClass="nav-text" text="Huéspedes"/></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleEmployees"><Label styleClass="nav-icon" text="♧"/><Label styleClass="nav-text" text="Empleados"/></HBox>
+                <Label styleClass="nav-caption nav-caption-spaced" text="CONFIGURACIÓN"/>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item nav-item-active"><Label styleClass="nav-icon" text="◷"/><Label styleClass="nav-text nav-text-active" text="Temporadas"/></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleBuildingMap"><Label styleClass="nav-icon" text="⌖"/><Label styleClass="nav-text" text="Mapa del edificio"/></HBox>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <VBox spacing="12.0" styleClass="sidebar-bottom">
+                <VBox spacing="5.0" styleClass="help-card"><Label styleClass="help-title" text="Temporadas del alojamiento"/><Label styleClass="help-description" text="Configura los meses de temporada alta y media. Los demás serán temporada baja automáticamente." wrapText="true"/></VBox>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-user">
+                    <StackPane prefHeight="38.0" prefWidth="38.0" styleClass="avatar-small"><Label fx:id="adminInitialLabel" styleClass="avatar-letter" text="A"/></StackPane>
+                    <VBox spacing="2.0"><Label fx:id="adminNameLabel" styleClass="sidebar-user-name" text="Administrador"/><Label styleClass="sidebar-user-role" text="Panel administrativo"/></VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox spacing="22.0" styleClass="dashboard-content">
+                    <padding><Insets top="30.0" right="38.0" bottom="38.0" left="38.0"/></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS"><Label styleClass="page-eyebrow" text="CONFIGURACIÓN DEL ALOJAMIENTO"/><Label styleClass="page-title" text="Temporadas"/><Label styleClass="page-date" text="Define los meses de cada temporada. La clasificación se repetirá automáticamente todos los años." wrapText="true"/></VBox>
+                        <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión  ↗"/>
+                    </HBox>
+                    <VBox spacing="17.0" styleClass="panel-card">
+                        <HBox alignment="CENTER_LEFT"><VBox spacing="4.0" HBox.hgrow="ALWAYS"><Label styleClass="section-title" text="Periodos del año"/><Label styleClass="section-subtitle" text="Registra varios periodos de temporada alta o media. Los meses asignados dejarán de aparecer en los selectores." wrapText="true"/></VBox><Label fx:id="periodCountLabel" styleClass="table-count" text="0 PERIODOS"/></HBox>
+                        <GridPane hgap="16.0" vgap="9.0">
+                            <columnConstraints><ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/><ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/><ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/></columnConstraints>
+                            <VBox spacing="6.0" GridPane.columnIndex="0"><Label styleClass="field-label" text="Temporada alta o media *"/><ComboBox fx:id="seasonComboBox" maxWidth="Infinity" promptText="Selecciona" styleClass="input-field"/></VBox>
+                            <VBox spacing="6.0" GridPane.columnIndex="1"><Label styleClass="field-label" text="Desde el mes *"/><ComboBox fx:id="startMonthComboBox" maxWidth="Infinity" promptText="Mes inicial" styleClass="input-field"/></VBox>
+                            <VBox spacing="6.0" GridPane.columnIndex="2"><Label styleClass="field-label" text="Hasta el mes disponible *"/><ComboBox fx:id="endMonthComboBox" maxWidth="Infinity" promptText="Mes final" styleClass="input-field"/></VBox>
+                        </GridPane>
+                        <Label styleClass="field-hint" text="Al elegir el mes inicial, solo aparecerán meses libres consecutivos. También puedes crear periodos que crucen diciembre, como noviembre a febrero." wrapText="true"/>
+                        <HBox spacing="10.0"><Button onAction="#handleSavePeriod" styleClass="login-button" text="＋  Registrar temporada"/><Button onAction="#handleDeletePeriod" styleClass="danger-button" text="Eliminar seleccionada"/></HBox>
+                        <TableView fx:id="periodsTable" prefHeight="390.0" styleClass="apartments-table">
+                            <columns><TableColumn fx:id="periodSeasonColumn" prefWidth="260.0" text="Temporada"/><TableColumn fx:id="periodStartColumn" prefWidth="260.0" text="Mes inicial"/><TableColumn fx:id="periodEndColumn" prefWidth="260.0" text="Mes final"/></columns>
+                            <placeholder><Label styleClass="empty-table" text="No hay periodos definidos. Los meses sin configuración se consideran temporada baja."/></placeholder>
+                        </TableView>
+                    </VBox>
+                    <Label fx:id="messageLabel" minHeight="30.0" styleClass="error-label" wrapText="true"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

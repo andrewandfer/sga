@@ -1,12 +1,13 @@
+
 package model.modelo;
+
 import model.enums.CanalReserva;
 import model.enums.EstadoReserva;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.TransicionInvalidaException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 
 public class Reserva implements Comparable<Reserva> {
 
@@ -21,13 +22,21 @@ public class Reserva implements Comparable<Reserva> {
     private final ListaDoblementeEnlazada<Ocupante> ocupantes;
     private final LocalDateTime creadaEn;
     private final LocalDateTime venceEn;
+    private final Folio folio;
 
-    public Reserva(String id, CanalReserva canal, Huesped titular, Apartamento apartamento,
-                   Estancia estancia, ListaDoblementeEnlazada<Ocupante> ocupantes, LocalDateTime creadaEn) {
-        if (id == null || canal == null || titular == null || apartamento == null
-                || estancia == null || ocupantes == null || creadaEn == null) {
-            throw new IllegalArgumentException("Todos los datos de la reserva son obligatorios");
+    public Reserva(String id, CanalReserva canal, Huesped titular,
+                   Apartamento apartamento, Estancia estancia,
+                   ListaDoblementeEnlazada<Ocupante> ocupantes,
+                   LocalDateTime creadaEn) {
+
+        if (id == null || canal == null || titular == null
+                || apartamento == null || estancia == null
+                || ocupantes == null || creadaEn == null) {
+
+            throw new IllegalArgumentException(
+                    "Todos los datos de la reserva son obligatorios");
         }
+
         this.id = id;
         this.canal = canal;
         this.titular = titular;
@@ -37,8 +46,9 @@ public class Reserva implements Comparable<Reserva> {
         this.creadaEn = creadaEn;
         this.venceEn = creadaEn.plusHours(HORAS_VENCIMIENTO);
         this.estado = EstadoReserva.PENDIENTE;
-    }
 
+        this.folio = new Folio("F-" + id, id);
+    }
 
     public void confirmar() {
         transicion(EstadoReserva.CONFIRMADA, EstadoReserva.PENDIENTE);
@@ -53,34 +63,50 @@ public class Reserva implements Comparable<Reserva> {
     }
 
     public void cancelar() {
-        transicion(EstadoReserva.CANCELADA, EstadoReserva.PENDIENTE, EstadoReserva.CONFIRMADA);
+        transicion(
+                EstadoReserva.CANCELADA,
+                EstadoReserva.PENDIENTE,
+                EstadoReserva.CONFIRMADA
+        );
     }
 
     public void marcarNoShow() {
         transicion(EstadoReserva.NO_SHOW, EstadoReserva.CONFIRMADA);
     }
 
-    private void transicion(EstadoReserva destino, EstadoReserva... permitidos) {
+    private void transicion(EstadoReserva destino,
+                            EstadoReserva... permitidos) {
+
         for (EstadoReserva p : permitidos) {
             if (estado == p) {
                 estado = destino;
                 return;
             }
         }
-        throw new TransicionInvalidaException("Transicion invalida en la reserva " + id + ": " + estado + " -> " + destino);
+
+        throw new TransicionInvalidaException(
+                "Transicion invalida en la reserva " + id
+                        + ": " + estado + " -> " + destino
+        );
     }
 
     public boolean ocupaNoches() {
-        return estado != EstadoReserva.CANCELADA && estado != EstadoReserva.NO_SHOW;
+        return estado != EstadoReserva.CANCELADA
+                && estado != EstadoReserva.NO_SHOW;
     }
 
     public boolean esActiva() {
-        return estado == EstadoReserva.PENDIENTE || estado == EstadoReserva.CONFIRMADA
+        return estado == EstadoReserva.PENDIENTE
+                || estado == EstadoReserva.CONFIRMADA
                 || estado == EstadoReserva.EN_CURSO;
     }
 
     public boolean estaVencida(LocalDateTime ahora) {
-        return estado == EstadoReserva.PENDIENTE && !ahora.isBefore(venceEn);
+        Objects.requireNonNull(ahora,
+                "La fecha actual no puede ser null");
+
+        return estado == EstadoReserva.PENDIENTE
+                && !ahora.isBefore(venceEn);
     }
 
     public int numeroPersonas() {
@@ -123,9 +149,14 @@ public class Reserva implements Comparable<Reserva> {
         return venceEn;
     }
 
+    public Folio getFolio() {
+        return folio;
+    }
+
     @Override
     public int compareTo(Reserva otra) {
-        return estancia.getEntrada().compareTo(otra.estancia.getEntrada());
+        return estancia.getEntrada()
+                .compareTo(otra.estancia.getEntrada());
     }
 
     @Override
@@ -133,9 +164,11 @@ public class Reserva implements Comparable<Reserva> {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof Reserva)) {
             return false;
         }
+
         return id.equals(((Reserva) o).id);
     }
 
@@ -146,6 +179,8 @@ public class Reserva implements Comparable<Reserva> {
 
     @Override
     public String toString() {
-        return id + " [" + canal + ", " + estado + ", apto " + apartamento.getCodigo() + ", " + estancia + "]";
+        return id + " [" + canal + ", " + estado
+                + ", apto " + apartamento.getCodigo()
+                + ", " + estancia + "]";
     }
 }

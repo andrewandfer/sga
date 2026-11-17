@@ -1,5 +1,5 @@
 package model.modelo;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 
 public class Cotizacion {
 

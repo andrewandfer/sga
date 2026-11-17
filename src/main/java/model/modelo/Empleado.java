@@ -1,25 +1,29 @@
 package model.modelo;
 
-import model.enums.RolEmpleado;
+import model.enums.RolUsuario;
+import model.interfaces.Usuario;
 
 import java.util.Objects;
 
 /** Empleado del alojamiento. Su orden natural (Comparable) es por documento. */
-public class Empleado implements Comparable<Empleado> {
+public class Empleado implements Comparable<Empleado>, Usuario {
 
     private final String documento;
     private String nombre;
-    private RolEmpleado rol;
+    private RolUsuario rol;
     private String telefono;
+    private String contrasena;
 
-    public Empleado(String documento, String nombre, RolEmpleado rol, String telefono) {
-        if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank() || rol == null) {
+    public Empleado(String documento, String nombre, RolUsuario rol, String telefono, String contrasena) {
+        if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank()
+                || rol == null || rol == RolUsuario.HUESPED) {
             throw new IllegalArgumentException("Documento, nombre y rol son obligatorios");
         }
         this.documento = documento;
         this.nombre = nombre;
         this.rol = rol;
         this.telefono = telefono;
+        cambiarContrasena(contrasena);
     }
 
     private Empleado(String documento) {
@@ -31,8 +35,32 @@ public class Empleado implements Comparable<Empleado> {
         return new Empleado(documento);
     }
 
+    @Override
     public String getDocumento() {
         return documento;
+    }
+
+    @Override
+    public void cambiarContrasena(String contrasena) {
+        if (contrasena == null || contrasena.isBlank()) {
+            throw new IllegalArgumentException("La contrasena es obligatoria");
+        }
+        this.contrasena = contrasena;
+    }
+
+    @Override
+    public boolean validarContrasena(String contrasena) {
+        return this.contrasena != null && this.contrasena.equals(contrasena);
+    }
+
+    @Override
+    public boolean tieneContrasena() {
+        return contrasena != null && !contrasena.isBlank();
+    }
+
+    @Override
+    public RolUsuario getRolUsuario() {
+        return rol == RolUsuario.ADMINISTRADOR ? RolUsuario.ADMINISTRADOR : RolUsuario.RECEPCIONISTA;
     }
 
     public String getNombre() {
@@ -46,12 +74,12 @@ public class Empleado implements Comparable<Empleado> {
         this.nombre = nombre;
     }
 
-    public RolEmpleado getRol() {
+    public RolUsuario getRol() {
         return rol;
     }
 
-    public void setRol(RolEmpleado rol) {
-        if (rol == null) {
+    public void setRol(RolUsuario rol) {
+        if (rol == null || rol == RolUsuario.HUESPED) {
             throw new IllegalArgumentException("El rol es obligatorio");
         }
         this.rol = rol;

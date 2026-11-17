@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="820.0" prefWidth="1280.0" styleClass="dashboard-root"
+            stylesheets="@../styles/adminEmployees.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.AdminEmployeesController">
+    <left>
+        <VBox prefWidth="252.0" spacing="0.0" styleClass="sidebar">
+            <VBox spacing="5.0" styleClass="brand-area">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <StackPane prefHeight="46.0" prefWidth="46.0" styleClass="brand-icon"><Label styleClass="brand-icon-text" text="A" /></StackPane>
+                    <VBox spacing="0.0"><Label styleClass="brand-name" text="APARTA-SUITES"/><Label styleClass="brand-subtitle" text="UQ · SALENTO"/></VBox>
+                </HBox>
+            </VBox>
+            <VBox spacing="8.0" styleClass="sidebar-navigation">
+                <Label styleClass="nav-caption" text="MENÚ PRINCIPAL"/>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleDashboard">
+                    <Label styleClass="nav-icon" text="⌂"/><Label styleClass="nav-text" text="Dashboard"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleApartments">
+                    <Label styleClass="nav-icon" text="▦"/><Label styleClass="nav-text" text="Apartamentos"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleGuests"><Label styleClass="nav-icon" text="♙"/><Label styleClass="nav-text" text="Huéspedes"/></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item nav-item-active">
+                    <Label styleClass="nav-icon" text="♧"/><Label styleClass="nav-text nav-text-active" text="Empleados"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleSeasons"><Label styleClass="nav-icon" text="◷"/><Label styleClass="nav-text" text="Temporadas"/></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleBuildingMap"><Label styleClass="nav-icon" text="⌖"/><Label styleClass="nav-text" text="Mapa del edificio"/></HBox>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <VBox spacing="12.0" styleClass="sidebar-bottom">
+                <VBox spacing="5.0" styleClass="help-card"><Label styleClass="help-title" text="Gestión del equipo"/><Label styleClass="help-description" text="Administra las cuentas del personal del alojamiento." wrapText="true"/></VBox>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-user">
+                    <StackPane prefHeight="38.0" prefWidth="38.0" styleClass="avatar-small"><Label fx:id="adminInitialLabel" styleClass="avatar-letter" text="A"/></StackPane>
+                    <VBox spacing="2.0"><Label fx:id="adminNameLabel" styleClass="sidebar-user-name" text="Administrador"/><Label styleClass="sidebar-user-role" text="Panel administrativo"/></VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox spacing="22.0" styleClass="dashboard-content">
+                    <padding><Insets top="30.0" right="38.0" bottom="34.0" left="38.0"/></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS"><Label styleClass="page-eyebrow" text="ADMINISTRACIÓN"/><Label styleClass="page-title" text="Gestión de empleados"/><Label styleClass="page-date" text="Administra las cuentas y roles del personal."/></VBox>
+                        <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión  ↗"/>
+                    </HBox>
+                    <HBox spacing="18.0" alignment="TOP_LEFT">
+                        <VBox spacing="14.0" styleClass="panel-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT"><VBox spacing="3.0" HBox.hgrow="ALWAYS"><Label styleClass="section-title" text="Personal registrado"/><Label styleClass="section-subtitle" text="Consulta y administra los empleados del alojamiento"/></VBox><Label fx:id="employeeCountLabel" styleClass="table-count" text="0 EMPLEADOS"/></HBox>
+                            <TextField fx:id="searchField" promptText="Buscar por documento, nombre o rol..." styleClass="input-field" onKeyReleased="#handleSearch"/>
+                            <TableView fx:id="employeesTable" prefHeight="490.0" styleClass="apartments-table">
+                                <columns>
+                                    <TableColumn fx:id="documentColumn" prefWidth="125.0" text="Documento"/>
+                                    <TableColumn fx:id="nameColumn" prefWidth="190.0" text="Nombre"/>
+                                    <TableColumn fx:id="phoneColumn" prefWidth="145.0" text="Teléfono"/>
+                                    <TableColumn fx:id="roleColumn" prefWidth="155.0" text="Rol"/>
+                                </columns>
+                                <placeholder><VBox alignment="CENTER" spacing="7.0"><Label styleClass="empty-title" text="No hay empleados para mostrar"/><Label styleClass="empty-subtitle" text="Registra el primero desde el formulario."/></VBox></placeholder>
+                            </TableView>
+                            <HBox alignment="CENTER_RIGHT"><Button onAction="#handleDelete" styleClass="register-button" text="Eliminar seleccionado"/></HBox>
+                        </VBox>
+                        <VBox prefWidth="300.0" spacing="15.0" styleClass="panel-card">
+                            <VBox spacing="3.0"><Label styleClass="section-title" text="Nuevo empleado"/><Label styleClass="section-subtitle" text="Crea una cuenta para el personal"/></VBox>
+                            <VBox spacing="6.0"><Label styleClass="field-label" text="Documento *"/><TextField fx:id="documentField" promptText="Número de documento" styleClass="input-field"/></VBox>
+                            <VBox spacing="6.0"><Label styleClass="field-label" text="Nombre completo *"/><TextField fx:id="nameField" promptText="Nombre y apellidos" styleClass="input-field"/></VBox>
+                            <VBox spacing="6.0"><Label styleClass="field-label" text="Teléfono"/><TextField fx:id="phoneField" promptText="Número de contacto" styleClass="input-field"/></VBox>
+                            <VBox spacing="6.0"><Label styleClass="field-label" text="Rol *"/><ComboBox fx:id="roleComboBox" maxWidth="Infinity" promptText="Selecciona un rol" styleClass="input-field"/></VBox>
+                            <VBox spacing="6.0"><Label styleClass="field-label" text="Contraseña *"/><PasswordField fx:id="passwordField" promptText="Contraseña de acceso" styleClass="input-field"/></VBox>
+                            <Label fx:id="messageLabel" minHeight="34.0" styleClass="error-label" wrapText="true"/>
+                            <Button maxWidth="Infinity" onAction="#handleRegister" styleClass="login-button" text="＋  Registrar empleado"/>
+                            <Label styleClass="summary-caption" text="La contraseña será asignada al crear la cuenta." wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT"><Label styleClass="footer-text" text="APARTA-SUITES UQ  •  GESTIÓN DE PERSONAL"/></HBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

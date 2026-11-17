@@ -2,7 +2,7 @@ package model.modelo;
 import model.enums.EstadoApartamento;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -38,7 +38,7 @@ public class Apartamento implements Comparable<Apartamento> {
         this.caracteristicas = caracteristicas;
     }
 
-    private Apartamento(String codigo) {
+    public Apartamento(String codigo) {
         this.codigo = codigo;
     }
 
@@ -94,11 +94,29 @@ public class Apartamento implements Comparable<Apartamento> {
     }
 
 
+    /**
+     * Inserta la reserva en el arbol. Si ya hay otra con la misma clave (misma fecha de entrada)
+     * que ya no ocupa noches (cancelada o no-show), se purga para que no bloquee la insercion.
+     *
+     * @return false si no se pudo insertar porque otra reserva vigente tiene esa clave.
+     */
     public boolean agregarReserva(Reserva r) {
+        Reserva existente = reservas.buscar(r);
+        if (existente != null && existente != r && !existente.ocupaNoches()) {
+            reservas.eliminar(existente);
+        }
         return reservas.insertar(r);
     }
 
+    /**
+     * Quita del arbol exactamente esta reserva. El arbol compara por fecha de entrada, asi que
+     * se verifica la identidad antes de eliminar para no borrar otra reserva con la misma clave.
+     */
     public boolean quitarReserva(Reserva r) {
+        Reserva existente = reservas.buscar(r);
+        if (existente != r) {
+            return false;
+        }
         return reservas.eliminar(r);
     }
 

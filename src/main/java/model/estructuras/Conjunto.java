@@ -1,19 +1,28 @@
+
 package model.estructuras;
 
-import model.estructuras.ListaDoblementeEnlazada.NodoDoble;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.NodoDoble;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class Conjunto<T> implements Iterable<T> {
 
-    private final ListaDoblementeEnlazada<T> elementos = new ListaDoblementeEnlazada<>();
+    private final ListaDoblementeEnlazada<T> elementos =
+            new ListaDoblementeEnlazada<>();
 
     public boolean agregar(T dato) {
-        Objects.requireNonNull(dato, "El conjunto no admite elementos nulos");
+        if (dato == null) {
+            throw new IllegalArgumentException(
+                    "El conjunto no admite elementos nulos"
+            );
+        }
+
         if (contiene(dato)) {
             return false;
         }
+
         elementos.agregar(dato);
         return true;
     }
@@ -34,7 +43,9 @@ public class Conjunto<T> implements Iterable<T> {
         return elementos.estaVacia();
     }
 
-    /** Iterador propio del conjunto: recorre los nodos internos en orden de insercion. */
+    /**
+     * Recorre los elementos en orden de inserción.
+     */
     @Override
     public Iterator<T> iterator() {
         return new IteradorConjunto();
@@ -51,11 +62,15 @@ public class Conjunto<T> implements Iterable<T> {
 
         @Override
         public T next() {
-            if (actual == null) {
-                throw new NoSuchElementException("No hay mas elementos en el conjunto");
+            if (!hasNext()) {
+                throw new NoSuchElementException(
+                        "No hay más elementos en el conjunto"
+                );
             }
+
             T dato = actual.getDato();
             actual = actual.getSiguiente();
+
             return dato;
         }
     }

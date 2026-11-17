@@ -5,7 +5,7 @@ import model.enums.EstadoApartamento;
 import model.enums.EstadoReserva;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.ExcepcionSGA;
 import model.modelo.*;
 
@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 
 public class CargadorDatos {
 
@@ -55,13 +56,21 @@ public class CargadorDatos {
         }
     }
 
+    private Month parsearMes(String valor) {
+        try { return Month.of(Integer.parseInt(valor)); }
+        catch (NumberFormatException | java.time.DateTimeException ex) { return LocalDate.parse(valor).getMonth(); }
+    }
+
     private void procesarLinea(String linea) throws ExcepcionSGA {
         String[] c = linea.split(";", -1);
         switch (c[0].trim().toUpperCase()) {
             case "TEMPORADA":
-                gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                        LocalDate.parse(c[2].trim()), LocalDate.parse(c[3].trim()),
-                        Temporada.valueOf(c[1].trim().toUpperCase())));
+                Temporada temporada = Temporada.valueOf(c[1].trim().toUpperCase());
+                // Los periodos BAJA de archivos antiguos se ignoran: BAJA es el valor por defecto.
+                if (temporada != Temporada.BAJA) {
+                    gestorTemporadas.definirPeriodo(new PeriodoTemporada(
+                            parsearMes(c[2].trim()), parsearMes(c[3].trim()), temporada));
+                }
                 break;
             case "APARTAMENTO":
                 Apartamento a = new Apartamento(c[1].trim(), c[2].trim(), c[3].trim(),
@@ -73,11 +82,14 @@ public class CargadorDatos {
                 registrar(a);
                 break;
             case "HUESPED":
+                if (c.length < 7 || c[6].trim().isEmpty()) {
+                    throw new ExcepcionSGA("El registro HUESPED debe incluir una contrasena en el campo 7");
+                }
                 Huesped h = new Huesped(c[1].trim(), c[2].trim(),
                         c[3].trim().isEmpty() ? null : LocalDate.parse(c[3].trim()),
-                        c[4].trim(), c[5].trim());
-                if (c.length > 6 && !c[6].trim().isEmpty()) {
-                    h.setRutaFotografia(c[6].trim());
+                        c[4].trim(), c[5].trim(), c[6].trim());
+                if (c.length > 7 && !c[7].trim().isEmpty()) {
+                    h.setRutaFotografia(c[7].trim());
                 }
                 registrar(h);
                 break;
@@ -114,7 +126,11 @@ public class CargadorDatos {
         // Campos opcionales: c[7] = estado de la reserva, c[8] = fecha/hora de creacion (vencimiento de Portal)
         LocalDateTime creada = c.length > 8 && !c[8].trim().isEmpty()
                 ? LocalDateTime.parse(c[8].trim()) : LocalDateTime.now();
-        Reserva reserva = gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal, creada);
+        // Una reserva EXTERNA cargada desde persistencia ya fue procesada y aceptada
+        // en su momento; no debe volver a entrar a la cola FIFO.
+        Reserva reserva = canal == CanalReserva.EXTERNA
+                ? gestorReservas.crearReservaExternaConfirmada(titular, apartamento, estancia, ocupantes, creada)
+                : gestorReservas.crearReserva(titular, apartamento, estancia, ocupantes, canal, creada);
         if (c.length > 7 && !c[7].trim().isEmpty()) {
             aplicarEstado(reserva, c[7].trim());
         }
@@ -179,9 +195,9 @@ public class CargadorDatos {
     public void guardarEnArchivo(String ruta) throws IOException {
         try (BufferedWriter w = new BufferedWriter(new FileWriter(ruta))) {
             escribir(w, "# SGA - datos exportados");
-            escribir(w, "# TEMPORADA;tipo;inicio;fin");
+            escribir(w, "# TEMPORADA;tipo;mesInicio;mesFin (1-12, se repiten cada ano)");
             for (PeriodoTemporada p : gestorTemporadas.getPeriodos()) {
-                escribir(w, "TEMPORADA;" + p.getTemporada() + ";" + p.getInicio() + ";" + p.getFin());
+                escribir(w, "TEMPORADA;" + p.getTemporada() + ";" + p.getMesInicio().getValue() + ";" + p.getMesFin().getValue());
             }
             escribir(w, "# APARTAMENTO;codigo;nombre;bloque;piso;dormitorios;capacidad;baja;media;alta;caracteristicas");
             for (Apartamento a : apartamentos) {
@@ -191,11 +207,12 @@ public class CargadorDatos {
                         + tarifa(a, Temporada.MEDIA) + ";" + tarifa(a, Temporada.ALTA) + ";"
                         + campo(a.getCaracteristicas()));
             }
-            escribir(w, "# HUESPED;documento;nombre;nacimiento;telefono;correo;foto");
+            escribir(w, "# HUESPED;documento;nombre;nacimiento;telefono;correo;contrasena;foto");
             for (Huesped h : huespedes) {
                 escribir(w, "HUESPED;" + campo(h.getDocumento()) + ";" + campo(h.getNombre()) + ";"
                         + (h.getFechaNacimiento() == null ? "" : h.getFechaNacimiento()) + ";"
-                        + campo(h.getTelefono()) + ";" + campo(h.getCorreo()) + ";" + campo(h.getRutaFotografia()));
+                        + campo(h.getTelefono()) + ";" + campo(h.getCorreo()) + ";"
+                        + campo(h.getContrasena()) + ";" + campo(h.getRutaFotografia()));
             }
             escribir(w, "# FAVORITO;documento;codigoApartamento");
             for (Huesped h : huespedes) {
@@ -243,7 +260,7 @@ public class CargadorDatos {
         return sb.toString();
     }
 
-    /** Evita que el texto de un campo rompa el formato (separador ; y saltos de linea). */
+    /** Evita que el texto de un campo rompa el formato (separador; y saltos de linea). */
     private String campo(String texto) {
         return texto == null ? "" : texto.replace(';', ',').replace('\n', ' ').replace('\r', ' ');
     }
@@ -264,12 +281,9 @@ public class CargadorDatos {
 
     /** Carga temporadas, 8 apartamentos, 5 huespedes y 4 reservas de ejemplo. */
     public void cargarEscenarioPrueba() throws ExcepcionSGA {
-        gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2026, 11, 20), LocalDate.of(2026, 12, 14), Temporada.MEDIA));
-        gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2026, 12, 15), LocalDate.of(2027, 1, 15), Temporada.ALTA));
-        gestorTemporadas.definirPeriodo(new PeriodoTemporada(
-                LocalDate.of(2027, 3, 20), LocalDate.of(2027, 4, 10), Temporada.MEDIA));
+        gestorTemporadas.definirPeriodo(new PeriodoTemporada(Month.NOVEMBER, Month.NOVEMBER, Temporada.MEDIA));
+        gestorTemporadas.definirPeriodo(new PeriodoTemporada(Month.DECEMBER, Month.FEBRUARY, Temporada.ALTA));
+        gestorTemporadas.definirPeriodo(new PeriodoTemporada(Month.MARCH, Month.APRIL, Temporada.MEDIA));
 
         apto("A-101", "Cafetal", "A", 1, 1, 2, 60000, 80000, 110000, "Balcon");
         apto("A-102", "Guadual", "A", 1, 2, 4, 85000, 110000, 150000, "Cocina equipada");
@@ -307,7 +321,7 @@ public class CargadorDatos {
 
     private void huesped(String documento, String nombre, LocalDate nacimiento, String telefono, String correo)
             throws ExcepcionSGA {
-        registrar(new Huesped(documento, nombre, nacimiento, telefono, correo));
+        registrar(new Huesped(documento, nombre, nacimiento, telefono, correo, "prueba123"));
     }
 
     private void reserva(String documento, String codigoApto, LocalDate entrada, LocalDate salida,

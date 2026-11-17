@@ -1,9 +1,9 @@
 package model.servicios;
 
-import model.enums.RolEmpleado;
+import model.enums.RolUsuario;
 import model.enums.Temporada;
 import model.estructuras.ArbolBinarioBusqueda;
-import model.estructuras.ListaDoblementeEnlazada;
+import model.estructuras.listaDoble.ListaDoblementeEnlazada;
 import model.excepciones.ExcepcionSGA;
 import model.modelo.Apartamento;
 import model.modelo.Empleado;
@@ -115,6 +115,15 @@ public class GestorAdministracion {
         h.setCorreo(correo);
     }
 
+    /** Cambia la contrasena de acceso de un huesped desde la administracion. */
+    public void cambiarContrasenaHuesped(String documento, String nuevaContrasena) throws ExcepcionSGA {
+        Huesped huesped = exigirHuesped(documento);
+        if (nuevaContrasena == null || nuevaContrasena.isBlank()) {
+            throw new ExcepcionSGA("La nueva contrasena no puede estar vacia.");
+        }
+        huesped.cambiarContrasena(nuevaContrasena);
+    }
+
     /** No permite eliminar un huesped con reservas pendientes, confirmadas o en curso. */
     public void eliminarHuesped(String documento) throws ExcepcionSGA {
         Huesped h = exigirHuesped(documento);
@@ -148,7 +157,7 @@ public class GestorAdministracion {
         if (!empleados.insertar(empleado)) {
             throw new ExcepcionSGA("Ya existe un empleado con el documento " + empleado.getDocumento());
         }
-        if (empleado.getRol() == RolEmpleado.RECEPCIONISTA) {
+        if (empleado.getRol() == RolUsuario.RECEPCIONISTA) {
             turnos.agregarRecepcionista(empleado);
         }
     }
@@ -171,7 +180,7 @@ public class GestorAdministracion {
         return empleados.inOrden();
     }
 
-    public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolEmpleado rol) {
+    public ListaDoblementeEnlazada<Empleado> listarEmpleadosPorRol(RolUsuario rol) {
         ListaDoblementeEnlazada<Empleado> resultado = new ListaDoblementeEnlazada<>();
         for (Empleado e : empleados) {
             if (e.getRol() == rol) {

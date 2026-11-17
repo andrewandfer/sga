@@ -1,0 +1,47 @@
+.map-root { -fx-background-color: #F3F6F7; -fx-font-family: "Segoe UI", Arial; }
+.sidebar { -fx-background-color: #123B46; }
+.brand-area { -fx-padding: 28 22 30 22; -fx-border-color: transparent transparent rgba(255,255,255,0.10) transparent; }
+.brand-icon { -fx-background-color: #205966; -fx-background-radius: 12; }
+.brand-icon-text { -fx-text-fill: #E3B866; -fx-font-size: 25px; -fx-font-weight: bold; }
+.brand-name { -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; }
+.brand-subtitle { -fx-text-fill: #A9C2C7; -fx-font-size: 9px; }
+.sidebar-navigation { -fx-padding: 22 14; }
+.nav-caption { -fx-text-fill: #87A7AD; -fx-font-size: 9px; -fx-font-weight: bold; -fx-padding: 0 10 8 10; }
+.nav-caption-spaced { -fx-padding: 20 10 8 10; }
+.nav-item { -fx-padding: 12 12; -fx-background-radius: 8; -fx-cursor: hand; }
+.nav-item:hover { -fx-background-color: #20515D; }
+.nav-item-active { -fx-background-color: #205966; }
+.nav-icon { -fx-text-fill: #D9E5E7; -fx-font-size: 17px; }
+.nav-text { -fx-text-fill: #D0DFE1; -fx-font-size: 11px; }
+.nav-text-active { -fx-text-fill: white; -fx-font-weight: bold; }
+.sidebar-bottom { -fx-padding: 18; -fx-border-color: rgba(255,255,255,0.10) transparent transparent transparent; }
+.sidebar-user { -fx-padding: 10 0; }
+.avatar-small { -fx-background-color: #E3B866; -fx-background-radius: 50; }
+.avatar-letter { -fx-text-fill: #123B46; -fx-font-weight: bold; }
+.sidebar-user-name { -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; }
+.sidebar-user-role { -fx-text-fill: #A9C2C7; -fx-font-size: 9px; }
+.logout-button { -fx-background-color: #205966; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 14; -fx-cursor: hand; }
+.map-scroll, .map-scroll > .viewport { -fx-background-color: transparent; }
+.page-content { -fx-padding: 30 34 35 34; }
+.page-eyebrow { -fx-text-fill: #9A7A3E; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.5px; }
+.page-title { -fx-text-fill: #173F49; -fx-font-size: 27px; -fx-font-weight: bold; }
+.page-subtitle, .section-subtitle { -fx-text-fill: #829398; -fx-font-size: 11px; }
+.metric-card, .panel-card { -fx-background-color: white; -fx-background-radius: 13; -fx-border-color: #E5ECEE; -fx-border-radius: 13; -fx-padding: 17; }
+.metric-label { -fx-text-fill: #839398; -fx-font-size: 9px; -fx-font-weight: bold; }
+.metric-value { -fx-text-fill: #173F49; -fx-font-size: 27px; -fx-font-weight: bold; }
+.section-title { -fx-text-fill: #173F49; -fx-font-size: 15px; -fx-font-weight: bold; }
+.simulation-tag { -fx-text-fill: #9A7A3E; -fx-background-color: #F8F2E7; -fx-padding: 7 10; -fx-background-radius: 7; -fx-font-size: 9px; -fx-font-weight: bold; }
+.graph-scroll, .graph-scroll > .viewport { -fx-background-color: #F8FAFA; }
+.graph-pane { -fx-background-color: #F8FAFA; -fx-border-color: #E7EDEF; -fx-border-radius: 8; }
+.legend-row { -fx-padding: 5 0 0 0; }
+.legend-row .label { -fx-font-size: 10px; -fx-font-weight: bold; }
+.legend-prepared { -fx-text-fill: #4F9B70; } .legend-occupied { -fx-text-fill: #5D91B4; }
+.legend-pending { -fx-text-fill: #B58A3F; } .legend-out { -fx-text-fill: #C56B6B; } .legend-service { -fx-text-fill: #205966; }
+.primary-button { -fx-background-color: #123B46; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-weight: bold; -fx-cursor: hand; }
+.primary-button:hover { -fx-background-color: #205966; }
+.secondary-button { -fx-background-color: white; -fx-text-fill: #315B64; -fx-border-color: #DCE6E8; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-weight: bold; -fx-cursor: hand; }
+.combo-box { -fx-background-color: #F8FAFA; -fx-border-color: #DCE6E8; -fx-border-radius: 7; -fx-background-radius: 7; }
+.route-info { -fx-text-fill: #9A7A3E; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 8 0; }
+.selected-info { -fx-text-fill: #49666D; -fx-font-size: 11px; -fx-background-color: #F3F6F7; -fx-padding: 12; -fx-background-radius: 8; }
+.hint-text, .disclaimer { -fx-text-fill: #819398; -fx-font-size: 10px; }
+.disclaimer { -fx-padding: 5 2 0 2; }
