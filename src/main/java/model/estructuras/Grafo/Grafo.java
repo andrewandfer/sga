@@ -25,6 +25,20 @@ public class Grafo<T> implements Iterable<NodoGrafo<T>> {
         registrarNodo(new NodoGrafo<>(contenido));
     }
 
+    /** Elimina un nodo y todas sus conexiones del grafo. */
+    public boolean eliminarNodo(NodoGrafo<T> nodo) {
+        if (nodo == null || !nodos.contiene(nodo)) return false;
+        for (Arista<T> arista : nodo.getAdyacentes()) {
+            NodoGrafo<T> vecino = arista.getExtremo(nodo);
+            vecino.quitarAdyacente(arista);
+        }
+        while (!nodo.getAdyacentes().estaVacia()) {
+            nodo.quitarAdyacente(nodo.getAdyacentes().primero());
+        }
+        nodos.eliminar(nodo);
+        return true;
+    }
+
     public void agregarNodo(NodoGrafo<T> origen, NodoGrafo<T> destino, Integer valor) {
         agregarNodo(origen, destino, valor, null);
     }

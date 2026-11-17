@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefHeight="850.0" prefWidth="1360.0" styleClass="map-root" stylesheets="@../styles/adminBuildingMap.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AdminBuildingMapController">
+    <left>
+        <VBox prefWidth="245.0" spacing="0" styleClass="sidebar">
+            <VBox spacing="5" styleClass="brand-area"><HBox alignment="CENTER_LEFT" spacing="12">
+                <StackPane prefHeight="46" prefWidth="46" styleClass="brand-icon"><Label styleClass="brand-icon-text" text="A"/></StackPane>
+                <VBox><Label styleClass="brand-name" text="APARTA-SUITES"/><Label styleClass="brand-subtitle" text="UQ · SALENTO"/></VBox>
+            </HBox></VBox>
+            <VBox spacing="8" styleClass="sidebar-navigation">
+                <Label styleClass="nav-caption" text="MENÚ PRINCIPAL"/>
+                <HBox onMouseClicked="#handleDashboard" styleClass="nav-item" spacing="13" alignment="CENTER_LEFT"><Label styleClass="nav-icon" text="⌂"/><Label styleClass="nav-text" text="Dashboard"/></HBox>
+                <HBox onMouseClicked="#handleApartments" styleClass="nav-item" spacing="13" alignment="CENTER_LEFT"><Label styleClass="nav-icon" text="▦"/><Label styleClass="nav-text" text="Apartamentos"/></HBox>
+                <HBox onMouseClicked="#handleGuests" styleClass="nav-item" spacing="13" alignment="CENTER_LEFT"><Label styleClass="nav-icon" text="♙"/><Label styleClass="nav-text" text="Huéspedes"/></HBox>
+                <HBox onMouseClicked="#handleEmployees" styleClass="nav-item" spacing="13" alignment="CENTER_LEFT"><Label styleClass="nav-icon" text="♧"/><Label styleClass="nav-text" text="Empleados"/></HBox>
+                <Label styleClass="nav-caption nav-caption-spaced" text="CONFIGURACIÓN"/>
+                <HBox onMouseClicked="#handleSeasons" styleClass="nav-item" spacing="13" alignment="CENTER_LEFT"><Label styleClass="nav-icon" text="◷"/><Label styleClass="nav-text" text="Temporadas"/></HBox>
+                <HBox styleClass="nav-item nav-item-active" spacing="13" alignment="CENTER_LEFT"><Label styleClass="nav-icon" text="⌖"/><Label styleClass="nav-text nav-text-active" text="Mapa del edificio"/></HBox>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <VBox styleClass="sidebar-bottom" spacing="10"><HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
+                <StackPane prefHeight="38" prefWidth="38" styleClass="avatar-small"><Label fx:id="adminInitialLabel" styleClass="avatar-letter" text="A"/></StackPane>
+                <VBox HBox.hgrow="ALWAYS"><Label fx:id="adminNameLabel" styleClass="sidebar-user-name" text="Administrador"/><Label styleClass="sidebar-user-role" text="Panel administrativo"/></VBox>
+            </HBox><Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión ↗"/></VBox>
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="map-scroll">
+            <content><VBox spacing="20" styleClass="page-content">
+                <HBox alignment="CENTER_LEFT" spacing="15"><VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label styleClass="page-eyebrow" text="INFRAESTRUCTURA"/><Label styleClass="page-title" text="Mapa del edificio"/>
+                    <Label styleClass="page-subtitle" text="Conectividad, pasillos y rutas más cortas desde recepción"/>
+                </VBox><Button onAction="#handleRefresh" styleClass="secondary-button" text="↻ Actualizar"/></HBox>
+                <HBox spacing="12">
+                    <VBox styleClass="metric-card" HBox.hgrow="ALWAYS"><Label styleClass="metric-label" text="NODOS"/><Label fx:id="nodeCountLabel" styleClass="metric-value" text="0"/></VBox>
+                    <VBox styleClass="metric-card" HBox.hgrow="ALWAYS"><Label styleClass="metric-label" text="CONEXIONES"/><Label fx:id="connectionCountLabel" styleClass="metric-value" text="0"/></VBox>
+                    <VBox styleClass="metric-card" HBox.hgrow="ALWAYS"><Label styleClass="metric-label" text="APARTAMENTOS INACCESIBLES"/><Label fx:id="inaccessibleCountLabel" styleClass="metric-value" text="0"/></VBox>
+                </HBox>
+                <VBox styleClass="panel-card" spacing="12">
+                    <HBox alignment="CENTER_LEFT"><VBox HBox.hgrow="ALWAYS" spacing="3"><Label styleClass="section-title" text="Topología del alojamiento"/><Label styleClass="section-subtitle" text="Nodos agrupados por bloque y piso; cada línea es un pasillo ponderado en metros."/></VBox><Label styleClass="simulation-tag" text="TOPOLOGÍA BASE"/></HBox>
+                    <ScrollPane fitToHeight="true" fitToWidth="false" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER" styleClass="graph-scroll">
+                        <content><Pane fx:id="graphPane" prefHeight="440" prefWidth="1500" styleClass="graph-pane"/></content>
+                    </ScrollPane>
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="legend-row">
+                        <Label text="● Preparado" styleClass="legend-prepared"/><Label text="● Ocupado" styleClass="legend-occupied"/><Label text="● Preparación" styleClass="legend-pending"/><Label text="● Fuera de servicio" styleClass="legend-out"/><Label text="● Servicios" styleClass="legend-service"/>
+                    </HBox>
+                </VBox>
+                <GridPane hgap="14" vgap="14">
+                    <columnConstraints><ColumnConstraints percentWidth="50" hgrow="ALWAYS"/><ColumnConstraints percentWidth="50" hgrow="ALWAYS"/></columnConstraints>
+                    <VBox GridPane.columnIndex="0" styleClass="panel-card" spacing="12">
+                        <Label styleClass="section-title" text="Ruta desde recepción"/><Label styleClass="section-subtitle" text="Selecciona un apartamento para calcular su ruta mínima con Dijkstra."/>
+                        <ComboBox fx:id="apartmentComboBox" maxWidth="Infinity" promptText="Seleccionar apartamento"/>
+                        <Button onAction="#handleCalculateRoute" styleClass="primary-button" text="Calcular ruta al apartamento" maxWidth="Infinity"/>
+                        <Button onAction="#handleRoutePending" styleClass="secondary-button" text="Calcular recorrido de pendientes" maxWidth="Infinity"/>
+                        <Label fx:id="routeInfoLabel" styleClass="route-info" text="Selecciona un apartamento." wrapText="true"/>
+                        <Label fx:id="selectedInfoLabel" styleClass="selected-info" text="Información del apartamento" wrapText="true"/>
+                    </VBox>
+                    <VBox GridPane.columnIndex="1" styleClass="panel-card" spacing="12">
+                        <Label styleClass="section-title" text="Administrar pasillos"/><Label styleClass="section-subtitle" text="Abre o cierra una conexión para simular bloqueos y comprobar accesibilidad."/>
+                        <ComboBox fx:id="corridorComboBox" maxWidth="Infinity" promptText="Seleccionar conexión"/>
+                        <Button onAction="#handleToggleCorridor" styleClass="secondary-button" text="Abrir / cerrar pasillo" maxWidth="Infinity"/>
+                        <Label styleClass="hint-text" text="Al cerrar una conexión, el sistema recalcula las rutas y los apartamentos que quedan desconectados de recepción." wrapText="true"/>
+                    </VBox>
+                </GridPane>
+                <Label styleClass="disclaimer" text="Nota: el proyecto aún no contiene un plano físico ni distancias reales. La topología es lógica y agrupada por bloque/piso, no un plano arquitectónico. Los pesos son estimados y deben sustituirse por medidas reales cuando exista un plano." wrapText="true"/>
+            </VBox></content>
+        </ScrollPane>
+    </center>
+</BorderPane>
