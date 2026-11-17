@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefHeight="900.0" prefWidth="1380.0" stylesheets="@../styles/adminReports.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.AdminReportsController">
+    <left>
+        <VBox prefWidth="238.0" spacing="0.0" styleClass="sidebar">
+            <VBox spacing="4.0" styleClass="brand-area">
+                <Label styleClass="brand-name" text="APARTA-SUITES" />
+                <Label styleClass="brand-subtitle" text="UQ · SALENTO" />
+            </VBox>
+            <VBox spacing="7.0" styleClass="navigation">
+                <Label styleClass="nav-caption" text="MENÚ PRINCIPAL" />
+                <HBox onMouseClicked="#handleDashboard" styleClass="nav-item"><Label text="⌂" /><Label text="Dashboard" /></HBox>
+                <HBox onMouseClicked="#handleApartments" styleClass="nav-item"><Label text="▦" /><Label text="Apartamentos" /></HBox>
+                <HBox onMouseClicked="#handleGuests" styleClass="nav-item"><Label text="♙" /><Label text="Huéspedes" /></HBox>
+                <HBox onMouseClicked="#handleEmployees" styleClass="nav-item"><Label text="♧" /><Label text="Empleados" /></HBox>
+                <Label styleClass="nav-caption nav-spaced" text="CONFIGURACIÓN" />
+                <HBox onMouseClicked="#handleSeasons" styleClass="nav-item"><Label text="◷" /><Label text="Temporadas" /></HBox>
+                <HBox onMouseClicked="#handleBuildingMap" styleClass="nav-item"><Label text="⌖" /><Label text="Mapa del edificio" /></HBox>
+                <HBox styleClass="nav-item nav-active"><Label text="▤" /><Label text="Reportes" /></HBox>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión" />
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="page-scroll">
+            <content>
+                <VBox spacing="22.0" styleClass="content">
+                    <padding><Insets top="30.0" right="34.0" bottom="36.0" left="34.0" /></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="eyebrow" text="ADMINISTRACIÓN" />
+                            <Label styleClass="page-title" text="Reportes" />
+                            <Label styleClass="subtitle" text="Indicadores calculados a partir de los movimientos registrados en el SGA." />
+                        </VBox>
+                        <Button onAction="#handleRefresh" styleClass="refresh-button" text="↻ Actualizar todo" />
+                    </HBox>
+
+                    <VBox spacing="12.0" styleClass="panel">
+                        <VBox spacing="3.0"><Label styleClass="section-title" text="Ocupación por apartamento y temporada" />
+                            <Label styleClass="section-subtitle" text="Noches ocupadas frente a noches disponibles en el periodo seleccionado. La fecha final no se incluye." /></VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <VBox spacing="4.0"><Label styleClass="field-label" text="Desde" /><DatePicker fx:id="occupancyFromPicker" /></VBox>
+                            <VBox spacing="4.0"><Label styleClass="field-label" text="Hasta (exclusiva)" /><DatePicker fx:id="occupancyToPicker" /></VBox>
+                            <Button onAction="#handleUpdateOccupancy" styleClass="action-button" text="Consultar" translateY="9.0" />
+                        </HBox>
+                        <Label fx:id="occupancySummaryLabel" styleClass="summary-text" text="Sin consultar" />
+                        <TableView fx:id="occupancyTable" prefHeight="220.0" styleClass="data-table">
+                            <columns>
+                                <TableColumn fx:id="occupancyApartmentColumn" prefWidth="180.0" text="Apartamento" />
+                                <TableColumn fx:id="occupancySeasonColumn" prefWidth="180.0" text="Temporada" />
+                                <TableColumn fx:id="occupancyNightsColumn" prefWidth="220.0" text="Noches ocupadas / disponibles" />
+                                <TableColumn fx:id="occupancyPercentColumn" prefWidth="180.0" text="Ocupación" />
+                            </columns>
+                            <placeholder><Label text="No hay registros para mostrar." /></placeholder>
+                        </TableView>
+                    </VBox>
+
+                    <VBox spacing="12.0" styleClass="panel">
+                        <VBox spacing="3.0"><Label styleClass="section-title" text="Ingresos por periodo" />
+                            <Label styleClass="section-subtitle" text="Se cuentan pagos recibidos y se descuentan devoluciones y anulaciones registradas en el mismo periodo." /></VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <VBox spacing="4.0"><Label styleClass="field-label" text="Desde" /><DatePicker fx:id="incomeFromPicker" /></VBox>
+                            <VBox spacing="4.0"><Label styleClass="field-label" text="Hasta (exclusiva)" /><DatePicker fx:id="incomeToPicker" /></VBox>
+                            <Button onAction="#handleUpdateIncome" styleClass="action-button" text="Consultar" translateY="9.0" />
+                        </HBox>
+                        <GridPane hgap="12.0" vgap="10.0">
+                            <columnConstraints><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
+                            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="metric"><Label styleClass="metric-label" text="PAGOS RECIBIDOS" /><Label fx:id="incomePaymentsLabel" styleClass="metric-value" text="COP 0" /></VBox>
+                            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="metric"><Label styleClass="metric-label" text="DEVOLUCIONES" /><Label fx:id="incomeRefundsLabel" styleClass="metric-value" text="COP 0" /></VBox>
+                            <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="metric"><Label styleClass="metric-label" text="ANULACIONES DE PAGOS" /><Label fx:id="incomeVoidsLabel" styleClass="metric-value" text="COP 0" /></VBox>
+                            <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="metric metric-highlight"><Label styleClass="metric-label" text="INGRESOS NETOS" /><Label fx:id="incomeNetLabel" styleClass="metric-value" text="COP 0" /></VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <VBox spacing="12.0" styleClass="panel">
+                        <VBox spacing="3.0"><Label styleClass="section-title" text="Reservas por canal y estado" />
+                            <Label styleClass="section-subtitle" text="Conteo del historial de reservas, incluidas las canceladas y los no-show." /></VBox>
+                        <TableView fx:id="channelTable" prefHeight="190.0" styleClass="data-table">
+                            <columns>
+                                <TableColumn fx:id="channelColumn" prefWidth="100.0" text="Canal" />
+                                <TableColumn fx:id="channelTotalColumn" prefWidth="75.0" text="Total" />
+                                <TableColumn fx:id="channelPendingColumn" prefWidth="100.0" text="Pendientes" />
+                                <TableColumn fx:id="channelConfirmedColumn" prefWidth="105.0" text="Confirmadas" />
+                                <TableColumn fx:id="channelInProgressColumn" prefWidth="100.0" text="En curso" />
+                                <TableColumn fx:id="channelFinishedColumn" prefWidth="100.0" text="Finalizadas" />
+                                <TableColumn fx:id="channelCancelledColumn" prefWidth="100.0" text="Canceladas" />
+                                <TableColumn fx:id="channelNoShowColumn" prefWidth="95.0" text="No-show" />
+                            </columns>
+                            <placeholder><Label text="No hay reservas registradas." /></placeholder>
+                        </TableView>
+                    </VBox>
+
+                    <GridPane hgap="14.0" vgap="14.0">
+                        <columnConstraints><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="10.0" styleClass="panel">
+                            <Label styleClass="section-title" text="Conflictos del canal externo" />
+                            <Label styleClass="section-subtitle" text="Solicitudes externas rechazadas por conflicto de disponibilidad, capacidad o estado." />
+                            <Label fx:id="conflictCountLabel" styleClass="big-number" text="0" />
+                            <Label text="Solicitudes rechazadas" styleClass="field-label" />
+                            <TableView fx:id="conflictsTable" prefHeight="210.0" styleClass="data-table">
+                                <columns>
+                                    <TableColumn fx:id="conflictIdColumn" prefWidth="85.0" text="Solicitud" />
+                                    <TableColumn fx:id="conflictDateColumn" prefWidth="125.0" text="Recibida" />
+                                    <TableColumn fx:id="conflictApartmentColumn" prefWidth="90.0" text="Apartamento" />
+                                    <TableColumn fx:id="conflictReasonColumn" prefWidth="220.0" text="Motivo del rechazo" />
+                                </columns>
+                                <placeholder><Label text="No hay conflictos registrados." /></placeholder>
+                            </TableView>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="12.0" styleClass="panel">
+                            <Label styleClass="section-title" text="Tiempo promedio de preparación" />
+                            <Label styleClass="section-subtitle" text="Promedio global de las preparaciones que han finalizado." />
+                            <Label fx:id="preparationAverageLabel" styleClass="big-number" text="Sin datos" />
+                            <Label text="Tiempo promedio" styleClass="field-label" />
+                            <Separator />
+                            <HBox alignment="CENTER_LEFT" spacing="8.0"><Label styleClass="metric-label" text="PREPARACIONES FINALIZADAS" /><Label fx:id="preparationCountLabel" styleClass="count-value" text="0" /></HBox>
+                            <Label fx:id="preparationInfoLabel" styleClass="summary-text" wrapText="true" text="Aún no hay información." />
+                            <Label styleClass="footnote" text="No se conserva un historial individual por apartamento; por eso no se presentan promedios históricos por unidad." wrapText="true" />
+                        </VBox>
+                    </GridPane>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

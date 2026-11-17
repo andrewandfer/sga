@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="820.0" prefWidth="1280.0"
+            styleClass="dashboard-root"
+            stylesheets="@../styles/adminDashboard.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.AdminDashboardController">
+
+    <left>
+        <VBox prefWidth="252.0" spacing="0.0" styleClass="sidebar">
+            <VBox spacing="5.0" styleClass="brand-area">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <StackPane prefHeight="46.0" prefWidth="46.0" styleClass="brand-icon">
+                        <Label styleClass="brand-icon-text" text="A" />
+                    </StackPane>
+                    <VBox spacing="0.0">
+                        <Label styleClass="brand-name" text="APARTA-SUITES" />
+                        <Label styleClass="brand-subtitle" text="UQ · SALENTO" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8.0" styleClass="sidebar-navigation">
+                <Label styleClass="nav-caption" text="MENÚ PRINCIPAL" />
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item nav-item-active">
+                    <Label styleClass="nav-icon" text="⌂" />
+                    <Label styleClass="nav-text nav-text-active" text="Dashboard" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleApartments">
+                    <Label styleClass="nav-icon" text="▦" />
+                    <Label styleClass="nav-text" text="Apartamentos" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleGuests">
+                    <Label styleClass="nav-icon" text="♙" />
+                    <Label styleClass="nav-text" text="Huéspedes" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleEmployees">
+                    <Label styleClass="nav-icon" text="♧" />
+                    <Label styleClass="nav-text" text="Empleados" />
+                </HBox>
+
+                <Label styleClass="nav-caption nav-caption-spaced" text="CONFIGURACIÓN" />
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleSeasons">
+                    <Label styleClass="nav-icon" text="◷" />
+                    <Label styleClass="nav-text" text="Temporadas" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleBuildingMap">
+                    <Label styleClass="nav-icon" text="⌖" />
+                    <Label styleClass="nav-text" text="Mapa del edificio" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="13.0" styleClass="nav-item" onMouseClicked="#handleReports">
+                    <Label styleClass="nav-icon" text="▤" />
+                    <Label styleClass="nav-text" text="Reportes" />
+                </HBox>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <VBox spacing="12.0" styleClass="sidebar-bottom">
+                <VBox spacing="5.0" styleClass="help-card">
+                    <Label styleClass="help-title" text="¿Todo bajo control?" />
+                    <Label styleClass="help-description" text="Administra tu alojamiento desde un solo lugar." wrapText="true" />
+                </VBox>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-user">
+                    <StackPane prefHeight="38.0" prefWidth="38.0" styleClass="avatar-small">
+                        <Label fx:id="adminInitialLabel" styleClass="avatar-letter" text="A" />
+                    </StackPane>
+                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                        <Label fx:id="adminNameLabel" styleClass="sidebar-user-name" text="Administrador" />
+                        <Label styleClass="sidebar-user-role" text="Panel administrativo" />
+                    </VBox>
+                    <Label styleClass="sidebar-user-dot" text="●" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox spacing="25.0" styleClass="dashboard-content">
+                    <padding>
+                        <Insets bottom="34.0" left="38.0" right="38.0" top="30.0" />
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="15.0">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="page-eyebrow" text="PANEL DE CONTROL" />
+                            <Label styleClass="page-title" text="¡Hola, bienvenido!" />
+                            <Label fx:id="dateLabel" styleClass="page-date" text="Lunes, 16 de noviembre de 2026" />
+                        </VBox>
+                        <HBox alignment="CENTER" spacing="9.0" styleClass="topbar-actions">
+                            <Button onAction="#handleRefresh" styleClass="refresh-button" text="↻  Actualizar" />
+                            <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión  ↗" />
+                        </HBox>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="welcome-banner">
+                        <StackPane prefHeight="48.0" prefWidth="48.0" styleClass="welcome-symbol">
+                            <Label styleClass="welcome-symbol-text" text="✦" />
+                        </StackPane>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label styleClass="banner-title" text="Tu alojamiento, en orden." />
+                            <Label styleClass="banner-subtitle" text="Aquí tienes el resumen general de Aparta-Suites UQ." />
+                        </VBox>
+                        <Label styleClass="banner-tag" text="ADMINISTRACIÓN" />
+                    </HBox>
+
+                    <VBox spacing="14.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                <Label styleClass="section-title" text="Estado de los apartamentos" />
+                                <Label styleClass="section-subtitle" text="Vista rápida de la operación actual" />
+                            </VBox>
+                            <HBox alignment="CENTER_LEFT" spacing="7.0" styleClass="total-pill">
+                                <Label styleClass="total-pill-number" fx:id="totalApartmentsLabel" text="0" />
+                                <Label styleClass="total-pill-text" text="en total" />
+                            </HBox>
+                        </HBox>
+
+                        <GridPane hgap="15.0" vgap="15.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                            </columnConstraints>
+                            <VBox spacing="11.0" styleClass="metric-card metric-prepared" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="metric-label" text="PREPARADOS" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="metric-icon metric-icon-green" text="✓" />
+                                </HBox>
+                                <Label fx:id="preparedLabel" styleClass="metric-value" text="0" />
+                                <Label styleClass="metric-footnote" text="Listos para recibir" />
+                            </VBox>
+                            <VBox spacing="11.0" styleClass="metric-card metric-occupied" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="metric-label" text="OCUPADOS" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="metric-icon metric-icon-blue" text="⌂" />
+                                </HBox>
+                                <Label fx:id="occupiedLabel" styleClass="metric-value" text="0" />
+                                <Label styleClass="metric-footnote" text="Con huéspedes alojados" />
+                            </VBox>
+                            <VBox spacing="11.0" styleClass="metric-card metric-pending" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="metric-label" text="EN PREPARACIÓN" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="metric-icon metric-icon-amber" text="◷" />
+                                </HBox>
+                                <Label fx:id="preparationLabel" styleClass="metric-value" text="0" />
+                                <Label styleClass="metric-footnote" text="Pendientes o en proceso" />
+                            </VBox>
+                            <VBox spacing="11.0" styleClass="metric-card metric-out" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="metric-label" text="FUERA DE SERVICIO" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="metric-icon metric-icon-red" text="!" />
+                                </HBox>
+                                <Label fx:id="outOfServiceLabel" styleClass="metric-value" text="0" />
+                                <Label styleClass="metric-footnote" text="No disponibles" />
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <HBox spacing="15.0">
+                        <VBox spacing="13.0" styleClass="panel-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT">
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="section-title" text="Inventario de apartamentos" />
+                                    <Label styleClass="section-subtitle" text="Consulta el estado operativo de cada unidad" />
+                                </VBox>
+                                <Label styleClass="table-count" text="LISTADO GENERAL" />
+                            </HBox>
+                            <TableView fx:id="apartmentsTable" prefHeight="310.0" styleClass="apartments-table">
+                                <columns>
+                                    <TableColumn fx:id="codeColumn" prefWidth="82.0" text="Código" />
+                                    <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Apartamento" />
+                                    <TableColumn fx:id="blockColumn" prefWidth="75.0" text="Bloque" />
+                                    <TableColumn fx:id="floorColumn" prefWidth="55.0" text="Piso" />
+                                    <TableColumn fx:id="capacityColumn" prefWidth="105.0" text="Capacidad" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="170.0" text="Estado" />
+                                </columns>
+                                <placeholder>
+                                    <VBox alignment="CENTER" spacing="7.0">
+                                        <Label styleClass="empty-title" text="Aún no hay apartamentos" />
+                                        <Label styleClass="empty-subtitle" text="Cuando registres unidades, aparecerán aquí." />
+                                    </VBox>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+
+                        <VBox prefWidth="270.0" spacing="14.0" styleClass="panel-card summary-panel">
+                            <VBox spacing="3.0">
+                                <Label styleClass="section-title" text="Resumen del sistema" />
+                                <Label styleClass="section-subtitle" text="Registros actuales" />
+                            </VBox>
+                            <VBox spacing="13.0">
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <StackPane styleClass="summary-icon summary-icon-guests"><Label text="♙" /></StackPane>
+                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="summary-label" text="Huéspedes" />
+                                        <Label fx:id="totalGuestsLabel" styleClass="summary-value" text="0" />
+                                    </VBox>
+                                    <Label styleClass="summary-caption" text="perfiles" />
+                                </HBox>
+                                <Separator styleClass="soft-separator" />
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <StackPane styleClass="summary-icon summary-icon-staff"><Label text="♧" /></StackPane>
+                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="summary-label" text="Empleados" />
+                                        <Label fx:id="totalEmployeesLabel" styleClass="summary-value" text="0" />
+                                    </VBox>
+                                    <Label styleClass="summary-caption" text="cuentas" />
+                                </HBox>
+                                <Separator styleClass="soft-separator" />
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <StackPane styleClass="summary-icon summary-icon-bookings"><Label text="▤" /></StackPane>
+                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="summary-label" text="Reservas" />
+                                        <Label fx:id="totalReservationsLabel" styleClass="summary-value" text="0" />
+                                    </VBox>
+                                    <Label styleClass="summary-caption" text="registradas" />
+                                </HBox>
+                            </VBox>
+                            <Region VBox.vgrow="ALWAYS" />
+                            <VBox spacing="5.0" styleClass="summary-note">
+                                <Label styleClass="summary-note-title" text="Consejo del día" />
+                                <Label styleClass="summary-note-text" text="Mantén los apartamentos preparados antes de la llegada de cada huésped." wrapText="true" />
+                            </VBox>
+                        </VBox>
+                    </HBox>
+
+                    <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                        <Label styleClass="footer-text" text="APARTA-SUITES UQ" />
+                        <Label styleClass="footer-dot" text="•" />
+                        <Label styleClass="footer-text" text="Sistema de Gestión de Alojamiento" />
+                    </HBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,153 @@
+/* ==========================================================
+   DASHBOARD ADMINISTRADOR - Aparta-Suites UQ
+   Azul petróleo · marfil · acento dorado
+   ========================================================== */
+
+.dashboard-root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-background-color: #F3F6F7;
+}
+
+/* BARRA LATERAL */
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #103944 0%, #123B46 55%, #0D303A 100%);
+    -fx-padding: 28 17 20 17;
+}
+.brand-area { -fx-padding: 2 8 31 8; }
+.brand-icon {
+    -fx-background-color: #E3B866;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 12, 0, 0, 4);
+}
+.brand-icon-text { -fx-text-fill: #123B46; -fx-font-size: 25px; -fx-font-weight: bold; }
+.brand-name { -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-letter-spacing: 1.2px; }
+.brand-subtitle { -fx-text-fill: #A9C9CC; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 2px; }
+.sidebar-navigation { -fx-padding: 0 0 0 0; }
+.nav-caption { -fx-text-fill: #E3B866; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.4px; -fx-padding: 0 10 7 10; }
+.nav-caption-spaced { -fx-padding: 23 10 7 10; }
+.nav-item {
+    -fx-padding: 12 12 12 13;
+    -fx-background-radius: 10;
+    -fx-min-height: 43;
+}
+.nav-item-active { -fx-background-color: rgba(227,184,102,0.16); -fx-border-color: transparent transparent transparent #E3B866; -fx-border-width: 0 0 0 3; }
+.nav-icon { -fx-text-fill: #D6E5E7; -fx-font-size: 19px; -fx-min-width: 22; -fx-alignment: CENTER; }
+.nav-item-active .nav-icon { -fx-text-fill: #E3B866; }
+.nav-item:hover { -fx-background-color: rgba(255,255,255,0.10); -fx-cursor: hand; }
+.nav-item-active:hover { -fx-background-color: rgba(227,184,102,0.22); }
+.nav-text { -fx-text-fill: #F0F5F5; -fx-font-size: 12.5px; }
+.nav-text-active { -fx-text-fill: white; -fx-font-weight: bold; }
+.sidebar-bottom { -fx-padding: 15 3 0 3; }
+.help-card { -fx-padding: 15 14; -fx-background-color: rgba(255,255,255,0.07); -fx-background-radius: 12; -fx-border-color: rgba(255,255,255,0.08); -fx-border-radius: 12; }
+.help-title { -fx-text-fill: #F0D49B; -fx-font-size: 11px; -fx-font-weight: bold; }
+.help-description { -fx-text-fill: #D1E0E2; -fx-font-size: 10px; -fx-line-spacing: 2px; }
+.sidebar-user { -fx-padding: 13 4 0 4; -fx-border-color: rgba(255,255,255,0.13) transparent transparent transparent; }
+.avatar-small { -fx-background-color: #E3B866; -fx-background-radius: 50; }
+.avatar-letter { -fx-text-fill: #123B46; -fx-font-size: 15px; -fx-font-weight: bold; }
+.sidebar-user-name { -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; }
+.sidebar-user-role { -fx-text-fill: #C7DADD; -fx-font-size: 9px; }
+.sidebar-user-dot { -fx-text-fill: #74C69D; -fx-font-size: 8px; }
+
+/* CONTENIDO */
+.dashboard-scroll { -fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.dashboard-scroll > .viewport { -fx-background-color: #F3F6F7; }
+.dashboard-scroll > .corner { -fx-background-color: transparent; }
+.dashboard-content { -fx-background-color: #F3F6F7; }
+.page-eyebrow { -fx-text-fill: #9A7A3E; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.8px; }
+.page-title { -fx-text-fill: #173F49; -fx-font-size: 27px; -fx-font-weight: bold; }
+.page-date { -fx-text-fill: #829398; -fx-font-size: 11px; }
+.topbar-actions { -fx-padding: 0 0 0 10; }
+.refresh-button { -fx-background-color: white; -fx-text-fill: #315B64; -fx-border-color: #DCE6E8; -fx-border-radius: 9; -fx-background-radius: 9; -fx-padding: 10 15; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand; }
+.refresh-button:hover { -fx-background-color: #EAF1F2; }
+.logout-button { -fx-background-color: #123B46; -fx-text-fill: white; -fx-background-radius: 9; -fx-padding: 10 16; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand; }
+.logout-button:hover { -fx-background-color: #205966; }
+
+/* BANNER */
+.welcome-banner { -fx-padding: 17 22; -fx-background-color: linear-gradient(to right, #174B57, #205966); -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(18,59,70,0.10), 15, 0, 0, 5); }
+.welcome-symbol { -fx-background-color: rgba(227,184,102,0.18); -fx-background-radius: 13; }
+.welcome-symbol-text { -fx-text-fill: #E3B866; -fx-font-size: 25px; }
+.banner-title { -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; }
+.banner-subtitle { -fx-text-fill: #C2D9DC; -fx-font-size: 11px; }
+.banner-tag { -fx-text-fill: #F1D59F; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.3px; -fx-padding: 8 11; -fx-border-color: rgba(241,213,159,0.45); -fx-border-radius: 20; }
+
+/* SECCIONES Y TARJETAS */
+.section-title { -fx-text-fill: #173F49; -fx-font-size: 15px; -fx-font-weight: bold; }
+.section-subtitle { -fx-text-fill: #849398; -fx-font-size: 10.5px; }
+.total-pill { -fx-padding: 7 12; -fx-background-color: #E8EFF0; -fx-background-radius: 20; }
+.total-pill-number { -fx-text-fill: #174B57; -fx-font-size: 12px; -fx-font-weight: bold; }
+.total-pill-text { -fx-text-fill: #71868B; -fx-font-size: 10px; }
+.metric-card { -fx-padding: 17 17 15 17; -fx-background-color: white; -fx-background-radius: 13; -fx-border-color: #E7EDEF; -fx-border-radius: 13; -fx-effect: dropshadow(gaussian, rgba(21,57,65,0.035), 10, 0, 0, 3); }
+.metric-card:hover { -fx-effect: dropshadow(gaussian, rgba(21,57,65,0.09), 14, 0, 0, 5); -fx-translate-y: -1; }
+.metric-prepared { -fx-border-color: #DCEDE3; }
+.metric-occupied { -fx-border-color: #DCE9F0; }
+.metric-pending { -fx-border-color: #F1E7D2; }
+.metric-out { -fx-border-color: #F0DEDE; }
+.metric-label { -fx-text-fill: #839398; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 0.8px; }
+.metric-value { -fx-text-fill: #173F49; -fx-font-size: 30px; -fx-font-weight: bold; }
+.metric-footnote { -fx-text-fill: #91A0A4; -fx-font-size: 10px; }
+.metric-icon { -fx-min-width: 28; -fx-min-height: 28; -fx-alignment: CENTER; -fx-background-radius: 9; -fx-font-size: 13px; -fx-font-weight: bold; }
+.metric-icon-green { -fx-background-color: #E7F4EB; -fx-text-fill: #3D9462; }
+.metric-icon-blue { -fx-background-color: #E8F1F7; -fx-text-fill: #4E83A2; }
+.metric-icon-amber { -fx-background-color: #FBF2E2; -fx-text-fill: #B58A3F; }
+.metric-icon-red { -fx-background-color: #F9EAEA; -fx-text-fill: #B95E5E; }
+
+/* TABLA */
+.panel-card { -fx-padding: 20; -fx-background-color: white; -fx-background-radius: 14; -fx-border-color: #E5ECEE; -fx-border-radius: 14; -fx-effect: dropshadow(gaussian, rgba(21,57,65,0.035), 12, 0, 0, 3); }
+.table-count { -fx-text-fill: #9A7A3E; -fx-font-size: 8.5px; -fx-font-weight: bold; -fx-letter-spacing: 1px; -fx-padding: 7 9; -fx-background-color: #F8F2E7; -fx-background-radius: 6; }
+.apartments-table { -fx-background-color: transparent; -fx-border-color: transparent; -fx-table-cell-border-color: #EEF2F3; -fx-padding: 3 0 0 0; }
+.apartments-table .column-header-background { -fx-background-color: #F5F8F8; -fx-background-radius: 7 7 0 0; }
+.apartments-table .column-header { -fx-background-color: transparent; -fx-size: 38px; -fx-border-color: transparent transparent #E7EDEF transparent; }
+.apartments-table .column-header .label { -fx-text-fill: #6F858A; -fx-font-size: 9px; -fx-font-weight: bold; -fx-alignment: CENTER_LEFT; }
+.apartments-table .table-row-cell { -fx-background-color: white; -fx-cell-size: 42px; -fx-border-color: transparent transparent #F0F3F4 transparent; }
+.apartments-table .table-row-cell:odd { -fx-background-color: #FCFDFD; }
+.apartments-table .table-row-cell:hover { -fx-background-color: #F1F6F6; }
+.apartments-table .table-cell { -fx-text-fill: #38565D; -fx-font-size: 10px; -fx-alignment: CENTER_LEFT; -fx-padding: 0 8; }
+.apartments-table .virtual-flow .scroll-bar:vertical { -fx-pref-width: 7; }
+.apartments-table .virtual-flow .scroll-bar:vertical .thumb { -fx-background-color: #C7D6D9; -fx-background-radius: 10; }
+.empty-title { -fx-text-fill: #46636A; -fx-font-size: 11px; -fx-font-weight: bold; }
+.empty-subtitle { -fx-text-fill: #9AA8AB; -fx-font-size: 10px; }
+
+/* RESUMEN */
+.summary-panel { -fx-pref-width: 270; }
+.summary-icon { -fx-min-width: 38; -fx-min-height: 38; -fx-background-radius: 11; -fx-alignment: CENTER; -fx-font-size: 16px; }
+.summary-icon-guests { -fx-background-color: #EAF2F4; -fx-text-fill: #39717B; }
+.summary-icon-staff { -fx-background-color: #F8F0E3; -fx-text-fill: #A47B3A; }
+.summary-icon-bookings { -fx-background-color: #EAF2EC; -fx-text-fill: #4D8A66; }
+.summary-label { -fx-text-fill: #72868B; -fx-font-size: 10px; }
+.summary-value { -fx-text-fill: #173F49; -fx-font-size: 18px; -fx-font-weight: bold; }
+.summary-caption { -fx-text-fill: #A0ACAF; -fx-font-size: 9px; }
+.soft-separator .line { -fx-border-color: #EDF1F2 transparent transparent transparent; -fx-border-width: 1 0 0 0; }
+.summary-note { -fx-padding: 12 13; -fx-background-color: #F8F5EE; -fx-background-radius: 10; -fx-border-color: #F0E6D4; -fx-border-radius: 10; }
+.summary-note-title { -fx-text-fill: #96743C; -fx-font-size: 10px; -fx-font-weight: bold; }
+.summary-note-text { -fx-text-fill: #7E8988; -fx-font-size: 9.5px; -fx-line-spacing: 2px; }
+.footer-text { -fx-text-fill: #9BA9AC; -fx-font-size: 8.5px; -fx-letter-spacing: 0.8px; }
+.footer-dot { -fx-text-fill: #D4B16F; -fx-font-size: 10px; }
+
+/* FORMULARIOS DEL PANEL ADMINISTRATIVO */
+.field-label { -fx-text-fill: #29444B; -fx-font-size: 11px; -fx-font-weight: bold; }
+.input-field {
+    -fx-background-color: #F5F8F9;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-border-color: #DCE4E6;
+    -fx-border-radius: 9;
+    -fx-padding: 0 12;
+    -fx-pref-height: 40;
+    -fx-min-height: 40;
+    -fx-font-size: 11px;
+    -fx-text-fill: #123B46;
+    -fx-prompt-text-fill: #9AA6AA;
+}
+.input-field:focused { -fx-background-color: white; -fx-border-color: #205966; }
+.login-button {
+    -fx-background-color: linear-gradient(to right, #123B46, #205966);
+    -fx-text-fill: white; -fx-background-radius: 9; -fx-font-size: 11px;
+    -fx-font-weight: bold; -fx-pref-height: 42; -fx-cursor: hand;
+}
+.login-button:hover { -fx-background-color: #2A7585; }
+.register-button {
+    -fx-background-color: transparent; -fx-text-fill: #205966;
+    -fx-border-color: #205966; -fx-border-radius: 9; -fx-background-radius: 9;
+    -fx-padding: 9 13; -fx-font-size: 10px; -fx-font-weight: bold; -fx-cursor: hand;
+}
+.register-button:hover { -fx-background-color: #205966; -fx-text-fill: white; }
